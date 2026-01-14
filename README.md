@@ -1,0 +1,279 @@
+
+# 🚀 FuelMate - On-Demand Fuel Delivery System
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18.3-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue.svg)](https://www.typescriptlang.org/)
+
+FuelMate is a comprehensive on-demand fuel delivery management system built with the MERN stack. It provides a seamless platform connecting customers, fuel stations, and delivery personnel for efficient fuel delivery services.
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Installation](#-installation)
+- [Environment Variables](#-environment-variables)
+- [Running the Application](#-running-the-application)
+- [API Documentation](#-api-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+## ✨ Features
+
+### Customer Features
+- 🔐 User authentication and authorization
+- 📍 Real-time location-based fuel ordering
+- 💳 Multiple payment options
+- 📱 Order tracking and history
+- ⭐ Rating and review system
+- 🔔 Push notifications for order updates
+
+### Station Features
+- 📊 Dashboard with analytics
+- 📦 Order management system
+- 👥 Delivery personnel management
+- 📈 Revenue tracking
+- 📍 Service area management
+
+### Delivery Personnel Features
+- 🗺️ Route optimization
+- 📋 Order assignment and tracking
+- 💰 Earnings dashboard
+- 📊 Performance metrics
+
+### Admin Features
+- 👨‍💼 User management
+- 🏪 Station management
+- 📊 System-wide analytics
+- 🔧 Configuration management
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 18.3** - UI library
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn/ui** - Component library
+- **React Router** - Client-side routing
+- **TanStack Query** - Data fetching and caching
+- **Recharts** - Data visualization
+- **Mapbox GL** - Interactive maps
+
+### Backend
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **MongoDB** - NoSQL database
+- **Mongoose** - ODM for MongoDB
+- **JWT** - Authentication
+- **bcrypt** - Password hashing
+
+### DevOps & Tools
+- **ESLint** - Code linting
+- **Nodemon** - Auto-restart server
+- **Git** - Version control
+
+## 📁 Project Structure
+
+```
+Fuel-Mate/
+├── 📂 public/                    # Static assets
+│   ├── favicon.ico              # App favicon
+│   └── robots.txt               # SEO robots file
+│
+├── 📂 server/                    # Backend application
+│   ├── 📂 controllers/          # Request handlers
+│   ├── 📂 middleware/           # Custom middleware
+│   ├── 📂 models/               # Mongoose schemas
+│   ├── 📂 routes/               # API routes
+│   ├── 📂 lib/                  # Utilities and helpers
+│   ├── index.js                 # Database connection
+│   └── server.js                # Express server setup
+│
+├── 📂 src/                       # Frontend application
+│   ├── 📂 components/           # React components
+│   │   ├── 📂 ui/               # shadcn/ui components
+│   │   └── ...                  # Custom components
+│   ├── 📂 contexts/             # React contexts
+│   ├── 📂 hooks/                # Custom React hooks
+│   ├── 📂 lib/                  # Utilities
+│   ├── 📂 models/               # TypeScript types/interfaces
+│   ├── 📂 pages/                # Page components
+│   ├── 📂 routes/               # Route configurations
+│   ├── 📂 services/             # API services
+│   ├── App.tsx                  # Root component
+│   ├── main.tsx                 # Entry point
+│   └── index.css                # Global styles
+│
+├── 📄 .env                       # Environment variables (not in git)
+├── 📄 .gitignore                # Git ignore rules
+├── 📄 components.json           # shadcn/ui config
+├── 📄 eslint.config.js          # ESLint configuration
+├── 📄 index.html                # HTML template
+├── 📄 package.json              # Dependencies and scripts
+├── 📄 postcss.config.js         # PostCSS configuration
+├── 📄 tailwind.config.ts        # Tailwind CSS config
+├── 📄 tsconfig.json             # TypeScript config
+├── 📄 tsconfig.app.json         # App TypeScript config
+├── 📄 tsconfig.node.json        # Node TypeScript config
+├── 📄 vite.config.ts            # Vite configuration
+└── 📄 README.md                 # This file
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+- **Node.js** (v18 or higher)
+- **npm** or **yarn**
+- **MongoDB** (local or Atlas)
+- **Git**
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Vishwas1345/Fuel-Mate.git
+   cd Fuel-Mate
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   # Create .env file in the root directory
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+## 🔐 Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Server Configuration
+PORT=5000
+NODE_ENV=development
+
+# Database
+MONGODB_URI=mongodb://localhost:27017/fuelmate
+# Or use MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fuelmate
+
+# JWT Secret
+JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
+
+# Frontend URL (for CORS)
+CLIENT_URL=http://localhost:5173
+
+# Mapbox (for maps)
+VITE_MAPBOX_TOKEN=your_mapbox_token_here
+
+# Payment Gateway (if applicable)
+PAYMENT_API_KEY=your_payment_api_key
+```
+
+## 🏃 Running the Application
+
+### Development Mode
+
+**Run Frontend (Vite Dev Server)**
+```bash
+npm run dev
+```
+The frontend will be available at `http://localhost:5173`
+
+**Run Backend (Node.js Server)**
+```bash
+npm run server:dev
+```
+The backend API will be available at `http://localhost:5000`
+
+**Run Both Concurrently**
+```bash
+# In separate terminals:
+# Terminal 1:
+npm run dev
+
+# Terminal 2:
+npm run server:dev
+```
+
+### Production Mode
+
+**Build Frontend**
+```bash
+npm run build
+```
+
+**Run Backend**
+```bash
+npm run server
+```
+
+**Preview Production Build**
+```bash
+npm run preview
+```
+
+## 📚 API Documentation
+
+### Base URL
+```
+http://localhost:5000/api
+```
+
+### Authentication Endpoints
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
+
+### Order Endpoints
+- `GET /api/orders` - Get all orders
+- `POST /api/orders` - Create new order
+- `GET /api/orders/:id` - Get order by ID
+- `PUT /api/orders/:id` - Update order
+- `DELETE /api/orders/:id` - Delete order
+
+### User Endpoints
+- `GET /api/users` - Get all users
+- `GET /api/users/:id` - Get user by ID
+- `PUT /api/users/:id` - Update user
+- `DELETE /api/users/:id` - Delete user
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Vishwas**
+- GitHub: [@Vishwas1345](https://github.com/Vishwas1345)
+
+## 🙏 Acknowledgments
+
+- [shadcn/ui](https://ui.shadcn.com/) for the beautiful component library
+- [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
+- [Vite](https://vitejs.dev/) for the blazing fast build tool
+- [MongoDB](https://www.mongodb.com/) for the database
+
+---
+
+**Made with ❤️ by Vishwas**
