@@ -25,6 +25,10 @@ app.use(cors({
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.json({ message: 'FuelMate API is running 🚀' });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', authenticate, orderRoutes);
 app.use('/api/users', authenticate, userRoutes);
