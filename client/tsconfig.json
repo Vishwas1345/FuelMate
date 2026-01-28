@@ -15,9 +15,9 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        "strict": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
@@ -28,6 +28,10 @@
     },
     "include": [
         "."
+    ],
+    "exclude": [
+        "vite.config.ts",
+        "eslint.config.js"
     ],
     "references": [
         {

@@ -218,7 +218,7 @@ class Api {
       }
 
       return updatedUser;
-    } catch (error) {
+    } catch (error: any) {
       // If it's an auth error, try to refresh the token and retry
       if (error.message.includes('unauthorized') || error.message.includes('invalid token')) {
         const newToken = await this.refreshToken();

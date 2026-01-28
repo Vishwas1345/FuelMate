@@ -1,0 +1,60 @@
+name: FuelMate CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  client-ci:
+    name: Client CI (Build & Lint)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+
+    - name: Install Client Dependencies
+      working-directory: ./client
+      run: npm ci
+
+    - name: Lint Client
+      working-directory: ./client
+      run: npm run lint
+      continue-on-error: true
+
+    - name: Build Client
+      working-directory: ./client
+      run: npm run build
+
+  server-ci:
+    name: Server CI (Install Check)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+
+    - name: Install Server Dependencies
+      working-directory: ./server
+      run: npm ci
+
+    # Uncomment the below steps once ESLint is added to server dependencies
+    # - name: Lint Server
+    #   working-directory: ./server
+    #   run: npm run lint

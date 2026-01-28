@@ -1,0 +1,3 @@
+error TS6305: Output file 'C:/FuelMate/client/vite.config.d.ts' has not been built from source file 'C:/FuelMate/client/vite.config.ts'.
+  The file is in the program because:
+    Matched by include pattern '.' in 'C:/FuelMate/client/tsconfig.json'
