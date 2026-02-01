@@ -70,11 +70,13 @@ FuelMate is a comprehensive on-demand fuel delivery management system built with
 - **Mongoose** - ODM for MongoDB
 - **JWT** - Authentication
 - **bcrypt** - Password hashing
+- **Winston** - Professional logging with file rotation
 
 ### DevOps & Tools
 - **ESLint** - Code linting
 - **Nodemon** - Auto-restart server
 - **Git** - Version control
+- **loglevel** - Client-side logging
 
 ## 📁 Project Structure
 
@@ -178,6 +180,57 @@ VITE_MAPBOX_TOKEN=your_mapbox_token_here
 
 # Payment Gateway (if applicable)
 PAYMENT_API_KEY=your_payment_api_key
+
+# Logging Configuration
+LOG_LEVEL=debug              # Server: error, warn, info, http, debug
+VITE_LOG_LEVEL=debug         # Client: trace, debug, info, warn, error
+```
+
+## 📝 Logging
+
+FuelMate uses professional logging libraries for both client and server:
+
+### Server Logging (Winston)
+- **Colored console output** for easy debugging
+- **Daily rotating log files** in `server/logs/`
+- **Separate error logs** for quick issue identification
+- **Automatic exception handling**
+
+### Client Logging (loglevel)
+- **Colored browser console** output
+- **Timestamp formatting**
+- **Helper methods** for API calls, components, and actions
+- **Dynamic log level** changes
+
+### Quick Start
+
+**Server:**
+```javascript
+import logger from './utils/logger.js';
+
+logger.info('User logged in', { userId: user.id });
+logger.error('Database error', { error: err.message });
+```
+
+**Client:**
+```typescript
+import logger from '@/utils/logger';
+
+logger.info('Component mounted');
+logger.api('POST', '/api/orders', { orderId: '123' });
+```
+
+### Documentation
+- 📖 **Full Guide**: See `LOGGER_USAGE.md` for comprehensive documentation
+- 🚀 **Quick Reference**: See `LOGGER_SETUP.md` for setup summary
+- 💡 **Examples**: Check `server/examples/` and `client/examples/`
+
+### Log Files (Server)
+Logs are saved to `server/logs/`:
+- `application-YYYY-MM-DD.log` - All logs
+- `error-YYYY-MM-DD.log` - Errors only
+- `exceptions-YYYY-MM-DD.log` - Uncaught exceptions
+- `rejections-YYYY-MM-DD.log` - Unhandled rejections
 ```
 
 ## 🏃 Running the Application
