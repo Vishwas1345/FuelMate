@@ -7,6 +7,8 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     const { name, email, subject, message } = req.body;
 
+    logger.info('Contact form submission received', { email, subject, name });
+
     try {
         // Check if credentials exist
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {

@@ -13,7 +13,15 @@ const cookieOptions = {
 // Register a new user
 export const register = async (req, res) => {
     try {
+        logger.info('Registration attempt', { email: req.body.email, role: req.body.role });
+
         const { user, tokens } = await authService.register(req.body);
+
+        logger.info('User registered successfully', {
+            userId: user._id,
+            email: user.email,
+            role: user.role
+        });
 
         // Set refresh token in HTTP-only cookie
         res.cookie('refreshToken', tokens.refreshToken, cookieOptions);
@@ -41,7 +49,11 @@ export const register = async (req, res) => {
 // Login user
 export const login = async (req, res) => {
     try {
+        logger.info('Login attempt', { email: req.body.email });
+
         const { user, tokens } = await authService.login(req.body);
+
+        logger.info('Login successful', { userId: user._id, email: user.email, role: user.role });
 
         // Set refresh token in HTTP-only cookie
         res.cookie('refreshToken', tokens.refreshToken, cookieOptions);
@@ -69,7 +81,11 @@ export const login = async (req, res) => {
 // Get user profile
 export const getProfile = async (req, res) => {
     try {
+        logger.info('Fetching user profile', { userId: req.user.id });
+
         const user = await authService.getProfile(req.user.id);
+
+        logger.info('Profile fetched successfully', { userId: req.user.id });
         res.json(user);
     } catch (error) {
         logger.error('Profile fetch error', { error: error.message, stack: error.stack, userId: req.user?.id });
@@ -83,9 +99,13 @@ export const getProfile = async (req, res) => {
 // Refresh token
 export const refreshToken = async (req, res) => {
     try {
+        logger.info('Token refresh attempt');
+
         const refreshToken = req.cookies.refreshToken;
 
         const tokens = await authService.refreshToken(refreshToken);
+
+        logger.info('Token refreshed successfully');
 
         // Set new refresh token
         res.cookie('refreshToken', tokens.refreshToken, cookieOptions);
@@ -106,11 +126,15 @@ export const refreshToken = async (req, res) => {
 // Logout
 export const logout = (req, res) => {
     try {
+        logger.info('Logout attempt');
+
         // Clear refresh token cookie
         res.clearCookie('refreshToken', {
             ...cookieOptions,
             maxAge: 0
         });
+
+        logger.info('Logout successful');
 
         res.json({
             message: 'Logged out successfully'
