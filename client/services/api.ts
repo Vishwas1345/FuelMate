@@ -20,6 +20,12 @@ export type User = {
   phone?: string;
   address?: string;
   createdAt?: string;
+  currentLocation?: string;
+  avatar?: string;
+  totalDeliveries?: number;
+  totalFuelDelivered?: number;
+  totalEarnings?: number;
+  averageOrderValue?: number;
 };
 
 export type AuthResponse = {

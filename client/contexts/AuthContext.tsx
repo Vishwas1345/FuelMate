@@ -187,10 +187,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Sync with window.orderSystem if it exists
       if (window.orderSystem) {
         window.orderSystem.addOrder({
-          ...newOrder,
-          id: newOrder._id,
-          timestamp: new Date(newOrder.createdAt),
-          status: newOrder.status || 'pending'
+          customer: typeof newOrder.customer === 'object' ? newOrder.customer.name : newOrder.customer,
+          fuelType: newOrder.fuelType,
+          quantity: newOrder.quantity,
+          brand: newOrder.brand,
+          price: newOrder.price,
+          deliveryAddress: newOrder.deliveryAddress,
+          paymentMethod: newOrder.paymentMethod
         });
       }
 
@@ -213,19 +216,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Sync with window.orderSystem if it exists
       if (window.orderSystem) {
         window.orderSystem.orders = orders.map(order => ({
-          ...order,
           id: order._id,
+          status: order.status,
+          customer: typeof order.customer === 'object' ? order.customer.name : order.customer,
+          fuelType: order.fuelType,
+          quantity: order.quantity,
+          brand: order.brand,
+          price: order.price,
+          deliveryAddress: order.deliveryAddress,
           timestamp: new Date(order.createdAt),
           estimatedDelivery: order.estimatedDelivery ? new Date(order.estimatedDelivery) : undefined,
+          paymentMethod: order.paymentMethod,
+          driver: order.driver ? {
+            name: order.driver.name,
+            phone: order.driver.phone || '',
+            email: order.driver.email || '',
+            currentLocation: order.driver.currentLocation
+          } : undefined
         }));
 
         // Update order history for delivered orders
         const deliveredOrders = orders.filter(order => order.status === 'delivered');
         window.orderSystem.orderHistory = deliveredOrders.map(order => ({
-          ...order,
           id: order._id,
+          status: order.status,
+          customer: typeof order.customer === 'object' ? order.customer.name : order.customer,
+          fuelType: order.fuelType,
+          quantity: order.quantity,
+          brand: order.brand,
+          price: order.price,
+          deliveryAddress: order.deliveryAddress,
           timestamp: new Date(order.createdAt),
           estimatedDelivery: order.estimatedDelivery ? new Date(order.estimatedDelivery) : undefined,
+          deliveredAt: order.deliveredAt ? new Date(order.deliveredAt) : undefined,
+          paymentMethod: order.paymentMethod,
+          driver: order.driver ? {
+            name: order.driver.name,
+            phone: order.driver.phone || '',
+            email: order.driver.email || '',
+            currentLocation: order.driver.currentLocation
+          } : undefined
         }));
 
         window.orderSystem.listeners.forEach((callback: () => void) => callback());
@@ -257,10 +287,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const orderIndex = window.orderSystem.orders.findIndex(o => o.id === orderId);
         if (orderIndex !== -1) {
           window.orderSystem.orders[orderIndex] = {
-            ...updatedOrder,
             id: updatedOrder._id,
+            status: updatedOrder.status,
+            customer: typeof updatedOrder.customer === 'object' ? updatedOrder.customer.name : updatedOrder.customer,
+            fuelType: updatedOrder.fuelType,
+            quantity: updatedOrder.quantity,
+            brand: updatedOrder.brand,
+            price: updatedOrder.price,
+            deliveryAddress: updatedOrder.deliveryAddress,
             timestamp: new Date(updatedOrder.createdAt),
             estimatedDelivery: updatedOrder.estimatedDelivery ? new Date(updatedOrder.estimatedDelivery) : undefined,
+            deliveredAt: updatedOrder.deliveredAt ? new Date(updatedOrder.deliveredAt) : undefined,
+            paymentMethod: updatedOrder.paymentMethod,
+            driver: updatedOrder.driver ? {
+              name: updatedOrder.driver.name,
+              phone: updatedOrder.driver.phone || '',
+              email: updatedOrder.driver.email || '',
+              currentLocation: updatedOrder.driver.currentLocation
+            } : undefined
           };
 
           if (status === 'delivered') {
