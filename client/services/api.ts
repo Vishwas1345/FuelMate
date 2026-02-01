@@ -95,7 +95,7 @@ class Api {
 
       // Handle 401 with token refresh
       if (response.status === 401) {
-        if (url === '/auth/refresh-token') {
+        if (url === '/api/auth/refresh-token') {
           // If refresh token request fails, logout
           this.handleLogout();
           throw new Error('Session expired. Please login again.');
@@ -147,7 +147,7 @@ class Api {
     this.isRefreshing = true;
 
     try {
-      const response = await this.fetch('/auth/refresh-token', {
+      const response = await this.fetch('/api/auth/refresh-token', {
         method: 'POST'
       });
 
@@ -174,7 +174,7 @@ class Api {
 
   // Auth methods
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await this.fetch('/auth/login', {
+    const response = await this.fetch('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials)
     });
@@ -183,7 +183,7 @@ class Api {
   }
 
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await this.fetch('/auth/register', {
+    const response = await this.fetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -193,7 +193,7 @@ class Api {
 
   async logout(): Promise<void> {
     try {
-      await this.fetch('/auth/logout', {
+      await this.fetch('/api/auth/logout', {
         method: 'POST'
       });
     } finally {
@@ -202,12 +202,12 @@ class Api {
   }
 
   async getProfile(): Promise<User> {
-    return this.fetch('/auth/profile');
+    return this.fetch('/api/auth/profile');
   }
 
   async updateProfile(data: Partial<User>): Promise<User> {
     try {
-      const response = await this.fetch('/users/profile', {
+      const response = await this.fetch('/api/users/profile', {
         method: 'PUT',
         body: JSON.stringify(data)
       });
@@ -238,7 +238,7 @@ class Api {
   }
 
   async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
-    return this.fetch('/users/password', {
+    return this.fetch('/api/users/password', {
       method: 'PUT',
       body: JSON.stringify({ currentPassword, newPassword })
     });
@@ -246,18 +246,18 @@ class Api {
 
   // Order methods
   async createOrder(orderData: any): Promise<Order> {
-    return this.fetch('/orders', {
+    return this.fetch('/api/orders', {
       method: 'POST',
       body: JSON.stringify(orderData)
     });
   }
 
   async getOrders(): Promise<Order[]> {
-    return this.fetch('/orders');
+    return this.fetch('/api/orders');
   }
 
   async updateOrderStatus(orderId: string, status: string, driver?: any): Promise<Order> {
-    return this.fetch(`/orders/${orderId}/status`, {
+    return this.fetch(`/api/orders/${orderId}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status, driver })
     });

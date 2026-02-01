@@ -98,7 +98,7 @@ const UserProfile = () => {
           return;
         }
 
-        const response = await fetch(`${baseURL}/users/profile`, {
+        const response = await fetch(`${baseURL}/api/users/profile`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
