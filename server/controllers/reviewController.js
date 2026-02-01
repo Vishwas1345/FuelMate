@@ -1,4 +1,5 @@
 import reviewService from '../services/reviewService.js';
+import logger from '../utils/logger.js';
 
 class ReviewController {
     async getReviews(req, res) {
@@ -6,6 +7,7 @@ class ReviewController {
             const reviews = await reviewService.getApprovedReviews();
             res.json(reviews);
         } catch (err) {
+            logger.error('Error fetching reviews', { error: err.message, stack: err.stack });
             res.status(500).json({ message: err.message });
         }
     }
@@ -15,7 +17,7 @@ class ReviewController {
             const newReview = await reviewService.createReview(req.body);
             res.status(201).json(newReview);
         } catch (err) {
-            console.error("Review Error:", err);
+            logger.error('Review creation error', { error: err.message, stack: err.stack, reviewData: req.body });
             res.status(400).json({ message: err.message });
         }
     }

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from '../utils/logger.js';
 
 const connectDB = async () => {
   try {
@@ -8,31 +9,33 @@ const connectDB = async () => {
       throw new Error('MongoDB URI is not defined in .env');
     }
 
-    console.log('Attempting to connect to MongoDB at:', uri);
-    
+    logger.info('Attempting to connect to MongoDB', { uri: uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@') });
+
     await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
-    console.log('MongoDB connected successfully');
+    logger.info('✅ MongoDB connected successfully');
 
     // Add connection event listeners
     mongoose.connection.on('error', (err) => {
-      console.error('MongoDB connection error:', err);
+      logger.error('MongoDB connection error', { error: err.message, stack: err.stack });
     });
 
     mongoose.connection.on('disconnected', () => {
-      console.log('MongoDB disconnected');
+      logger.warn('MongoDB disconnected');
     });
 
     mongoose.connection.on('reconnected', () => {
-      console.log('MongoDB reconnected');
+      logger.info('MongoDB reconnected');
     });
-    
+
   } catch (error) {
-    console.error('MongoDB connection error:', error.message);
-    console.error('Full error:', error);
+    logger.error('❌ MongoDB connection failed', {
+      error: error.message,
+      stack: error.stack
+    });
     process.exit(1);
   }
 };

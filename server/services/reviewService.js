@@ -1,5 +1,6 @@
 import Review from '../models/Review.js';
 import nodemailer from 'nodemailer';
+import logger from '../utils/logger.js';
 
 class ReviewService {
     async getApprovedReviews() {
@@ -77,9 +78,9 @@ vishwastiwari1901@gmail.com`,
                 };
 
                 await transporter.sendMail(mailOptions);
-                console.log(`Review acknowledgment sent to ${email}`);
+                logger.info('Review acknowledgment email sent', { to: email });
             } catch (error) {
-                console.error("Email sending failed:", error);
+                logger.error('Email sending failed', { error: error.message, stack: error.stack, to: email });
                 // We don't throw here to avoid failing the review creation just because email failed
             }
         }

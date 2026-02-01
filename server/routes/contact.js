@@ -1,5 +1,6 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
+import logger from '../utils/logger.js';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.post('/', async (req, res) => {
     try {
         // Check if credentials exist
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-            console.error('Email credentials missing in .env');
+            logger.error('Email credentials missing in .env');
             return res.status(500).json({ message: 'Server configuration error: Missing email credentials.' });
         }
 
@@ -47,10 +48,10 @@ router.post('/', async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully to vishwastiwari1901@gmail.com');
+        logger.info('Contact email sent successfully', { to: 'vishwastiwari1901@gmail.com', from: email, subject });
         res.status(200).json({ message: 'Email sent successfully' });
     } catch (error) {
-        console.error('Email error details:', error);
+        logger.error('Email sending failed', { error: error.message, stack: error.stack, from: req.body.email });
         res.status(500).json({ message: 'Failed to send email. Please try again later.' });
     }
 });

@@ -9,6 +9,7 @@ import orderRoutes from './routes/orders.js';
 import userRoutes from './routes/users.js';
 import { authenticate } from './middleware/auth.js';
 import connectDB from './lib/mongodb.js';
+import logger from './utils/logger.js';
 
 dotenv.config();
 
@@ -60,6 +61,12 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
+// HTTP request logging
+app.use((req, res, next) => {
+  logger.http(`${req.method} ${req.url}`, { ip: req.ip, userAgent: req.get('user-agent') });
+  next();
+});
+
 // Connect to MongoDB
 connectDB();
 
@@ -70,7 +77,13 @@ app.use('/api/users', authenticate, userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error('Unhandled error', {
+    error: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+    ip: req.ip
+  });
   res.status(err.status || 500).json({
     message: err.message || 'Internal Server Error',
     code: err.code || 'SERVER_ERROR'
@@ -79,5 +92,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logger.info(`✅ Server running on port ${PORT}`);
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`Log Level: ${process.env.LOG_LEVEL || 'info'}`);
 }); 
