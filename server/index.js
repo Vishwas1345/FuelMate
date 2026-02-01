@@ -27,9 +27,10 @@ const limiter = rateLimit({
 // CORS configuration
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
-  [process.env.BACKEND_URL],
+    ? [process.env.BACKEND_URL]
+    : ['http://localhost:3001', 'http://localhost:5173'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: [
     'Content-Type',
     'Authorization',
@@ -42,6 +43,7 @@ const corsOptions = {
   preflightContinue: false,
   optionsSuccessStatus: 204
 };
+
 
 // Security middleware
 app.use(helmet()); // Adds various HTTP headers for security

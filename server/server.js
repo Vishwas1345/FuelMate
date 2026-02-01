@@ -4,12 +4,7 @@ import { dirname } from 'path';
 import express from 'express';
 import cors from 'cors';
 
-import authRoutes from './routes/auth.js';
-import orderRoutes from './routes/orders.js';
-import userRoutes from './routes/users.js';
-import reviewRoutes from './routes/reviews.js';
-import contactRoutes from './routes/contact.js';
-import { authenticate } from './middleware/auth.js';
+import routes from './routes/index.route.js';
 import connectDB from './lib/mongodb.js';
 import logger from './utils/logger.js';
 
@@ -19,9 +14,12 @@ const app = express();
 
 app.use(cors({
   origin: [
+    'http://localhost:3001',
+    'http://localhost:5173',
     process.env.FRONTEND_URL,
-  ],
-  credentials: true
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
 }));
 
 app.use(express.json());
@@ -37,11 +35,8 @@ app.get('/', (req, res) => {
   res.json({ message: 'FuelMate API is running 🚀' });
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/orders', authenticate, orderRoutes);
-app.use('/api/users', authenticate, userRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/contact', contactRoutes);
+// All API routes
+app.use('/api', routes);
 
 app.use((err, req, res, next) => {
   logger.error('Unhandled Error:', {
