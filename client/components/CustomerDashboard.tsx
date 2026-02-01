@@ -92,7 +92,7 @@ const CustomerDashboard = () => {
 
   useEffect(() => {
     if (!window.orderSystem) return;
-    
+
     const updateOrdersState = () => {
       // Get all orders from both active orders and order history
       const allOrders = [
@@ -127,7 +127,7 @@ const CustomerDashboard = () => {
     // Get today's date at midnight for comparison
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     // Convert localOrders to CustomerOrder type
     const customerOrders = localOrders.map(order => ({
       id: order._id,
@@ -143,16 +143,16 @@ const CustomerDashboard = () => {
       paymentMethod: order.paymentMethod,
       driver: order.driver
     }));
-    
+
     // Filter orders for active and completed
-    const activeOrdersList = customerOrders.filter(order => 
-      order.status === 'pending' || 
-      order.status === 'confirmed' || 
+    const activeOrdersList = customerOrders.filter(order =>
+      order.status === 'pending' ||
+      order.status === 'confirmed' ||
       order.status === 'in-transit'
     );
     setActiveOrders(activeOrdersList);
-    
-    const completedOrdersList = customerOrders.filter(order => 
+
+    const completedOrdersList = customerOrders.filter(order =>
       order.status === 'delivered'
     );
     setPastOrders(completedOrdersList);
@@ -178,7 +178,7 @@ const CustomerDashboard = () => {
     setTodaySpend(todayTotal);
 
     // Calculate average order value for today
-    const averageOrderValue = todayOrders.length > 0 
+    const averageOrderValue = todayOrders.length > 0
       ? Number((todayTotal / todayOrders.length).toFixed(2))
       : 0;
     setTotalSpend(averageOrderValue);
@@ -211,7 +211,7 @@ const CustomerDashboard = () => {
     const interval = setInterval(updatePrices, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fuelPrices.Petrol, fuelPrices.Diesel]);
 
   const handleOrderSubmit = async (orderData: FormData) => {
     try {
@@ -253,9 +253,9 @@ const CustomerDashboard = () => {
   useEffect(() => {
     const handleOrderStatusChange = () => {
       if (!window.orderSystem) return;
-      
+
       const systemOrders = window.orderSystem.orders;
-      
+
       const customerOrdersFromSystem = systemOrders.map(order => ({
         id: order.id,
         status: order.status as 'pending' | 'confirmed' | 'in-transit' | 'delivered' | 'cancelled',
@@ -269,25 +269,25 @@ const CustomerDashboard = () => {
         driver: order.driver,
         paymentMethod: order.paymentMethod
       }));
-      
+
       // Check for newly confirmed orders
-      const newlyConfirmed = customerOrdersFromSystem.filter(order => 
-        order.status === 'confirmed' && 
+      const newlyConfirmed = customerOrdersFromSystem.filter(order =>
+        order.status === 'confirmed' &&
         !activeOrders.some(o => o.id === order.id && o.status === 'confirmed')
       );
-      
+
       // Check for newly started deliveries
-      const newlyInTransit = customerOrdersFromSystem.filter(order => 
-        order.status === 'in-transit' && 
+      const newlyInTransit = customerOrdersFromSystem.filter(order =>
+        order.status === 'in-transit' &&
         !activeOrders.some(o => o.id === order.id && o.status === 'in-transit')
       );
-      
+
       // Check for newly delivered orders
-      const newlyDelivered = customerOrdersFromSystem.filter(order => 
-        order.status === 'delivered' && 
+      const newlyDelivered = customerOrdersFromSystem.filter(order =>
+        order.status === 'delivered' &&
         !pastOrders.some(o => o.id === order.id)
       );
-      
+
       // Show notifications for status changes
       newlyConfirmed.forEach(order => {
         toast({
@@ -295,14 +295,14 @@ const CustomerDashboard = () => {
           description: `Your order #${order.id} has been confirmed and will be delivered soon.`,
         });
       });
-      
+
       newlyInTransit.forEach(order => {
         toast({
           title: "Delivery Started!",
           description: `Your order #${order.id} is on the way with ${order.driver?.name || 'our delivery agent'}.`,
         });
       });
-      
+
       newlyDelivered.forEach(order => {
         toast({
           title: "Order Delivered!",
@@ -310,9 +310,9 @@ const CustomerDashboard = () => {
         });
       });
     };
-    
+
     handleOrderStatusChange();
-  }, [activeOrders, pastOrders, toast]);
+  }, [activeOrders, pastOrders]);
 
   const handleTrackOrder = (orderId: string) => {
     setTrackingOrderId(orderId);
@@ -427,15 +427,15 @@ const CustomerDashboard = () => {
         <>
           <Tabs defaultValue="order" className="space-y-4">
             <TabsList className="grid w-full grid-cols-2 bg-slate-800">
-              <TabsTrigger 
-                value="order" 
+              <TabsTrigger
+                value="order"
                 className="flex items-center gap-2 data-[state=active]:bg-orange-500 data-[state=active]:text-white hover:text-orange-500 data-[state=active]:hover:text-white"
               >
                 <Fuel className="h-4 w-4" />
                 Order Fuel
               </TabsTrigger>
-              <TabsTrigger 
-                value="track" 
+              <TabsTrigger
+                value="track"
                 className="flex items-center gap-2 data-[state=active]:bg-orange-500 data-[state=active]:text-white hover:text-orange-500 data-[state=active]:hover:text-white"
               >
                 <Truck className="h-4 w-4" />
@@ -446,8 +446,8 @@ const CustomerDashboard = () => {
               <FuelOrderForm onSubmit={handleOrderSubmit} fuelPrices={fuelPrices} />
             </TabsContent>
             <TabsContent value="track">
-              <OrderTracking 
-                activeOrders={activeOrders} 
+              <OrderTracking
+                activeOrders={activeOrders}
                 trackingOrderId={trackingOrderId}
                 onTrackOrder={handleTrackOrder}
               />

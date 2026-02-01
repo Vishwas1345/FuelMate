@@ -78,7 +78,6 @@ const Home = () => {
         };
 
         fetchReviews();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const benefits = [

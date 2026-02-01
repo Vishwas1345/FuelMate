@@ -109,7 +109,7 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, fuelPrices }) =
     const pricePerLiter = fuelPrices[fuelType];
     const total = Number((pricePerLiter * numQuantity).toFixed(2));
     setTotalAmount(total);
-  }, [form.watch('fuelType'), form.watch('quantity'), fuelPrices]);
+  }, [form, fuelPrices]);
 
   const handleBrandChange = (value: string) => {
     form.setValue('brand', value);
@@ -172,7 +172,7 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, fuelPrices }) =
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     form.setValue('quantity', value);
-    
+
     const numValue = parseInt(value);
     if (numValue > 20) {
       toast({
@@ -352,7 +352,7 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, fuelPrices }) =
               </div>
               <div className="mt-2 h-[250px] rounded-md overflow-hidden border border-slate-700">
                 <div className="w-full h-full">
-                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.41709397844!2d72.73988438253697!3d21.1593402994649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04e59411d1563%3A0xfe4558290938b042!2sSurat%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1745851551947!5m2!1sen!2sin" width={"100%"} height={"100%"}  loading="lazy" ></iframe>
+                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.41709397844!2d72.73988438253697!3d21.1593402994649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04e59411d1563%3A0xfe4558290938b042!2sSurat%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1745851551947!5m2!1sen!2sin" width={"100%"} height={"100%"} loading="lazy" ></iframe>
                 </div>
               </div>
             </div>
@@ -443,8 +443,8 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, fuelPrices }) =
           </div>
 
           <div className="flex justify-end">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="bg-orange-500 hover:bg-orange-600 text-white"
               disabled={!selectedStation || !form.getValues('deliveryAddress')}
             >
