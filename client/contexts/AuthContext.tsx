@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   user: User | null;
   userOrders: Order[];
+  setUser: (user: User | null) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
@@ -377,6 +378,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     user,
     userOrders,
+    setUser,
     login,
     logout,
     signup,

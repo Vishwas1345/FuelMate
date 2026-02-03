@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoIcon } from "@/components/Logo";
 import { User, ArrowRight } from "lucide-react";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
@@ -176,16 +177,19 @@ export default function Auth() {
                       <span className="px-2 bg-slate-900 text-slate-400">Or continue with</span>
                     </div>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full mt-4 bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:border-orange-500/50 transition-all duration-300 group flex items-center justify-center"
-                    onClick={handleGuestLogin}
-                    disabled={isLoading}
-                  >
-                    <User className="mr-2 w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors" />
-                    {isLoading ? "Logging in..." : "Continue as Guest"}
-                  </Button>
+                  <div className="mt-4 space-y-3">
+                    <GoogleSignInButton />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:border-orange-500/50 transition-all duration-300 group flex items-center justify-center"
+                      onClick={handleGuestLogin}
+                      disabled={isLoading}
+                    >
+                      <User className="mr-2 w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors" />
+                      {isLoading ? "Logging in..." : "Continue as Guest"}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-center">
@@ -260,6 +264,19 @@ export default function Auth() {
                     {isLoading ? "Creating account..." : "Sign Up"}
                   </Button>
                 </form>
+                <div className="mt-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-slate-700"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-slate-900 text-slate-400">Or sign up with</span>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <GoogleSignInButton text="Sign up with Google" />
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
