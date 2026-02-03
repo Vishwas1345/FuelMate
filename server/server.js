@@ -1,4 +1,5 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
+
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import express from 'express';
@@ -7,8 +8,7 @@ import cors from 'cors';
 import routes from './routes/index.route.js';
 import connectDB from './lib/mongodb.js';
 import logger from './utils/logger.js';
-
-dotenv.config();
+import passport from './config/passport.js';
 
 const app = express();
 
@@ -23,6 +23,9 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Initialize Passport
+app.use(passport.initialize());
 
 // Log all requests
 app.use((req, res, next) => {
