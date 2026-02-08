@@ -38,11 +38,23 @@ export default function Auth() {
     setIsLoading(true);
     setLoginError("");
 
-    // Simulate login process and redirect to under construction
-    setTimeout(() => {
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    try {
+      await login(email, password);
+      // Navigation is handled in AuthContext
+    } catch (error: any) {
+      setLoginError(error.message || "Failed to login");
+      toast({
+        title: "Login failed",
+        description: error.message || "Failed to login",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-      navigate("/under-construction", { replace: true });
-    }, 1000);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -80,7 +92,7 @@ export default function Auth() {
 
     try {
       await signup(name, email, password);
-      navigate("/under-construction", { replace: true });
+      // Navigation is handled in AuthContext
     } catch (error: any) {
       const errorMessage = error.message || "An error occurred while creating your account";
       setSignupError(errorMessage);
@@ -96,10 +108,18 @@ export default function Auth() {
 
   const handleGuestLogin = async () => {
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      await loginAsGuest();
+      // Navigation is handled in AuthContext
+    } catch (error: any) {
+      toast({
+        title: "Guest login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-      navigate("/under-construction", { replace: true });
-    }, 800);
+    }
   };
 
   return (

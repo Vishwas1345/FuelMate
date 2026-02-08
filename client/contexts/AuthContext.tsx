@@ -72,7 +72,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Welcome back!",
       });
 
-      navigate("/dashboard");
+      if (!response.user.isProfileComplete) {
+        navigate("/onboarding");
+      } else if (response.user.role === 'station') {
+        navigate("/station");
+      } else {
+        navigate("/customer");
+      }
     } catch (error: any) {
       toast({
         title: "Login Failed",
@@ -108,7 +114,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Your account has been created successfully!",
       });
 
-      navigate("/dashboard");
+      if (!response.user.isProfileComplete) {
+        navigate("/onboarding");
+      } else if (response.user.role === 'station') {
+        navigate("/station");
+      } else {
+        navigate("/customer");
+      }
     } catch (error: any) {
       toast({
         title: "Registration Failed",
@@ -333,7 +345,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         id: 'guest',
         name: 'Guest User',
         email: 'guest@example.com',
-        role: 'guest'
+        role: 'guest',
+        isProfileComplete: true
       };
 
       setUser(guestUser);
@@ -344,7 +357,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Welcome! You are logged in as a guest.",
       });
 
-      navigate("/dashboard");
+      navigate("/customer");
     } catch (error: any) {
       toast({
         title: "Guest login failed",

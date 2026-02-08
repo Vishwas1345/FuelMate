@@ -18,7 +18,29 @@ export type User = {
   email: string;
   role: string;
   phone?: string;
-  address?: string;
+  address?: string; // Legacy, kept for compatibility if needed
+  addresses?: {
+    label: string;
+    addressLine: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+  }[];
+  dob?: string;
+  gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  vehicles?: {
+    type: 'car' | 'bike' | 'truck' | 'other';
+    model: string;
+    plateNumber: string;
+  }[];
+  isProfileComplete?: boolean;
+  businessName?: string;
+  businessPhone?: string;
+  fuelProvider?: string;
+  pumpLocation?: string;
+  trucksNeeded?: number;
+  driversNeeded?: number;
   createdAt?: string;
   currentLocation?: string;
   avatar?: string;
