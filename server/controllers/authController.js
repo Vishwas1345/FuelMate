@@ -34,7 +34,9 @@ export const register = async (req, res) => {
                 id: user._id,
                 email: user.email,
                 name: user.name,
-                role: user.role
+                role: user.role,
+                isProfileComplete: user.isProfileComplete,
+                avatar: user.avatar
             }
         });
     } catch (error) {
@@ -66,7 +68,9 @@ export const login = async (req, res) => {
                 id: user._id,
                 email: user.email,
                 name: user.name,
-                role: user.role
+                role: user.role,
+                isProfileComplete: user.isProfileComplete,
+                avatar: user.avatar
             }
         });
     } catch (error) {

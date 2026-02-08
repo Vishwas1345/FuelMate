@@ -50,6 +50,69 @@ const userSchema = new mongoose.Schema({
     enum: ['customer', 'station'],
     default: 'customer'
   },
+  isProfileComplete: {
+    type: Boolean,
+    default: false
+  },
+  // Customer specific fields
+  addresses: [{
+    label: { type: String, enum: ['home', 'work', 'other'], default: 'home' },
+    addressLine: { type: String, trim: true },
+    city: { type: String, trim: true },
+    state: { type: String, trim: true },
+    country: { type: String, trim: true },
+    zipCode: { type: String, trim: true }
+  }],
+  dob: {
+    type: Date
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other', 'prefer_not_to_say']
+  },
+  vehicles: [{
+    type: { type: String, enum: ['car', 'bike', 'truck', 'other'], default: 'car' },
+    model: { type: String, trim: true },
+    plateNumber: { type: String, trim: true, uppercase: true }
+  }],
+  // Station (Seller) specific fields
+  businessName: {
+    type: String,
+    trim: true
+  },
+  businessPhone: {
+    type: String,
+    trim: true
+  },
+  gstNumber: {
+    type: String,
+    trim: true,
+    uppercase: true
+  },
+  fuelProvider: {
+    type: String,
+    enum: ['HP', 'IndianOil', 'BharatPetroleum', 'Shell', 'Reliance', 'Nayara'],
+    trim: true
+  },
+  pumpLocation: {
+    addressLine: { type: String, trim: true },
+    city: { type: String, trim: true },
+    state: { type: String, trim: true },
+    country: { type: String, trim: true },
+    zipCode: { type: String, trim: true },
+    coordinates: {
+      lat: { type: Number },
+      lng: { type: Number }
+    }
+  },
+  trucksNeeded: {
+    type: Number,
+    min: 0
+  },
+  driversNeeded: {
+    type: Number,
+    min: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

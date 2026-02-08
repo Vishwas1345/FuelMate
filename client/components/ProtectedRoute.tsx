@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -20,6 +20,19 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (!isAuthenticated) {
     // Redirect to the auth page, but save the attempted location
     return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+
+
+  // Force onboarding if profile is incomplete
+  if (user && !user.isProfileComplete && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  // Optional: Prevent completed users from visiting onboarding again
+  if (user && user.isProfileComplete && location.pathname === '/onboarding') {
+    if (user.role === 'station') return <Navigate to="/station" replace />;
+    return <Navigate to="/customer" replace />;
   }
 
   return <>{children}</>;

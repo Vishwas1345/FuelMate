@@ -23,13 +23,25 @@ class UserService {
         }
 
         // Update only allowed fields
-        const allowedUpdates = ['name', 'phone', 'address'];
+        const allowedUpdates = [
+            'name', 'phone', 'addresses', 'avatar', 'role',
+            'businessName', 'businessPhone', 'gstNumber', 'fuelProvider', 'pumpLocation', 'trucksNeeded', 'driversNeeded',
+            'isProfileComplete',
+            'dob', 'gender', 'vehicles'
+        ];
+
+        // Filter updates
         const updates = Object.keys(updateData)
             .filter(key => allowedUpdates.includes(key))
             .reduce((obj, key) => {
                 obj[key] = updateData[key];
                 return obj;
             }, {});
+
+        // Check if profile is complete based on role
+        if (updates.isProfileComplete) {
+            // You can add server-side validation here to ensure fields are actually present
+        }
 
         const updatedUser = await User.findByIdAndUpdate(
             userId,
