@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import routes from './routes/index.route.js';
 import connectDB from './lib/mongodb.js';
@@ -23,6 +24,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser());
 
 // Initialize Passport
 app.use(passport.initialize());

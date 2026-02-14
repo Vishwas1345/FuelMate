@@ -179,7 +179,7 @@ const Home = () => {
                             </div>
 
                             {/* Heading */}
-                            <h1 className="animate-fade-in-up delay-100 text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                            <h1 className="animate-fade-in-up delay-100 text-4xl sm:text-5xl font-bold text-white leading-tight">
                                 Fuel Delivered
                                 <span className="block bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                                     Anytime, Anywhere

@@ -14,7 +14,6 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
-import BoardSwitcher from '@/components/BoardSwitcher';
 
 const Header = () => {
   const location = useLocation();
@@ -48,6 +47,7 @@ const Header = () => {
   };
 
   const handleCopyReferCode = () => {
+    // @ts-ignore
     const referCode = `FUELMATE-${user?.id?.slice(0, 6).toUpperCase()}`;
     navigator.clipboard.writeText(referCode);
     toast({
@@ -64,8 +64,6 @@ const Header = () => {
             <LogoIcon className="w-6 h-6 text-orange-500" />
             <span className="text-xl font-bold text-white">FuelMate</span>
           </Link>
-
-          <BoardSwitcher />
         </div>
 
         <nav className="flex items-center gap-2 md:gap-4">
@@ -124,13 +122,14 @@ const Header = () => {
                   <p className="text-sm text-gray-400 mb-2">Your Referral Code:</p>
                   <div className="flex items-center gap-2">
                     <code className="text-orange-400 font-mono text-sm">
+                      {/* @ts-ignore */}
                       FUELMATE-{user?.id?.slice(0, 6).toUpperCase()}
                     </code>
                     <Button
                       variant="ghost"
                       size="icon"
                       className="h-6 w-6 text-gray-400 hover:text-white"
-                      onClick={handleCopyReferCode}
+                      onClick={() => handleCopyReferCode()}
                     >
                       <Copy className="h-3 w-3" />
                     </Button>

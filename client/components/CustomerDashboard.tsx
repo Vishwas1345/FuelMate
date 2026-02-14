@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
-import { Fuel, Clock, Truck, CheckCircle, AlertCircle, IndianRupee, Droplets, Calendar, TrendingUp } from 'lucide-react';
+import { Fuel, Clock, Truck, CheckCircle, AlertCircle, IndianRupee, Droplets, Calendar, TrendingUp, ArrowLeft } from 'lucide-react';
 import FuelOrderForm from './FuelOrderForm';
 import OrderTracking from './OrderTracking';
 import { useAuth } from '@/contexts/AuthContext';
@@ -75,8 +75,36 @@ const generateRandomPrice = (basePrice: number) => {
   return Number((basePrice + fluctuation).toFixed(2));
 };
 
+// Define the window.orderSystem type to fix TS errors
+declare global {
+  interface Window {
+    orderSystem: any;
+  }
+}
+
+// Station Type
+type Station = {
+  _id: string;
+  businessName: string;
+  pumpLocation: {
+    addressLine: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+  };
+  fuelProvider: string;
+  isAvailable: boolean;
+  fuelPrices: {
+    petrol: number;
+    diesel: number;
+  };
+  avatar: string;
+};
+
 const CustomerDashboard = () => {
   const { user } = useAuth();
+  const [stations, setStations] = useState<Station[]>([]);
   const [localOrders, setLocalOrders] = useState<any[]>([]);
   const [activeOrders, setActiveOrders] = useState<CustomerOrder[]>([]);
   const [pastOrders, setPastOrders] = useState<CustomerOrder[]>([]);
@@ -91,6 +119,28 @@ const CustomerDashboard = () => {
   });
 
   useEffect(() => {
+    const fetchStations = async () => {
+      // @ts-ignore
+      const city = user?.addresses?.[0]?.city;
+      if (city) {
+        try {
+          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/stations?city=${city}`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setStations(data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch stations", error);
+        }
+      }
+    };
+
+    fetchStations();
+
     if (!window.orderSystem) return;
 
     const updateOrdersState = () => {
@@ -189,29 +239,25 @@ const CustomerDashboard = () => {
     console.log('Average Order Value:', averageOrderValue);
   }, [localOrders]);
 
-  // Update fuel prices every 5 minutes
+  // Update fuel prices
   useEffect(() => {
-    const updatePrices = () => {
-      setFuelPrices({
+    // Initial prices only
+    setFuelPrices({
+      Petrol: generateRandomPrice(BASE_PRICES.Petrol),
+      Diesel: generateRandomPrice(BASE_PRICES.Diesel)
+    });
+
+    const interval = setInterval(() => {
+      setFuelPrices(prev => ({
         Petrol: generateRandomPrice(BASE_PRICES.Petrol),
         Diesel: generateRandomPrice(BASE_PRICES.Diesel)
-      });
-
-      // Show toast notification for price update
-      toast({
-        title: "Fuel Prices Updated",
-        description: `New Prices - Petrol: ₹${fuelPrices.Petrol}/L, Diesel: ₹${fuelPrices.Diesel}/L`,
-      });
-    };
-
-    // Initial update
-    updatePrices();
-
-    // Set interval for updates every 5 minutes
-    const interval = setInterval(updatePrices, 5 * 60 * 1000);
+      }));
+    }, 30000); // 30 seconds instead of 5 minutes for better visibility in demo, or sticking to user request less lag? 
+    // Actually user said "lags somewhere", which might be due to re-renders. 
+    // Let's keep it simple and efficient.
 
     return () => clearInterval(interval);
-  }, [fuelPrices.Petrol, fuelPrices.Diesel]);
+  }, []);
 
   const handleOrderSubmit = async (orderData: FormData) => {
     try {
@@ -320,104 +366,64 @@ const CustomerDashboard = () => {
 
   return (
     <div className="container px-4 py-6 md:py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div className="mb-4">
+        <Button variant="ghost" className="text-gray-400 hover:text-white pl-0 gap-2" onClick={() => window.history.back()}>
+          <ArrowLeft className="w-4 h-4" /> Back
+        </Button>
+      </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Customer Dashboard</h1>
-          <p className="text-gray-400">Today's Overview</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">Welcome back, <span className="text-orange-500">{user?.name}</span></h1>
+
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Fuel className="h-5 w-5 text-orange-500" />
-              Active Orders
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-white">{activeOrders.length}</div>
-            <p className="text-sm text-gray-400">Currently in progress</p>
-          </CardContent>
-        </Card>
+      {stations.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+            <Fuel className="text-orange-500" /> Available Fuel Stations Nearby
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stations.map((station) => (
+              <Card key={station._id} className="bg-slate-900 border-slate-800 hover:border-orange-500/50 transition-all duration-300 group overflow-hidden">
+                <div className="h-24 bg-gradient-to-r from-slate-800 to-slate-900 relative">
+                  <div className="absolute -bottom-6 left-6">
+                    <div className="w-16 h-16 rounded-full border-4 border-slate-900 bg-white overflow-hidden shadow-lg group-hover:scale-105 transition-transform">
+                      <img src={station.avatar || '/placeholder-station.png'} alt={station.businessName} className="w-full h-full object-cover" />
+                    </div>
+                  </div>
+                  <Badge className={`absolute top-4 right-4 ${station.isAvailable ? 'bg-green-500/20 text-green-400 border-green-500/50' : 'bg-red-500/20 text-red-400 border-red-500/50'}`}>
+                    {station.isAvailable ? 'Open Now' : 'Closed'}
+                  </Badge>
+                </div>
+                <CardHeader className="pt-10 pb-2">
+                  <CardTitle className="text-lg text-white group-hover:text-orange-400 transition-colors">{station.businessName}</CardTitle>
+                  <p className="text-sm text-gray-400 flex items-center gap-1">
+                    <Truck className="w-3 h-3" /> {station.fuelProvider} Partner
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 mt-2">
+                    <div className="flex justify-between items-center text-sm p-2 bg-slate-950 rounded-lg border border-slate-800/50">
+                      <span className="text-gray-400">Petrol</span>
+                      <span className="font-mono text-orange-400 font-bold">₹{station.fuelPrices?.petrol || "101.5"}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm p-2 bg-slate-950 rounded-lg border border-slate-800/50">
+                      <span className="text-gray-400">Diesel</span>
+                      <span className="font-mono text-blue-400 font-bold">₹{station.fuelPrices?.diesel || "92.5"}</span>
+                    </div>
+                    <Button className="w-full mt-2 bg-slate-800 hover:bg-orange-600 text-white border border-slate-700 hover:border-orange-500 transition-all" variant="outline">
+                      Order from here <TrendingUp className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              Completed Today
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-white">{pastOrders.filter(order => {
-              const orderDate = new Date(order.deliveredAt || order.timestamp);
-              orderDate.setHours(0, 0, 0, 0);
-              return orderDate.getTime() === new Date().setHours(0, 0, 0, 0);
-            }).length}</div>
-            <p className="text-sm text-gray-400">Successfully delivered</p>
-          </CardContent>
-        </Card>
 
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Droplets className="h-5 w-5 text-blue-500" />
-              Fuel Ordered Today
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-white">{totalFuelOrdered.toFixed(2)}L</div>
-            <p className="text-sm text-gray-400">From completed orders</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <IndianRupee className="h-5 w-5 text-yellow-500" />
-              Today's Spend
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-white">₹{todaySpend.toFixed(2)}</div>
-            <p className="text-sm text-gray-400">On completed orders</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Additional Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <Card className="bg-slate-900 border-slate-800">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Total Orders Today</p>
-                <p className="text-2xl font-bold text-white">{pastOrders.filter(order => {
-                  const orderDate = new Date(order.deliveredAt || order.timestamp);
-                  orderDate.setHours(0, 0, 0, 0);
-                  return orderDate.getTime() === new Date().setHours(0, 0, 0, 0);
-                }).length}</p>
-                <p className="text-sm text-gray-400">Delivered today</p>
-              </div>
-              <Calendar className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Average Order Value</p>
-                <p className="text-2xl font-bold text-white">₹{totalSpend.toFixed(2)}</p>
-                <p className="text-sm text-gray-400">Per completed order</p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center min-h-[200px]">

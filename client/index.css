@@ -75,40 +75,7 @@
     @apply bg-blue-600 text-white;
   }
 
-  /* Global font size adjustments for better readability */
-  h1 {
-    font-size: clamp(1.75rem, 4vw, 3rem) !important;
-  }
-
-  h2 {
-    font-size: clamp(1.5rem, 3vw, 2.25rem) !important;
-  }
-
-  h3 {
-    font-size: clamp(1.25rem, 2vw, 1.5rem) !important;
-  }
-
-  p,
-  .text-xl {
-    font-size: clamp(0.875rem, 1.5vw, 1.125rem) !important;
-  }
-
-  .text-base {
-    font-size: 1rem !important;
-  }
-
-  .text-sm {
-    font-size: 0.875rem !important;
-  }
-
-  .text-xs {
-    font-size: 0.75rem !important;
-  }
-
-  /* Button text sizing */
-  button {
-    font-size: 0.9375rem !important;
-  }
+  /* Global font size adjustments removed to allow Tailwind utilities to work */
 }
 
 @layer utilities {

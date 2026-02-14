@@ -113,6 +113,14 @@ const userSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
+  isAvailable: {
+    type: Boolean,
+    default: true
+  },
+  fuelPrices: {
+    petrol: { type: Number, default: 101.5 },
+    diesel: { type: Number, default: 92.5 }
+  },
   createdAt: {
     type: Date,
     default: Date.now

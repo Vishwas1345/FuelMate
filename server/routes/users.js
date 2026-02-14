@@ -9,4 +9,13 @@ router.get('/profile', userController.getProfile);
 // Update user profile
 router.put('/profile', userController.updateProfile);
 
+// Get stations (public/protected)
+router.get('/stations', userController.getStations);
+
+// Toggle availability (Station only)
+router.patch('/availability', userController.toggleAvailability);
+
+// Get dashboard stats (Station only)
+router.get('/dashboard-stats', userController.getDashboardStats);
+
 export default router; 

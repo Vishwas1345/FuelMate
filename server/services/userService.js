@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Order from '../models/Order.js';
 
 class UserService {
     async getProfile(userId) {
@@ -59,6 +60,66 @@ class UserService {
 
         return updatedUser;
     }
+
+    async getStations(city) {
+        if (!city) return [];
+
+        // Case-insensitive city matching
+        const normalizedCity = new RegExp(`^${city}$`, 'i');
+
+        return await User.find({
+            role: 'station',
+            'pumpLocation.city': normalizedCity,
+            isAvailable: true
+        }).select('businessName pumpLocation fuelProvider isAvailable fuelPrices avatar');
+    }
+
+    async toggleAvailability(userId) {
+        const user = await User.findById(userId);
+        if (!user || user.role !== 'station') {
+            throw new Error('Not authorized or user not found');
+        }
+
+        user.isAvailable = !user.isAvailable;
+        await user.save();
+        return { isAvailable: user.isAvailable };
+    }
+
+    async getDashboardStats(stationId) {
+        const orders = await Order.find({ stationId }).sort({ createdAt: -1 });
+
+        const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+        const petrolSold = orders
+            .filter(o => o.fuelType === 'Petrol')
+            .reduce((sum, o) => sum + (o.quantity || 0), 0);
+        const dieselSold = orders
+            .filter(o => o.fuelType === 'Diesel')
+            .reduce((sum, o) => sum + (o.quantity || 0), 0);
+
+        // Simple graph data (last 7 days)
+        const last7Days = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            return d.toISOString().split('T')[0];
+        }).reverse();
+
+        const graphData = last7Days.map(date => {
+            const dayOrders = orders.filter(o => o.createdAt && o.createdAt.toISOString().startsWith(date));
+            return {
+                date,
+                amount: dayOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0)
+            };
+        });
+
+        return {
+            totalRevenue,
+            petrolSold,
+            dieselSold,
+            recentOrders: orders.slice(0, 5),
+            graphData
+        };
+    }
 }
+
 
 export default new UserService();

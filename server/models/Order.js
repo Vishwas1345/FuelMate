@@ -21,6 +21,11 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  stationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
   selectedStation: {
     type: String,
     required: true,
@@ -64,7 +69,7 @@ const orderSchema = new mongoose.Schema({
 });
 
 // Update the updatedAt field before saving
-orderSchema.pre('save', function(next) {
+orderSchema.pre('save', function (next) {
   this.updatedAt = new Date();
   next();
 });

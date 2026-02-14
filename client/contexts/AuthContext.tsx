@@ -219,7 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const getOrders = async () => {
     try {
-      if (user?.role === 'guest') {
+      if (user?._id.startsWith('guest-id-')) {
         return [];
       }
 
@@ -341,12 +341,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginAsGuest = async () => {
     try {
-      const guestUser = {
-        id: 'guest',
+      // Create a guest user object that fully complies with the User type
+      const guestUser: User = {
+        _id: 'guest-id-' + Date.now(),
         name: 'Guest User',
         email: 'guest@example.com',
-        role: 'guest',
-        isProfileComplete: true
+        role: 'customer', // Treat guest as a customer
+        isProfileComplete: true,
+        addresses: [],
+        vehicles: []
       };
 
       setUser(guestUser);

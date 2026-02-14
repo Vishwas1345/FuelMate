@@ -43,7 +43,7 @@ export default function Onboarding() {
         gender: string;
         vehicles: { type: string; model: string; plateNumber: string; }[];
         avatar: string; // Base64 string
-        addresses: { label: string; addressLine: string; landmark: string; city: string; state: string; country: string; zipCode: string; }[];
+        addresses: { label: string; addressLine: string; landmark?: string; city: string; state: string; country: string; zipCode: string; }[];
         businessName: string;
         businessPhone: string;
         gstNumber: string;
@@ -87,8 +87,11 @@ export default function Onboarding() {
                 addresses: user.addresses?.length ? user.addresses : prev.addresses,
                 businessName: user.businessName || '',
                 businessPhone: user.businessPhone || '',
+                // @ts-ignore
                 fuelProvider: user.fuelProvider || '',
-                pumpLocation: user.pumpLocation || '',
+                // @ts-ignore
+                pumpLocation: (user.pumpLocation && typeof user.pumpLocation === 'object') ? { ...user.pumpLocation, coordinates: user.pumpLocation.coordinates || { lat: 0, lng: 0 } } : prev.pumpLocation,
+                // @ts-ignore
                 trucksNeeded: user.trucksNeeded || 0,
                 driversNeeded: user.driversNeeded || 0
             }));
@@ -659,7 +662,17 @@ export default function Onboarding() {
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="fuelProvider" className="text-slate-300">Fuel Provider</Label>
-                                        <Select value={formData.fuelProvider} onValueChange={(val) => setFormData(p => ({ ...p, fuelProvider: val }))}>
+                                        <Select value={formData.fuelProvider} onValueChange={(val) => {
+                                            const logos: Record<string, string> = {
+                                                'HP': '/hp_logo.png',
+                                                'IndianOil': '/Indian_oil_logo.png',
+                                                'BharatPetroleum': '/Bharat_pertroleum_logo.png',
+                                                'Shell': '/shell_logo.png',
+                                                'Reliance': '/reliance_logo.png',
+                                                'Nayara': '/nayara_logo.webp'
+                                            };
+                                            setFormData(p => ({ ...p, fuelProvider: val, avatar: logos[val] || '' }));
+                                        }}>
                                             <SelectTrigger className="bg-slate-800 border-slate-700 text-white focus:ring-orange-500 h-11"><SelectValue placeholder="Select Provider" /></SelectTrigger>
                                             <SelectContent className="bg-slate-800 border-slate-700 text-white"><SelectItem value="HP">HP Petroleum</SelectItem><SelectItem value="IndianOil">Indian Oil (IOCL)</SelectItem><SelectItem value="BharatPetroleum">Bharat Petroleum (BPCL)</SelectItem><SelectItem value="Shell">Shell</SelectItem><SelectItem value="Reliance">Reliance Petroleum</SelectItem><SelectItem value="Nayara">Nayara Energy</SelectItem></SelectContent>
                                         </Select>

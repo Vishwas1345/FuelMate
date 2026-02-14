@@ -13,12 +13,18 @@ export type RegisterData = {
 };
 
 export type User = {
-  id: string;
+  _id: string; // Mongoose ID
   name: string;
   email: string;
-  role: string;
+  role: 'customer' | 'station' | 'admin';
   phone?: string;
-  address?: string; // Legacy, kept for compatibility if needed
+  avatar?: string;
+  isProfileComplete?: boolean;
+  createdAt?: string;
+
+  // Customer Fields
+  dob?: string;
+  gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
   addresses?: {
     label: string;
     addressLine: string;
@@ -26,28 +32,41 @@ export type User = {
     state: string;
     country: string;
     zipCode: string;
+    landmark?: string;
   }[];
-  dob?: string;
-  gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
   vehicles?: {
     type: 'car' | 'bike' | 'truck' | 'other';
     model: string;
     plateNumber: string;
   }[];
-  isProfileComplete?: boolean;
+
+  // Station Fields
   businessName?: string;
   businessPhone?: string;
+  gstNumber?: string;
   fuelProvider?: string;
-  pumpLocation?: string;
+  pumpLocation?: {
+    addressLine: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    }
+  };
   trucksNeeded?: number;
   driversNeeded?: number;
-  createdAt?: string;
-  currentLocation?: string;
-  avatar?: string;
-  totalDeliveries?: number;
-  totalFuelDelivered?: number;
-  totalEarnings?: number;
-  averageOrderValue?: number;
+  isAvailable?: boolean;
+  fuelPrices?: {
+    petrol: number;
+    diesel: number;
+  };
+
+  // Legacy/Compatibility
+  id?: string;
+  address?: string;
 };
 
 export type AuthResponse = {
