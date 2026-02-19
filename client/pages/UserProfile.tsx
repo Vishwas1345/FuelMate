@@ -274,13 +274,13 @@ const UserProfile = () => {
                   <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant={isEditing ? "destructive" : "default"}
-                      className="w-full"
+                      className={isEditing ? "w-full" : "w-full bg-orange-600 hover:bg-orange-700 text-white"}
                       onClick={() => setIsEditing(!isEditing)}
                     >
-                      {isEditing ? <><X className="w-4 h-4 mr-2" /> Cancel</> : <><Edit className="w-4 h-4 mr-2" /> Edit Profile</>}
+                      {isEditing ? <><X className="w-4 h-4" /> Cancel</> : <><Edit className="w-4 h-4" /> Edit Profile</>}
                     </Button>
-                    <Button variant="outline" className="w-full border-slate-700 hover:bg-slate-800" onClick={logout}>
-                      <LogOut className="w-4 h-4 mr-2" /> Logout
+                    <Button variant="secondary" className="w-full hover:bg-slate-800" onClick={logout}>
+                      <LogOut className="w-4 h-4" /> Logout
                     </Button>
                   </div>
                   {isEditing && (
@@ -289,7 +289,7 @@ const UserProfile = () => {
                       onClick={handleSaveProfile}
                       disabled={isSaving}
                     >
-                      {isSaving ? "Saving..." : <><Save className="w-4 h-4 mr-2" /> Save Changes</>}
+                      {isSaving ? "Saving..." : <><Save className="w-4 h-4" /> Save Changes</>}
                     </Button>
                   )}
                 </div>
