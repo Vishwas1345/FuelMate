@@ -126,10 +126,10 @@ export default function Onboarding() {
     const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+            const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
             if (file.size > MAX_FILE_SIZE) {
-                toast.error("Image is too large. Please upload an image smaller than 2MB.");
+                toast.error("Image is too large. Please upload an image smaller than 5MB.");
                 e.target.value = ''; // Reset input
                 return;
             }
