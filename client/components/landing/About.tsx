@@ -18,59 +18,53 @@ const About = () => {
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     {/* Left Content */}
                     <div className="space-y-6">
-                        <div className="inline-block px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-sm font-medium">
-                            About FuelMate
+                        <div className="inline-block px-3 py-1 bg-slate-900 border border-slate-800 rounded text-orange-400 text-[10px] font-bold uppercase tracking-widest">
+                            Intelligence Dashboard
                         </div>
 
-                        <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight">
-                            Revolutionizing Fuel Delivery
-                            <span className="block bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                                One Tank at a Time
+                        <h2 className="text-4xl sm:text-5xl font-black text-white leading-tight uppercase tracking-tighter">
+                            Fuel Logistic
+                            <span className="block text-orange-500">
+                                REIMAGINED
                             </span>
                         </h2>
 
-                        <div className="space-y-4 text-gray-400 text-lg leading-relaxed">
+                        <div className="space-y-4 text-slate-400 text-lg leading-relaxed font-medium">
                             <p>
-                                FuelMate was born from a simple idea: fuel delivery should be as easy as ordering food. We're transforming the way people refuel their vehicles by bringing premium quality fuel directly to them.
-                            </p>
-                            <p>
-                                Our mission is to save you time and provide unparalleled convenience. Whether you're at home, at work, or anywhere in between, we ensure you never have to worry about running out of fuel again.
-                            </p>
-                            <p>
-                                With a network of certified fuel stations and a team of professional delivery personnel, we guarantee quality, safety, and reliability in every delivery.
+                                FuelMate is a high-performance logistics platform designed to optimize energy distribution. We provide enterprise-grade fuel delivery directly to your fleet or personal vehicle.
                             </p>
                         </div>
 
                         {/* Values */}
                         <div className="grid grid-cols-2 gap-4 pt-6">
-                            <div className="space-y-2">
-                                <div className="text-orange-500 font-semibold">Our Vision</div>
-                                <p className="text-gray-400 text-sm">To become the world's most trusted on-demand fuel delivery platform</p>
+                            <div className="space-y-2 border-l-2 border-slate-800 pl-4">
+                                <div className="text-white font-black uppercase text-xs tracking-widest">Core Vision</div>
+                                <p className="text-slate-500 text-xs font-medium">Global energy accessibility and distribution optimization.</p>
                             </div>
-                            <div className="space-y-2">
-                                <div className="text-orange-500 font-semibold">Our Mission</div>
-                                <p className="text-gray-400 text-sm">Making fuel delivery accessible, affordable, and environmentally conscious</p>
+                            <div className="space-y-2 border-l-2 border-slate-800 pl-4">
+                                <div className="text-white font-black uppercase text-xs tracking-widest">Compliance</div>
+                                <p className="text-slate-500 text-xs font-medium">Tier-1 security and certified energy handling standards.</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Content - Stats */}
                     <div className="space-y-6">
-                        <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8">
-                            <h3 className="text-2xl font-bold text-white mb-8">Our Impact</h3>
+                        <div className="bg-slate-900 border border-slate-800 rounded-lg p-8">
+                            <h3 className="text-sm font-black text-white mb-8 uppercase tracking-widest">Operational Metadata</h3>
 
                             <div className="grid grid-cols-2 gap-6">
                                 {stats.map((stat, index) => (
                                     <div
                                         key={index}
-                                        className="space-y-3 p-6 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-orange-500/50 transition-colors duration-300"
+                                        className="space-y-3 p-6 bg-slate-950 border border-slate-800 rounded-md hover:border-orange-500/50 transition-colors duration-300"
                                     >
-                                        <div className="inline-flex p-2 bg-orange-500/10 rounded-lg text-orange-500">
+                                        <div className="inline-flex p-2 bg-slate-900 rounded border border-slate-800 text-orange-500">
                                             {stat.icon}
                                         </div>
                                         <div>
-                                            <div className="text-3xl font-bold text-white">{stat.value}</div>
-                                            <div className="text-sm text-gray-400">{stat.label}</div>
+                                            <div className="text-3xl font-black text-white tracking-tighter">{stat.value}</div>
+                                            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{stat.label}</div>
                                         </div>
                                     </div>
                                 ))}
@@ -78,16 +72,16 @@ const About = () => {
                         </div>
 
                         {/* Team Section */}
-                        <div className="bg-gradient-to-br from-orange-500/10 to-blue-500/10 border border-orange-500/20 rounded-2xl p-8">
-                            <h3 className="text-xl font-bold text-white mb-4">Join Our Growing Team</h3>
-                            <p className="text-gray-400 mb-6">
-                                We're always looking for passionate individuals to join our mission of revolutionizing fuel delivery.
+                        <div className="bg-slate-900 border border-slate-800 rounded-lg p-8">
+                            <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest">Partner Operations</h3>
+                            <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">
+                                Join our network of certified energy distribution partners. Scale your station's reach through our logistics layer.
                             </p>
                             <a
                                 href="#contact"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors duration-200"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-md transition-colors duration-200 text-xs uppercase tracking-widest"
                             >
-                                Get in Touch
+                                Contact Operations
                             </a>
                         </div>
                     </div>
