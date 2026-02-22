@@ -6,8 +6,12 @@ const router = express.Router();
 // Get all orders for a user
 router.get('/', orderController.getUserOrders);
 
-// Create a new order
+// Create a new order (generic)
 router.post('/', orderController.createOrder);
+
+// Separate endpoints for specific fuel types
+router.post('/petrol', orderController.createPetrolOrder);
+router.post('/diesel', orderController.createDieselOrder);
 
 // Get order history (completed orders)
 router.get('/history', orderController.getOrderHistory);
