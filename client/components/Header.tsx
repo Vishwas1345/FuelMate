@@ -76,14 +76,18 @@ const Header = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.avatar} alt={user?.name} />
-                  <AvatarFallback className="bg-slate-700 text-white">
+              <div className="relative h-9 w-9 rounded-full cursor-pointer ring-2 ring-slate-700 hover:ring-orange-500 transition-all duration-200 overflow-hidden flex-shrink-0">
+                <Avatar className="h-9 w-9">
+                  <AvatarImage
+                    src={user?.avatar}
+                    alt={user?.name}
+                    className="h-full w-full object-cover rounded-full"
+                  />
+                  <AvatarFallback className="h-full w-full bg-gradient-to-br from-orange-500 to-orange-700 text-white text-sm font-semibold rounded-full flex items-center justify-center">
                     {getInitials(user?.name || '')}
                   </AvatarFallback>
                 </Avatar>
-              </Button>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 bg-slate-900 border-slate-800 text-white" align="end" forceMount>
               <div className="flex items-center justify-start gap-2 p-2">
