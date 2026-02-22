@@ -1,459 +1,260 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import MapView from '@/components/MapView';
-import { MapPin, Crosshair, Fuel } from 'lucide-react';
-import { IndianRupee } from 'lucide-react';
-
-// Define available fuel stations for each brand
-const fuelStations = {
-  'Indian Oil': [
-    { id: 'io_ring_road', name: 'Indian Oil Station - Ring Road', address: 'Ring Road, Surat', distance: '2.1 km' },
-    { id: 'io_adajan', name: 'Indian Oil Station - Adajan', address: 'Adajan Main Road, Surat', distance: '3.5 km' }
-  ],
-  'Bharat Petroleum': [
-    { id: 'bp_vesu', name: 'BP Station - Vesu', address: 'Vesu Main Road, Surat', distance: '1.8 km' },
-    { id: 'bp_piplod', name: 'BP Station - Piplod', address: 'Piplod, Dumas Road, Surat', distance: '4.2 km' }
-  ],
-  'Hindustan Petroleum': [
-    { id: 'hp_athwa', name: 'HP Station - Athwa', address: 'Athwa Lines, Surat', distance: '2.7 km' },
-    { id: 'hp_city_light', name: 'HP Station - City Light', address: 'City Light Road, Surat', distance: '3.9 km' }
-  ],
-  'Shell': [
-    { id: 'shell_ghod_dod', name: 'Shell Station - Ghod Dod Road', address: 'Ghod Dod Road, Surat', distance: '2.2 km' },
-    { id: 'shell_udhna', name: 'Shell Station - Udhna', address: 'Udhna Main Road, Surat', distance: '5.0 km' }
-  ],
-  'Reliance': [
-    { id: 'rel_katargam', name: 'Reliance Station - Katargam', address: 'Katargam, Surat', distance: '3.3 km' },
-    { id: 'rel_varachha', name: 'Reliance Station - Varachha', address: 'Varachha Road, Surat', distance: '4.5 km' }
-  ]
-};
-
-const formSchema = z.object({
-  fuelType: z.enum(['Petrol', 'Diesel']),
-  quantity: z.string().refine((val) => {
-    const num = parseInt(val);
-    return !isNaN(num) && num >= 1 && num <= 20;
-  }, "Quantity must be between 1 and 20 liters"),
-  brand: z.string().min(1, "Please select a fuel brand"),
-  selectedStation: z.string().min(1, "Please select a fuel station"),
-  deliveryAddress: z.string().min(1, "Please enter a delivery address"),
-  paymentMethod: z.enum(['cash', 'card', 'upi', 'netbanking'], {
-    required_error: "Please select a payment method"
-  })
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { Card, CardContent } from '@/components/ui/card';
+import { Fuel, MapPin, Car, Info, ChevronRight, Fuel as FuelIcon, AlertCircle, ShoppingCart } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import PaymentDialog from './PaymentDialog';
+import { Badge } from '@/components/ui/badge';
 
 interface FuelOrderFormProps {
-  onSubmit: (data: FormData) => void;
-  fuelPrices: {
-    Petrol: number;
-    Diesel: number;
-  };
+  onSubmit: (data: any) => void;
+  station: any;
 }
 
-// List of random Surat locations
-const suratLocations = [
-  'Ghod Dod Road, Surat',
-  'Adajan, Surat',
-  'Magdalla, Surat',
-  'City Light, Surat',
-  // 'Ring Road, Surat',
-  'Katargam, Surat',
-  'Varachha, Surat',
-  'Athwa, Surat',
-  'Piplod, Surat',
-  'Udhna, Surat',
-  'Dumas Road, Surat',
-  'Pal, Surat',
-  // 'Parle Point, Surat',
-  'Majura Gate, Surat',
-  'Sarthana, Surat',
-  // 'Nanpura, Surat'
-];
+const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
+  const { user } = useAuth();
+  const [fuelType, setFuelType] = useState<'petrol' | 'diesel'>('petrol');
+  const [quantity, setQuantity] = useState<string>('5');
+  const [selectedAddress, setSelectedAddress] = useState<string>('');
+  const [selectedVehicle, setSelectedVehicle] = useState<string>('');
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, fuelPrices }) => {
-  const [selectedBrand, setSelectedBrand] = useState<string>('');
-  const [nearestStations, setNearestStations] = useState<Array<{ id: string; name: string; address: string; distance: string }>>([]);
-  const [selectedStation, setSelectedStation] = useState<string>('');
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
-  const [userLocation, setUserLocation] = useState<string>('');
-  const [totalAmount, setTotalAmount] = useState<number>(0);
-
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fuelType: 'Petrol',
-      quantity: '1',
-      brand: '',
-      selectedStation: '',
-      deliveryAddress: '',
-      paymentMethod: 'cash'
-    }
-  });
-
-  // Calculate total amount whenever fuel type or quantity changes
   useEffect(() => {
-    const fuelType = form.watch('fuelType');
-    const quantity = form.watch('quantity');
-    const numQuantity = parseInt(quantity) || 0;
-    const pricePerLiter = fuelPrices[fuelType];
-    const total = Number((pricePerLiter * numQuantity).toFixed(2));
-    setTotalAmount(total);
-  }, [form, fuelPrices]);
-
-  const handleBrandChange = (value: string) => {
-    form.setValue('brand', value);
-    form.setValue('selectedStation', ''); // Reset selected station when brand changes
-    setSelectedBrand(value);
-    setSelectedStation('');
-    const stations = fuelStations[value as keyof typeof fuelStations] || [];
-    setNearestStations(stations);
-  };
-
-  const handleStationSelect = (station: { id: string; name: string; address: string; distance: string }) => {
-    setSelectedStation(station.name);
-    form.setValue('selectedStation', station.id);
-  };
-
-  const getCurrentLocation = () => {
-    setIsLoadingLocation(true);
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const response = await fetch(
-              `https://api.opencagedata.com/geocode/v1/json?q=${position.coords.latitude}+${position.coords.longitude}&key=YOUR_API_KEY`
-            );
-            const data = await response.json();
-            if (data.results && data.results[0]) {
-              const address = data.results[0].formatted;
-              setUserLocation(address);
-              form.setValue('deliveryAddress', address);
-            }
-          } catch (error) {
-            toast({
-              title: "Location Error",
-              description: "Could not fetch your address. Please enter manually.",
-              variant: "destructive",
-            });
-          } finally {
-            setIsLoadingLocation(false);
-          }
-        },
-        (error) => {
-          toast({
-            title: "Location Error",
-            description: "Could not get your location. Please allow location access or enter manually.",
-            variant: "destructive",
-          });
-          setIsLoadingLocation(false);
-        }
-      );
-    } else {
-      toast({
-        title: "Location Not Supported",
-        description: "Your browser doesn't support location services.",
-        variant: "destructive",
-      });
-      setIsLoadingLocation(false);
+    if (user?.addresses?.length) {
+      setSelectedAddress(user.addresses[0].addressLine + ", " + user.addresses[0].city);
     }
-  };
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    form.setValue('quantity', value);
-
-    const numValue = parseInt(value);
-    if (numValue > 20) {
-      toast({
-        title: 'Quantity Limit Exceeded',
-        description: 'Maximum order quantity is 20 liters',
-        variant: 'destructive',
-      });
+    if (user?.vehicles?.length) {
+      setSelectedVehicle(user.vehicles[0].plateNumber);
     }
+  }, [user]);
+
+  const prices = {
+    petrol: station?.fuelPrices?.petrol || 101.5,
+    diesel: station?.fuelPrices?.diesel || 92.5
   };
 
-  const handleSubmit = async (data: FormData) => {
+  const bill = useMemo(() => {
+    const qty = parseFloat(quantity) || 0;
+    const fuelCost = qty * prices[fuelType];
+    const platformFee = qty * 2;
+    const isFreeDelivery = user?.addresses?.[0]?.city?.toLowerCase() === station?.pumpLocation?.city?.toLowerCase();
+    const deliveryFee = isFreeDelivery ? 0 : (fuelType === 'petrol' ? 35 : 40);
+    const total = fuelCost + platformFee + deliveryFee;
+    return { fuelCost, platformFee, deliveryFee, total, isFreeDelivery };
+  }, [fuelType, quantity, station, user, prices]);
+
+  const handleOpenPayment = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsPaymentOpen(true);
+  };
+
+  const handleConfirmOrder = async (paymentMethod: string) => {
+    setIsSubmitting(true);
     try {
-      await onSubmit(data);
-      // Reset form and state
-      form.reset({
-        fuelType: 'Petrol',
-        quantity: '1',
-        brand: '',
-        selectedStation: '',
-        deliveryAddress: '',
-        paymentMethod: 'cash'
+      await onSubmit({
+        stationId: station._id,
+        selectedStation: station.businessName, // Required by model
+        brand: station.fuelProvider,
+        fuelType: fuelType.charAt(0).toUpperCase() + fuelType.slice(1),
+        quantity: parseFloat(quantity),
+        deliveryAddress: selectedAddress,
+        vehiclePlate: selectedVehicle,
+        paymentMethod,
+        billSummary: bill,
+        totalPrice: bill.total // Required by model
       });
-      setSelectedBrand('');
-      setNearestStations([]);
-      setSelectedStation('');
-      setUserLocation('');
+      setIsPaymentOpen(false);
     } catch (error) {
-      // Let the parent component handle the error toast
-      throw error;
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Card className="bg-slate-900 border-slate-800">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white">
-          <Fuel className="h-5 w-5 text-orange-500" />
-          Place Fuel Order
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+    <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto">
+      <form onSubmit={handleOpenPayment} className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+        {/* Left Column: Form Controls */}
+        <div className="lg:col-span-3 space-y-8">
+          {/* Fuel Selector */}
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="fuelType" className="text-white">Fuel Type</Label>
-              <Select
-                onValueChange={(value) => form.setValue('fuelType', value as 'Petrol' | 'Diesel')}
-                defaultValue={form.getValues('fuelType')}
+            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">1. Select Fuel Type</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setFuelType('petrol')}
+                className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${fuelType === 'petrol'
+                    ? 'border-orange-500 bg-orange-500/5'
+                    : 'border-slate-800 bg-slate-900/50 grayscale hover:grayscale-0'
+                  }`}
               >
-                <SelectTrigger id="fuelType" className="bg-slate-800 border-slate-700 text-white">
-                  <SelectValue placeholder="Select fuel type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Petrol">Petrol - ₹{fuelPrices.Petrol}/L</SelectItem>
-                  <SelectItem value="Diesel">Diesel - ₹{fuelPrices.Diesel}/L</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="quantity" className="text-white">Quantity (in liters)</Label>
-              <Input
-                id="quantity"
-                type="number"
-                {...form.register('quantity')}
-                className="bg-slate-800 border-slate-700 text-white"
-                min="1"
-                max="20"
-                onChange={(e) => {
-                  handleQuantityChange(e);
-                  form.trigger('quantity');
-                }}
-              />
-              {form.formState.errors.quantity && (
-                <p className="text-red-500 text-xs mt-1">{form.formState.errors.quantity.message}</p>
-              )}
-              <p className="text-xs text-gray-400 mt-1">Maximum 20 liters per order</p>
-            </div>
-
-            {/* Price Summary Card */}
-            <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
-              <div className="flex justify-between items-center">
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-400">Price per liter</p>
-                  <p className="text-lg font-semibold text-white">₹{fuelPrices[form.getValues('fuelType')]}</p>
+                <div className="text-left">
+                  <p className={`font-black tracking-tight ${fuelType === 'petrol' ? 'text-white' : 'text-slate-500'}`}>PETROL</p>
+                  <p className="text-xs font-mono text-orange-500/70">₹{prices.petrol}/L</p>
                 </div>
-                <div className="space-y-1 text-right">
-                  <p className="text-sm text-gray-400">Total Amount</p>
-                  <p className="text-lg font-semibold text-orange-500">₹{totalAmount}</p>
+                <FuelIcon className={`w-8 h-8 ${fuelType === 'petrol' ? 'text-orange-500' : 'text-slate-700'}`} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFuelType('diesel')}
+                className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${fuelType === 'diesel'
+                    ? 'border-blue-500 bg-blue-500/5'
+                    : 'border-slate-800 bg-slate-900/50 grayscale hover:grayscale-0'
+                  }`}
+              >
+                <div className="text-left">
+                  <p className={`font-black tracking-tight ${fuelType === 'diesel' ? 'text-white' : 'text-slate-500'}`}>DIESEL</p>
+                  <p className="text-xs font-mono text-blue-500/70">₹{prices.diesel}/L</p>
+                </div>
+                <FuelIcon className={`w-8 h-8 ${fuelType === 'diesel' ? 'text-blue-500' : 'text-slate-700'}`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Quantity Selector */}
+          <div className="space-y-4">
+            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">2. Specify Quantity</Label>
+            <div className="relative">
+              <Input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                className="bg-slate-900 border-slate-800 text-white font-mono text-2xl h-16 rounded-lg focus:border-orange-500 transition-all text-center"
+                placeholder="0"
+                max="20"
+                min="1"
+              />
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">LITRES</div>
+            </div>
+            <div className="flex gap-2">
+              {['5', '10', '15', '20'].map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setQuantity(val)}
+                  className={`flex-1 py-2 rounded-md text-xs font-bold transition-all border ${quantity === val ? 'bg-orange-500 border-orange-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
+                    }`}
+                >
+                  {val}L
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Logistics */}
+          <div className="space-y-4">
+            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">3. Logistics & Location</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Select value={selectedAddress} onValueChange={setSelectedAddress}>
+                  <SelectTrigger className="bg-slate-900 border-slate-800 text-white h-12 rounded-lg">
+                    <SelectValue placeholder="Select Destination" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                    {user?.addresses?.map((addr: any, i: number) => (
+                      <SelectItem key={i} value={addr.addressLine + ", " + addr.city}>
+                        {addr.label.toUpperCase()} : {addr.addressLine}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
+                  <SelectTrigger className="bg-slate-900 border-slate-800 text-white h-12 rounded-lg">
+                    <SelectValue placeholder="Select Vehicle" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                    {user?.vehicles?.map((v: any, i: number) => (
+                      <SelectItem key={i} value={v.plateNumber}>
+                        {v.model.toUpperCase()} ({v.plateNumber})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Checkout Summary */}
+        <div className="lg:col-span-2">
+          <Card className="bg-slate-900 border-slate-800 rounded-lg overflow-hidden flex flex-col h-full shadow-lg">
+            <div className="p-6 bg-slate-800/20 border-b border-slate-800 flex items-center justify-between">
+              <h3 className="text-white font-bold flex items-center gap-2">
+                <ShoppingCart className="w-4 h-4 text-orange-500" /> Order Summary
+              </h3>
+              <Badge className="bg-slate-950 font-mono text-orange-400 border border-slate-800">PREVIEW</Badge>
+            </div>
+
+            <CardContent className="p-8 space-y-6 flex-1">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center group">
+                  <span className="text-slate-500 font-medium text-sm">Unit Price ({fuelType})</span>
+                  <span className="text-white font-mono">₹{prices[fuelType].toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium text-sm">Volume Requested</span>
+                  <span className="text-white font-mono">{quantity || 0} L</span>
+                </div>
+
+                <div className="h-px bg-slate-800 my-4" />
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium text-sm">Fuel Cost</span>
+                  <span className="text-white font-mono">₹{bill.fuelCost.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium text-sm">Platform Service</span>
+                  <span className="text-white font-mono">₹{bill.platformFee.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 font-medium text-sm">Delivery Logistics</span>
+                  <span className={`font-mono ${bill.deliveryFee === 0 ? 'text-green-500' : 'text-white'}`}>
+                    {bill.deliveryFee === 0 ? 'COMPLIMENTARY' : `₹${bill.deliveryFee.toFixed(2)}`}
+                  </span>
                 </div>
               </div>
-              <div className="mt-2 pt-2 border-t border-slate-700">
-                <p className="text-xs text-gray-400">
-                  {form.watch('quantity') || 0} liters of {form.watch('fuelType')} at ₹{fuelPrices[form.watch('fuelType')]}/L
+
+              <div className="mt-auto pt-8 border-t border-slate-800">
+                <div className="flex justify-between items-end mb-8">
+                  <div>
+                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-tighter">Total Payable</p>
+                    <p className="text-4xl font-black text-white">₹{bill.total.toFixed(2)}</p>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={!quantity || !selectedAddress || !selectedVehicle}
+                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white text-lg font-black rounded-lg shadow-lg hover:shadow-orange-500/10 transition-all gap-3"
+                >
+                  PROCEED TO PAYMENT <ChevronRight className="w-5 h-5" />
+                </Button>
+
+                <p className="text-[9px] text-slate-500 text-center mt-4 uppercase tracking-widest font-bold">
+                  Secure Server Connection Active
                 </p>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        </div>
+      </form>
 
-            <div>
-              <Label htmlFor="brand" className="text-white">Preferred Brand</Label>
-              <Select
-                onValueChange={handleBrandChange}
-                defaultValue={form.getValues('brand')}
-              >
-                <SelectTrigger id="brand" className="bg-slate-800 border-slate-700 text-white">
-                  <SelectValue placeholder="Select brand" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Indian Oil">Indian Oil</SelectItem>
-                  <SelectItem value="Bharat Petroleum">Bharat Petroleum</SelectItem>
-                  <SelectItem value="Hindustan Petroleum">Hindustan Petroleum</SelectItem>
-                  <SelectItem value="Shell">Shell</SelectItem>
-                  <SelectItem value="Reliance">Reliance</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {selectedBrand && nearestStations.length > 0 && (
-              <div className="bg-slate-800 p-4 rounded-lg">
-                <h3 className="text-sm font-medium text-white mb-2">Select Nearest {selectedBrand} Station in Surat</h3>
-                <div className="space-y-3">
-                  {nearestStations.map((station) => (
-                    <div key={station.id} className="flex items-start space-x-3">
-                      <input
-                        type="radio"
-                        name="station"
-                        id={station.id}
-                        value={station.id}
-                        checked={form.getValues('selectedStation') === station.id}
-                        onChange={() => {
-                          setSelectedStation(station.name);
-                          form.setValue('selectedStation', station.id);
-                        }}
-                        className="text-orange-500 focus:ring-orange-500 h-4 w-4 border-gray-600 bg-gray-700 mt-2"
-                      />
-                      <Label htmlFor={station.id} className="text-sm text-gray-300 cursor-pointer">
-                        <div className="flex items-start gap-2">
-                          <MapPin className="h-4 w-4 text-orange-500 mt-1" />
-                          <div>
-                            <p className="font-medium">{station.name}</p>
-                            <p className="text-gray-400">{station.address}</p>
-                            <p className="text-orange-500">{station.distance}</p>
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div>
-              <Label htmlFor="deliveryAddress" className="text-white">Delivery Address</Label>
-              <div className="relative flex gap-2 items-center">
-                <Input
-                  id="deliveryAddress"
-                  value={userLocation || form.getValues('deliveryAddress')}
-                  onChange={(e) => {
-                    form.setValue('deliveryAddress', e.target.value);
-                    setUserLocation(e.target.value);
-                  }}
-                  className="bg-slate-800 border-slate-700 text-white"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="bg-slate-800 border-slate-700 text-white px-3 py-2 text-xs whitespace-nowrap flex items-center gap-2"
-                  onClick={() => {
-                    const randomLocation = suratLocations[Math.floor(Math.random() * suratLocations.length)];
-                    setUserLocation(randomLocation);
-                    form.setValue('deliveryAddress', randomLocation);
-                  }}
-                >
-                  <MapPin className="h-4 w-4" />
-                  Use Current Location
-                </Button>
-              </div>
-              <div className="mt-2 h-[250px] rounded-md overflow-hidden border border-slate-700">
-                <div className="w-full h-full">
-                  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.41709397844!2d72.73988438253697!3d21.1593402994649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04e59411d1563%3A0xfe4558290938b042!2sSurat%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1745851551947!5m2!1sen!2sin" width={"100%"} height={"100%"} loading="lazy" ></iframe>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-white mb-2 block">Payment Method *</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center space-x-3 bg-slate-800/50 p-3 rounded-lg">
-                  <input
-                    type="radio"
-                    id="cash"
-                    value="cash"
-                    {...form.register('paymentMethod')}
-                    className="text-orange-500 focus:ring-orange-500 h-4 w-4 border-gray-600 bg-gray-700"
-                  />
-                  <Label htmlFor="cash" className="flex items-center space-x-3 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <div>
-                      <span className="text-sm font-medium text-white">Cash</span>
-                      <p className="text-xs text-gray-400">Pay on delivery</p>
-                    </div>
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-3 bg-slate-800/50 p-3 rounded-lg">
-                  <input
-                    type="radio"
-                    id="card"
-                    value="card"
-                    {...form.register('paymentMethod')}
-                    className="text-orange-500 focus:ring-orange-500 h-4 w-4 border-gray-600 bg-gray-700"
-                  />
-                  <Label htmlFor="card" className="flex items-center space-x-3 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                    </svg>
-                    <div>
-                      <span className="text-sm font-medium text-white">Card</span>
-                      <p className="text-xs text-gray-400">Credit/Debit</p>
-                    </div>
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-3 bg-slate-800/50 p-3 rounded-lg">
-                  <input
-                    type="radio"
-                    id="upi"
-                    value="upi"
-                    {...form.register('paymentMethod')}
-                    className="text-orange-500 focus:ring-orange-500 h-4 w-4 border-gray-600 bg-gray-700"
-                  />
-                  <Label htmlFor="upi" className="flex items-center space-x-3 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                    </svg>
-                    <div>
-                      <span className="text-sm font-medium text-white">UPI</span>
-                      <p className="text-xs text-gray-400">GPay/PhonePe</p>
-                    </div>
-                  </Label>
-                </div>
-
-                <div className="flex items-center space-x-3 bg-slate-800/50 p-3 rounded-lg">
-                  <input
-                    type="radio"
-                    id="netbanking"
-                    value="netbanking"
-                    {...form.register('paymentMethod')}
-                    className="text-orange-500 focus:ring-orange-500 h-4 w-4 border-gray-600 bg-gray-700"
-                  />
-                  <Label htmlFor="netbanking" className="flex items-center space-x-3 cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l9-4 9 4m-9-4v20m9-16l-9 4m0 0L3 6m0 16l9-4m9 4l-9-4m0 4V4" />
-                    </svg>
-                    <div>
-                      <span className="text-sm font-medium text-white">Net Banking</span>
-                      <p className="text-xs text-gray-400">All Indian Banks</p>
-                    </div>
-                  </Label>
-                </div>
-              </div>
-              {form.formState.errors.paymentMethod && (
-                <p className="text-red-500 text-xs mt-2">{form.formState.errors.paymentMethod.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              className="bg-orange-500 hover:bg-orange-600 text-white"
-              disabled={!selectedStation || !form.getValues('deliveryAddress')}
-            >
-              Place Order
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      <PaymentDialog
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        onConfirm={handleConfirmOrder}
+        amount={bill.total}
+        isSubmitting={isSubmitting}
+      />
+    </div>
   );
 };
 

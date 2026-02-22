@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import OrderCard from './OrderCard';
 import MapboxMap from './MapboxMap';
-import { Phone, Mail, User, Search, MapPin, Clock, Truck, CheckCircle, AlertCircle } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Phone, Mail, Truck, Clock, CheckCircle, MapPin, Navigation, ShieldCheck } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 
@@ -36,196 +34,145 @@ interface OrderTrackingProps {
 }
 
 const OrderTracking = ({ activeOrders, trackingOrderId, onTrackOrder }: OrderTrackingProps) => {
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
-  const getDriverCoordinates = (order: Order | null) => {
-    if (!order || order.status !== 'in-transit' || !order.driver) return null;
-    
-    if (order.driver.coordinates) {
-      return order.driver.coordinates;
-    }
-    
-    return { lat: 21.1702 + (Math.random() * 0.03), lng: 72.8311 + (Math.random() * 0.03) };
-  };
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(
+    activeOrders.find(o => o.id === trackingOrderId) || (activeOrders.length > 0 ? activeOrders[0] : null)
+  );
 
   const getStatusProgress = (status: string): number => {
     switch (status) {
-      case 'pending':
-        return 25;
-      case 'confirmed':
-        return 50;
-      case 'in-transit':
-        return 75;
-      case 'delivered':
-        return 100;
-      default:
-        return 0;
+      case 'pending': return 15;
+      case 'confirmed': return 40;
+      case 'in-transit': return 75;
+      case 'delivered': return 100;
+      default: return 0;
     }
   };
 
-  const getStatusSteps = (status: string) => {
-    const steps = [
-      { id: 'pending', label: 'Order Placed', icon: <Clock className="h-4 w-4" /> },
-      { id: 'confirmed', label: 'Order Confirmed', icon: <CheckCircle className="h-4 w-4" /> },
-      { id: 'in-transit', label: 'In Transit', icon: <Truck className="h-4 w-4" /> },
-      { id: 'delivered', label: 'Delivered', icon: <CheckCircle className="h-4 w-4" /> },
-    ];
-
-    return steps.map((step, index) => {
-      const isActive = steps.findIndex(s => s.id === status) >= index;
-      return (
-        <div key={step.id} className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-            isActive ? 'bg-orange-500 text-white' : 'bg-slate-700 text-gray-400'
-          }`}>
-            {step.icon}
-          </div>
-          <div className={`text-sm ${isActive ? 'text-white' : 'text-gray-400'}`}>
-            {step.label}
-          </div>
-        </div>
-      );
-    });
+  const statusMap = {
+    'pending': { label: 'In Queue', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    'confirmed': { label: 'Confirmed', color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    'in-transit': { label: 'Dispatching', color: 'text-orange-500', bg: 'bg-orange-500/10' },
+    'delivered': { label: 'Completed', color: 'text-green-500', bg: 'bg-green-500/10' },
+    'cancelled': { label: 'Cancelled', color: 'text-red-500', bg: 'bg-red-500/10' },
   };
 
   return (
-    <Card className="bg-slate-900 border-slate-800">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Truck className="h-5 w-5 text-orange-500" />
-          Track Your Order
+    <Card className="bg-slate-900 border-slate-800 rounded-lg shadow-sm overflow-hidden">
+      <CardHeader className="bg-slate-800/20 border-b border-slate-800 py-4">
+        <CardTitle className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+          <Navigation className="h-4 w-4 text-orange-500" /> Live Manifest
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="mb-4">
+      <CardContent className="p-6 space-y-8">
+        <div>
           <Select
-            value={trackingOrderId || ''}
+            value={selectedOrder?.id || ''}
             onValueChange={(value) => {
               onTrackOrder(value);
-              const order = activeOrders.find(o => o.id === value);
-              setSelectedOrder(order || null);
+              setSelectedOrder(activeOrders.find(o => o.id === value) || null);
             }}
           >
-            <SelectTrigger className="w-full bg-slate-800 border-slate-700 text-white">
-              <SelectValue placeholder="Select an order to track" />
+            <SelectTrigger className="w-full bg-slate-950 border-slate-800 text-white font-bold h-12 rounded-lg">
+              <SelectValue placeholder="Select Active Shipment" />
             </SelectTrigger>
-            <SelectContent>
-              {activeOrders.filter((order, index, self) => 
-                index === self.findIndex((o) => o.id === order.id)
-              ).map(order => (
-                <SelectItem key={order.id} value={order.id}>
-                  <div className="flex items-center gap-2">
-                    <Badge className={
-                      order.status === 'pending' ? 'bg-amber-100 text-amber-800' :
-                      order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                      order.status === 'in-transit' ? 'bg-indigo-100 text-indigo-800' :
-                      'bg-green-100 text-green-800'
-                    }>
-                      {order.status.replace('-', ' ')}
-                    </Badge>
-                    <span className="truncate">Order #{order.id} - {order.fuelType}</span>
+            <SelectContent className="bg-slate-900 border-slate-800 text-white">
+              {activeOrders.map(order => (
+                <SelectItem key={order.id} value={order.id} className="focus:bg-slate-800">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${statusMap[order.status].color.replace('text', 'bg')}`} />
+                    <span className="font-mono text-xs uppercase">#{order.id.slice(-6)} — {order.fuelType} ({order.quantity}L)</span>
                   </div>
                 </SelectItem>
               ))}
+              {activeOrders.length === 0 && <p className="p-4 text-xs text-slate-500 text-center">No active manifest</p>}
             </SelectContent>
           </Select>
         </div>
 
-        {selectedOrder && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-slate-800 p-4 rounded-lg">
-                <h3 className="text-lg font-medium text-white mb-3">Order Details</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge className={
-                      selectedOrder.status === 'pending' ? 'bg-amber-100 text-amber-800' :
-                      selectedOrder.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
-                      selectedOrder.status === 'in-transit' ? 'bg-indigo-100 text-indigo-800' :
-                      'bg-green-100 text-green-800'
-                    }>
-                      {selectedOrder.status.replace('-', ' ')}
-                    </Badge>
-                    <span className="text-white truncate">{selectedOrder.fuelType} - {selectedOrder.quantity}L</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                    <span className="text-white truncate">{selectedOrder.deliveryAddress}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                    <span className="text-white truncate">
-                      Ordered: {new Date(selectedOrder.timestamp).toLocaleString()}
-                    </span>
-                  </div>
-                  {selectedOrder.estimatedDelivery && (
-                    <div className="flex items-center gap-2">
-                      <AlertCircle className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                      <span className="text-white truncate">
-                        Estimated Delivery: {new Date(selectedOrder.estimatedDelivery).toLocaleString()}
-                      </span>
-                    </div>
-                  )}
+        {selectedOrder ? (
+          <div className="space-y-8 animate-in fade-in duration-300">
+            {/* Logistic Progress */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-end">
+                <span className={`text-[10px] font-black uppercase tracking-widest ${statusMap[selectedOrder.status].color}`}>
+                  {statusMap[selectedOrder.status].label}
+                </span>
+                <span className="text-white font-mono text-xs">{getStatusProgress(selectedOrder.status)}%</span>
+              </div>
+              <Progress value={getStatusProgress(selectedOrder.status)} className="h-1.5 bg-slate-800 rounded-full" />
+            </div>
+
+            {/* Shipment Data */}
+            <div className="space-y-4 bg-slate-950/50 p-6 rounded-lg border border-slate-800/50">
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center border border-slate-800 flex-shrink-0">
+                  <MapPin className="h-4 w-4 text-slate-500 font-bold" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-600 font-bold uppercase mb-1">Destination Address</p>
+                  <p className="text-xs text-white font-medium leading-relaxed">{selectedOrder.deliveryAddress}</p>
                 </div>
               </div>
-
-              <div className="bg-slate-800 p-4 rounded-lg">
-                <h3 className="text-lg font-medium text-white mb-3">Delivery Progress</h3>
-                <div className="space-y-4">
-                  <Progress value={getStatusProgress(selectedOrder.status)} className="h-2" />
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {getStatusSteps(selectedOrder.status)}
-                  </div>
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center border border-slate-800 flex-shrink-0">
+                  <Clock className="h-4 w-4 text-slate-500" />
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-600 font-bold uppercase mb-1">Est. Arrival</p>
+                  <p className="text-xs text-white font-medium">
+                    {selectedOrder.estimatedDelivery ? new Date(selectedOrder.estimatedDelivery).toLocaleTimeString() : "PENDING DISPATCH"}
+                  </p>
                 </div>
               </div>
             </div>
 
+            {/* Personnel */}
             {selectedOrder.driver && (
-              <div className="bg-slate-800 p-4 rounded-lg">
-                <h3 className="text-lg font-medium text-white mb-3">Driver Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-400">Driver Name</p>
-                    <p className="text-white font-medium">{selectedOrder.driver.name}</p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 rounded-lg border border-slate-800 bg-slate-900/40">
+                  <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
+                    <Truck className="h-5 w-5 text-orange-500" />
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Contact</p>
-                    <p className="text-white font-medium">{selectedOrder.driver.phone}</p>
+                  <div className="flex-1">
+                    <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Courier In-Charge</p>
+                    <p className="text-sm font-bold text-white uppercase">{selectedOrder.driver.name}</p>
                   </div>
-                  <div className="md:col-span-2">
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1">
-                        <Phone className="h-4 w-4 mr-2" />
-                        Call Driver
-                      </Button>
-                      <Button size="sm" variant="outline" className="flex-1">
-                        <Mail className="h-4 w-4 mr-2" />
-                        Message Driver
-                      </Button>
-                    </div>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="icon" className="w-8 h-8 bg-slate-950 border border-slate-800 text-orange-500 hover:bg-orange-500 hover:text-white">
+                      <Phone className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="w-8 h-8 bg-slate-950 border border-slate-800 text-orange-500 hover:bg-orange-500 hover:text-white">
+                      <Mail className="h-3.5 w-3.5" />
+                    </Button>
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="bg-slate-800 p-4 rounded-lg">
-              <h3 className="text-lg font-medium text-white mb-3">Delivery Tracking</h3>
-              <div className="h-64 rounded-lg overflow-hidden border border-slate-700">
-                <MapboxMap 
-                  address={selectedOrder.deliveryAddress} 
-                  driverLocation={getDriverCoordinates(selectedOrder)}
+            {/* Live Telemetry View */}
+            <div className="space-y-3">
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Operational Telemetry</p>
+              <div className="h-48 rounded-lg overflow-hidden border border-slate-800 shadow-inner bg-slate-950">
+                <MapboxMap
+                  address={selectedOrder.deliveryAddress}
+                  driverLocation={selectedOrder.driver?.coordinates}
                 />
               </div>
             </div>
 
-            <div className="flex gap-2">
-              <Button className="flex-1 bg-orange-500 hover:bg-orange-600">
-                Contact Support
+            <div className="pt-4 flex gap-3">
+              <Button className="flex-1 bg-slate-800 border border-slate-700 text-white hover:bg-slate-700 font-bold text-xs h-10">
+                SUPPORT TICKET
               </Button>
-              <Button variant="outline" className="flex-1">
-                View Order Details
+              <Button variant="outline" className="flex-1 bg-transparent border-slate-800 text-slate-400 hover:text-white font-bold text-xs h-10">
+                FULL LOGS
               </Button>
             </div>
+          </div>
+        ) : (
+          <div className="py-20 text-center space-y-4">
+            <ShieldCheck className="w-12 h-12 text-slate-800 mx-auto" />
+            <p className="text-slate-500 text-sm font-medium">No operational manifest found.</p>
           </div>
         )}
       </CardContent>

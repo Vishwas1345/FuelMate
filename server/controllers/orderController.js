@@ -17,13 +17,27 @@ class OrderController {
     async createOrder(req, res) {
         try {
             logger.info('Creating new order', { userId: req.user.id, fuelType: req.body.fuelType, quantity: req.body.quantity });
-            const order = await orderService.createOrder(req.body, req.user.id);
+            const orderValue = {
+                ...req.body,
+                totalPrice: req.body.billSummary?.total || req.body.totalPrice // Ensure totalPrice is set
+            };
+            const order = await orderService.createOrder(orderValue, req.user.id);
             logger.info('Order created successfully', { userId: req.user.id, orderId: order._id });
             res.status(201).json(order);
         } catch (error) {
             logger.error('Error creating order', { error: error.message, stack: error.stack, userId: req.user?.id });
             res.status(error.status || 500).json({ message: error.message });
         }
+    }
+
+    async createPetrolOrder(req, res) {
+        req.body.fuelType = 'Petrol';
+        return this.createOrder(req, res);
+    }
+
+    async createDieselOrder(req, res) {
+        req.body.fuelType = 'Diesel';
+        return this.createOrder(req, res);
     }
 
     async updateOrderStatus(req, res) {

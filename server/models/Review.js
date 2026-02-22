@@ -1,26 +1,24 @@
 import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        trim: true,
-        lowercase: true
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    name: {
-        type: String,
-        default: function () {
-            return this.email ? this.email.split('@')[0] : 'Anonymous';
-        }
+    stationId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
-    message: {
+    comment: {
         type: String,
         required: true,
         trim: true
     },
     rating: {
         type: Number,
-        default: 5,
+        required: true,
         min: 1,
         max: 5
     },

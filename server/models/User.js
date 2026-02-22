@@ -113,6 +113,20 @@ const userSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
+  // New Station fields
+  about: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  history: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  startingYear: {
+    type: Number
+  },
   isAvailable: {
     type: Boolean,
     default: true
