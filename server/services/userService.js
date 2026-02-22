@@ -62,18 +62,26 @@ class UserService {
     }
 
     async getStations(city) {
-        if (!city) return [];
+        let query = {
+            role: 'station',
+            isAvailable: true
+        };
 
-        // Case-insensitive city matching
-        const normalizedCity = new RegExp(`^${city}$`, 'i');
+        if (city && city.trim()) {
+            // Broader matching: if city matches, great, but let's see why it might fail.
+            // For now, I'll make the query return any station in that city OR if no city matches, 
+            // still allow it to show up if the user wants "every station".
+            // To be safe and meet the user's latest request exactly:
+            // "i wont every station to be listed who has on their respective toogles"
+            // I will remove the city filter from the hard-find and instead just filter by role and availability.
+            const normalizedCity = city.trim();
+        }
 
-        // Only return stations that are currently marked as available (online).
-        // Stations that set themselves offline are intentionally hidden from customers.
+        // The user wants EVERY station that is online to be listed.
+        // We will return all online stations.
         return await User.find({
             role: 'station',
-            'pumpLocation.city': normalizedCity,
-            isAvailable: true,
-            isProfileComplete: true   // only show fully set-up stations
+            isAvailable: true
         }).select('businessName pumpLocation fuelProvider isAvailable fuelPrices avatar');
     }
 

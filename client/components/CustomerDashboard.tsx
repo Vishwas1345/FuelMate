@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
-import { Fuel, Truck, ArrowLeft, TrendingUp, MapPin } from 'lucide-react';
+import { Fuel, Truck, ArrowLeft, TrendingUp, MapPin, AlertCircle } from 'lucide-react';
 import FuelOrderForm from './FuelOrderForm';
 import OrderTracking from './OrderTracking';
 import { useAuth } from '@/contexts/AuthContext';
@@ -90,18 +90,22 @@ const CustomerDashboard = () => {
     const fetchStations = async () => {
       // @ts-ignore
       const city = user?.addresses?.[0]?.city;
-      if (city) {
-        try {
-          const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/stations?city=${city}`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setStations(data);
+      try {
+        const url = city
+          ? `${import.meta.env.VITE_BACKEND_URL}/api/users/stations?city=${encodeURIComponent(city)}`
+          : `${import.meta.env.VITE_BACKEND_URL}/api/users/stations`;
+
+        const res = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
-        } catch (error) {
-          console.error("Failed to fetch stations", error);
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setStations(data);
         }
+      } catch (error) {
+        console.error("Failed to fetch stations", error);
       }
 
       if (!window.orderSystem) {
@@ -279,7 +283,7 @@ const CustomerDashboard = () => {
       </div>
 
       {/* Station Cards */}
-      {stations.length > 0 && (
+      {stations.length > 0 ? (
         <div className="mb-10">
           <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
             <Fuel className="text-orange-500" /> Available Fuel Stations Nearby
@@ -326,6 +330,16 @@ const CustomerDashboard = () => {
               </Card>
             ))}
           </div>
+        </div>
+      ) : !isLoading && (
+        <div className="mb-10 p-8 rounded-2xl bg-slate-900/50 border border-slate-800 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-orange-500" />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">We're Sorry!</h3>
+          <p className="text-gray-400 max-w-md mx-auto">
+            Currently, there are no fuel stations available near you. Our partners might be offline or out of delivery range. Please check back later!
+          </p>
         </div>
       )}
 
