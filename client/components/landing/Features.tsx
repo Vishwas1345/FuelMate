@@ -68,25 +68,25 @@ const Features = () => {
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="group relative bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition-all duration-300 hover:transform hover:scale-105"
+                            className="group relative bg-slate-900 border border-slate-800 rounded-lg p-8 hover:border-orange-500/50 transition-all duration-300"
                         >
                             {/* Icon */}
-                            <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.gradient} mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                                <div className="text-white">
+                            <div className={`inline-flex p-3 rounded-md bg-slate-950 border border-slate-800 mb-6 group-hover:border-orange-500/30 transition-all`}>
+                                <div className="text-orange-500">
                                     {feature.icon}
                                 </div>
                             </div>
 
                             {/* Content */}
-                            <h3 className="text-xl font-bold text-white mb-3">
+                            <h3 className="text-xl font-bold text-white mb-3 tracking-tight">
                                 {feature.title}
                             </h3>
-                            <p className="text-gray-400 leading-relaxed">
+                            <p className="text-gray-400 leading-relaxed text-sm">
                                 {feature.description}
                             </p>
 
                             {/* Hover effect */}
-                            <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}></div>
+                            <div className={`absolute inset-0 bg-orange-500/5 opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-300`}></div>
                         </div>
                     ))}
                 </div>

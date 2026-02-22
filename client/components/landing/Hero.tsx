@@ -16,9 +16,9 @@ const Hero = () => {
                     {/* Left Content */}
                     <div className="text-center lg:text-left space-y-8">
                         {/* Badge */}
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-sm font-medium">
-                            <Sparkles size={16} className="animate-pulse" />
-                            <span>On-Demand Fuel Delivery</span>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded text-orange-400 text-[10px] font-bold uppercase tracking-widest">
+                            <Sparkles size={12} className="animate-pulse text-orange-500" />
+                            <span>On-Demand Fuel Intelligence</span>
                         </div>
 
                         {/* Heading */}
@@ -39,7 +39,7 @@ const Hero = () => {
                             <Link to="/auth">
                                 <Button
                                     size="lg"
-                                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-6 text-lg group"
+                                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-6 text-lg group rounded-md shadow-lg shadow-orange-500/10"
                                 >
                                     Get Started
                                     <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
@@ -79,7 +79,7 @@ const Hero = () => {
                             <img
                                 src="/fuel_delivery_hero.png"
                                 alt="Fuel Delivery Service"
-                                className="w-full h-auto rounded-2xl shadow-2xl"
+                                className="w-full h-auto rounded-lg shadow-2xl border border-slate-800"
                             />
                         </div>
                         {/* Decorative elements */}
