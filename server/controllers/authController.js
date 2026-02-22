@@ -30,6 +30,7 @@ export const register = async (req, res) => {
         res.status(201).json({
             message: 'User registered successfully',
             token: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
             user: {
                 id: user._id,
                 email: user.email,
@@ -64,6 +65,7 @@ export const login = async (req, res) => {
         res.json({
             message: 'Login successful',
             token: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
             user: {
                 id: user._id,
                 email: user.email,
@@ -105,7 +107,9 @@ export const refreshToken = async (req, res) => {
     try {
         logger.info('Token refresh attempt');
 
-        const refreshToken = req.cookies.refreshToken;
+        // Prefer the HTTP-only cookie; fall back to the request body for clients
+        // that stored the refresh token in localStorage (e.g. older Google OAuth sessions)
+        const refreshToken = req.cookies.refreshToken || req.body?.refreshToken;
 
         const tokens = await authService.refreshToken(refreshToken);
 

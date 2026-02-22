@@ -134,23 +134,39 @@ class Api {
     try {
       const response = await fetch(`${BASE_URL}${url}`, defaultOptions);
 
-      // Handle 401 with token refresh
-      if (response.status === 401) {
+      // Handle 401 with token refresh — but ONLY for protected endpoints.
+      // Auth endpoints like /login and /register return 401 for bad credentials,
+      // NOT for expired tokens, so we must NOT silently retry them.
+      const isAuthEndpoint = url.startsWith('/api/auth/login') ||
+        url.startsWith('/api/auth/register');
+
+      if (response.status === 401 && !isAuthEndpoint) {
         if (url === '/api/auth/refresh-token') {
-          // If refresh token request fails, logout
+          // If refresh token request itself fails, clear session and give up
           this.handleLogout();
           throw new Error('Session expired. Please login again.');
         }
 
-        // Try to refresh token
+        // Try to silently refresh the access token
         const newToken = await this.refreshToken();
         if (newToken) {
-          // Retry original request with new token
-          defaultOptions.headers = {
-            ...defaultOptions.headers,
-            'Authorization': `Bearer ${newToken}`
+          // Retry the original request with the fresh token and parse JSON properly
+          const retryOptions = {
+            ...defaultOptions,
+            headers: {
+              ...defaultOptions.headers as Record<string, string>,
+              'Authorization': `Bearer ${newToken}`
+            }
           };
-          return await fetch(`${BASE_URL}${url}`, defaultOptions);
+          const retryResponse = await fetch(`${BASE_URL}${url}`, retryOptions);
+          const retryContentType = retryResponse.headers.get("content-type");
+          if (retryContentType && retryContentType.includes("application/json")) {
+            const retryData = await retryResponse.json();
+            if (!retryResponse.ok) throw new Error(retryData.message || 'Request failed');
+            return retryData;
+          }
+          if (!retryResponse.ok) throw new Error('Request failed');
+          return null;
         }
       }
 
@@ -188,12 +204,22 @@ class Api {
     this.isRefreshing = true;
 
     try {
+      // Send the stored refresh token in the body as a fallback
+      // (the server also accepts it from the HTTP-only cookie — whichever is present wins)
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+
       const response = await this.fetch('/api/auth/refresh-token', {
-        method: 'POST'
+        method: 'POST',
+        body: storedRefreshToken ? JSON.stringify({ refreshToken: storedRefreshToken }) : undefined
       });
 
       const newToken = response.token;
       localStorage.setItem('token', newToken);
+
+      // If the server issued a new refresh token, persist it
+      if (response.refreshToken) {
+        localStorage.setItem('refreshToken', response.refreshToken);
+      }
 
       // Notify subscribers with new token
       this.refreshSubscribers.forEach(cb => cb(newToken));
@@ -210,6 +236,7 @@ class Api {
 
   private handleLogout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     window.location.href = '/auth';
   }
 
@@ -220,6 +247,10 @@ class Api {
       body: JSON.stringify(credentials)
     });
     localStorage.setItem('token', response.token);
+    // Store refresh token as fallback for when cookie is not available
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
     return response;
   }
 
@@ -229,6 +260,9 @@ class Api {
       body: JSON.stringify(data)
     });
     localStorage.setItem('token', response.token);
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
     return response;
   }
 

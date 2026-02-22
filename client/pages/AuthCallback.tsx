@@ -13,7 +13,6 @@ const AuthCallback = () => {
             try {
                 const params = new URLSearchParams(window.location.search);
                 const token = params.get('token');
-                const refreshToken = params.get('refreshToken');
                 const errorParam = params.get('error');
 
                 if (errorParam) {
@@ -28,11 +27,8 @@ const AuthCallback = () => {
                     return;
                 }
 
-                // Store tokens
+                // Store the access token; refresh token is handled as an HTTP-only cookie by the server
                 localStorage.setItem('token', token);
-                if (refreshToken) {
-                    localStorage.setItem('refreshToken', refreshToken);
-                }
 
                 // Fetch user profile
                 const response = await fetch(

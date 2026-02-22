@@ -47,7 +47,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserOrders(orders);
       } catch (error) {
         console.error('Auth check failed:', error);
+        // Clear all stored tokens to avoid repeated refresh failures on page reload
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        setUser(null);
+        setIsAuthenticated(false);
       }
 
       setIsLoading(false);

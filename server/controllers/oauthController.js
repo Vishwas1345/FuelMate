@@ -2,6 +2,14 @@ import passport from '../config/passport.js';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger.js';
 
+// Cookie options (mirrors authController.js)
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+};
+
 // Check if Google OAuth is configured
 const isGoogleOAuthConfigured = () => {
     const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -64,8 +72,11 @@ export const googleCallback = (req, res, next) => {
                 authProvider: user.authProvider
             });
 
-            // Redirect to frontend with tokens
-            const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${accessToken}&refreshToken=${refreshToken}`;
+            // Set refresh token in HTTP-only cookie (same as regular login)
+            res.cookie('refreshToken', refreshToken, cookieOptions);
+
+            // Redirect to frontend with only the access token
+            const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${accessToken}`;
             res.redirect(redirectUrl);
         } catch (error) {
             logger.error('Google OAuth callback error', { error: error.message, stack: error.stack });
