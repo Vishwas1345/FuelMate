@@ -77,14 +77,14 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto">
-      <form onSubmit={handleOpenPayment} className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <form onSubmit={handleOpenPayment} className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
 
         {/* Left Column: Form Controls */}
-        <div className="lg:col-span-3 space-y-8">
+        <div className="lg:col-span-3 space-y-6 md:space-y-8">
           {/* Fuel Selector */}
           <div className="space-y-4">
             <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">1. Select Fuel Type</Label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <button
                 type="button"
                 onClick={() => setFuelType('petrol')}
@@ -97,7 +97,7 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                   <p className={`font-black tracking-tight ${fuelType === 'petrol' ? 'text-white' : 'text-slate-500'}`}>PETROL</p>
                   <p className="text-xs font-mono text-orange-500/70">₹{prices.petrol}/L</p>
                 </div>
-                <FuelIcon className={`w-8 h-8 ${fuelType === 'petrol' ? 'text-orange-500' : 'text-slate-700'}`} />
+                <FuelIcon className={`w-6 h-6 sm:w-8 sm:h-8 ${fuelType === 'petrol' ? 'text-orange-500' : 'text-slate-700'}`} />
               </button>
 
               <button
@@ -112,7 +112,7 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                   <p className={`font-black tracking-tight ${fuelType === 'diesel' ? 'text-white' : 'text-slate-500'}`}>DIESEL</p>
                   <p className="text-xs font-mono text-blue-500/70">₹{prices.diesel}/L</p>
                 </div>
-                <FuelIcon className={`w-8 h-8 ${fuelType === 'diesel' ? 'text-blue-500' : 'text-slate-700'}`} />
+                <FuelIcon className={`w-6 h-6 sm:w-8 sm:h-8 ${fuelType === 'diesel' ? 'text-blue-500' : 'text-slate-700'}`} />
               </button>
             </div>
           </div>
@@ -125,20 +125,20 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                 type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="bg-slate-900 border-slate-800 text-white font-mono text-2xl h-16 rounded-lg focus:border-orange-500 transition-all text-center"
+                className="bg-slate-900 border-slate-800 text-white font-mono text-xl md:text-2xl h-14 md:h-16 rounded-lg focus:border-orange-500 transition-all text-center"
                 placeholder="0"
                 max="20"
                 min="1"
               />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">LITRES</div>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm md:text-base">LITRES</div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {['5', '10', '15', '20'].map((val) => (
                 <button
                   key={val}
                   type="button"
                   onClick={() => setQuantity(val)}
-                  className={`flex-1 py-2 rounded-md text-xs font-bold transition-all border ${quantity === val ? 'bg-orange-500 border-orange-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
+                  className={`flex-1 min-w-[60px] py-2 rounded-md text-xs font-bold transition-all border ${quantity === val ? 'bg-orange-500 border-orange-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
                     }`}
                 >
                   {val}L

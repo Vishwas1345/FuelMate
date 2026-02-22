@@ -1,12 +1,18 @@
 import express from 'express';
 import reviewController from '../controllers/reviewController.js';
 
+import { authenticate } from '../middleware/auth.js';
+
 const router = express.Router();
 
-// Get all approved reviews
+// Get all approved general reviews
 router.get('/', reviewController.getReviews);
 
-// Create a new review
-router.post('/', reviewController.createReview);
+// Create a new general review
+router.post('/', authenticate, reviewController.createReview);
+
+// Station specific reviews
+router.get('/station/:stationId', reviewController.getStationReviews);
+router.post('/station/:stationId', authenticate, reviewController.createStationReview);
 
 export default router;
