@@ -67,11 +67,13 @@ class UserService {
         // Case-insensitive city matching
         const normalizedCity = new RegExp(`^${city}$`, 'i');
 
-        // Return ALL stations in the city — both open and closed.
-        // The frontend shows the availability status and disables ordering for closed stations.
+        // Only return stations that are currently marked as available (online).
+        // Stations that set themselves offline are intentionally hidden from customers.
         return await User.find({
             role: 'station',
             'pumpLocation.city': normalizedCity,
+            isAvailable: true,
+            isProfileComplete: true   // only show fully set-up stations
         }).select('businessName pumpLocation fuelProvider isAvailable fuelPrices avatar');
     }
 

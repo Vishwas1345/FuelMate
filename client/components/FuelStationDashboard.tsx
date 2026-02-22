@@ -64,11 +64,23 @@ const FuelStationDashboard = () => {
   const { user } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(null);
-  const [isAvailable, setIsAvailable] = useState(true);
+  // Start with false (safe default), then sync the real DB value once user loads.
+  // This is in a dedicated effect so it is independent of the stats fetch and never silently fails.
+  const [isAvailable, setIsAvailable] = useState<boolean>(false);
+
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [selectedDriver, setSelectedDriver] = useState<any | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const { toast } = useToast();
+
+  // Sync the toggle from the real DB value whenever the user profile loads or changes.
+  // Now that login response includes isAvailable, this works immediately on login too.
+  useEffect(() => {
+    if (user?._id) {
+      // Default to true (station online) matching the Mongoose schema default
+      setIsAvailable(user.isAvailable ?? true);
+    }
+  }, [user?._id, user?.isAvailable]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -76,22 +88,13 @@ const FuelStationDashboard = () => {
         const token = localStorage.getItem('token');
         const headers = { 'Authorization': `Bearer ${token}` };
 
-        // Fetch Stats
         const statsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/dashboard-stats`, { headers });
         if (statsRes.ok) {
           const data = await statsRes.json();
           setDashboardStats(data);
-          // Also update local orders for the list view if needed, but for now we focus on stats
           if (data.recentOrders) {
-            setOrders(data.recentOrders); // Using recent orders for now
+            setOrders(data.recentOrders);
           }
-        }
-
-        // Sync availability from user profile (refetch profile or use what we have)
-        // @ts-ignore
-        if (user?.isAvailable !== undefined) {
-          // @ts-ignore
-          setIsAvailable(user.isAvailable);
         }
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);
@@ -100,6 +103,7 @@ const FuelStationDashboard = () => {
 
     fetchDashboardData();
   }, [user]);
+
 
   const handleToggleAvailability = async () => {
     try {

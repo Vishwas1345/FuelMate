@@ -33,11 +33,14 @@ export const register = async (req, res) => {
             refreshToken: tokens.refreshToken,
             user: {
                 id: user._id,
+                _id: user._id,
                 email: user.email,
                 name: user.name,
                 role: user.role,
                 isProfileComplete: user.isProfileComplete,
-                avatar: user.avatar
+                avatar: user.avatar,
+                isAvailable: user.isAvailable,
+                fuelPrices: user.fuelPrices
             }
         });
     } catch (error) {
@@ -68,11 +71,14 @@ export const login = async (req, res) => {
             refreshToken: tokens.refreshToken,
             user: {
                 id: user._id,
+                _id: user._id,
                 email: user.email,
                 name: user.name,
                 role: user.role,
                 isProfileComplete: user.isProfileComplete,
-                avatar: user.avatar
+                avatar: user.avatar,
+                isAvailable: user.isAvailable,
+                fuelPrices: user.fuelPrices
             }
         });
     } catch (error) {
