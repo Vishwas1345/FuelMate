@@ -59,6 +59,9 @@ export type User = {
   trucksNeeded?: number;
   driversNeeded?: number;
   isAvailable?: boolean;
+  about?: string;
+  history?: string;
+  startingYear?: number;
   fuelPrices?: {
     petrol: number;
     diesel: number;
@@ -67,6 +70,19 @@ export type User = {
   // Legacy/Compatibility
   id?: string;
   address?: string;
+};
+
+export type Review = {
+  _id: string;
+  userId: {
+    _id: string;
+    name: string;
+    avatar?: string;
+  };
+  stationId: string;
+  comment: string;
+  rating: number;
+  createdAt: string;
 };
 
 export type AuthResponse = {
@@ -327,6 +343,20 @@ class Api {
     });
   }
 
+  async createPetrolOrder(orderData: any): Promise<Order> {
+    return this.fetch('/api/orders/petrol', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    });
+  }
+
+  async createDieselOrder(orderData: any): Promise<Order> {
+    return this.fetch('/api/orders/diesel', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    });
+  }
+
   async getOrders(): Promise<Order[]> {
     return this.fetch('/api/orders');
   }
@@ -336,6 +366,22 @@ class Api {
       method: 'PATCH',
       body: JSON.stringify({ status, driver })
     });
+  }
+
+  // Review methods
+  async getStationReviews(stationId: string): Promise<Review[]> {
+    return this.fetch(`/api/reviews/station/${stationId}`);
+  }
+
+  async createStationReview(stationId: string, comment: string, rating: number): Promise<Review> {
+    return this.fetch(`/api/reviews/station/${stationId}`, {
+      method: 'POST',
+      body: JSON.stringify({ comment, rating })
+    });
+  }
+
+  async getStations(): Promise<User[]> {
+    return this.fetch('/api/users/stations');
   }
 }
 

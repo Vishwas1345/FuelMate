@@ -159,8 +159,8 @@ const CustomerDashboard = () => {
         </div>
 
         {/* Professional Minimal Header */}
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 mb-8 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
+        <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 md:p-8 mb-8 shadow-sm">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-left">
             <div className="w-24 h-24 rounded-lg overflow-hidden bg-white border border-slate-800 shadow-sm flex-shrink-0">
               <img
                 src={selectedStation.avatar || '/placeholder-station.png'}
@@ -168,47 +168,49 @@ const CustomerDashboard = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-4 mb-2">
-                <h1 className="text-3xl font-bold text-white tracking-tight">{selectedStation.businessName}</h1>
+            <div className="flex-1 w-full">
+              <div className="flex flex-col md:flex-row flex-wrap items-center md:items-start gap-2 md:gap-4 mb-3">
+                <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">{selectedStation.businessName}</h1>
                 <Badge variant="secondary" className="bg-slate-800 text-slate-400 border-transparent">
                   {selectedStation.fuelProvider}
                 </Badge>
               </div>
-              <div className="flex flex-wrap gap-6 text-sm text-slate-400">
+              <div className="flex flex-col md:flex-row flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 text-sm text-slate-400">
                 <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-orange-500" /> {selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</p>
                 <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-orange-500" /> Open 24/7</p>
                 <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-orange-500" /> {selectedStation.phone || "Contact Avail."}</p>
               </div>
             </div>
-            <div className="w-full md:w-auto grid grid-cols-2 gap-4">
-              <div className="bg-slate-950 border border-slate-800/50 p-4 rounded-lg text-center min-w-[120px]">
-                <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Petrol Price</p>
-                <p className="text-2xl font-mono font-bold text-white">₹{selectedStation.fuelPrices.petrol}</p>
+            <div className="w-full md:w-auto grid grid-cols-2 gap-3 md:gap-4 mt-4 md:mt-0">
+              <div className="bg-slate-950 border border-slate-800/50 p-3 md:p-4 rounded-lg text-center flex-1">
+                <p className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase mb-1">Petrol Price</p>
+                <p className="text-xl md:text-2xl font-mono font-bold text-white">₹{selectedStation.fuelPrices.petrol}</p>
               </div>
-              <div className="bg-slate-950 border border-slate-800/50 p-4 rounded-lg text-center min-w-[120px]">
-                <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Diesel Price</p>
-                <p className="text-2xl font-mono font-bold text-white">₹{selectedStation.fuelPrices.diesel}</p>
+              <div className="bg-slate-950 border border-slate-800/50 p-3 md:p-4 rounded-lg text-center flex-1">
+                <p className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase mb-1">Diesel Price</p>
+                <p className="text-xl md:text-2xl font-mono font-bold text-white">₹{selectedStation.fuelPrices.diesel}</p>
               </div>
             </div>
           </div>
         </div>
 
         <Tabs defaultValue="order" className="w-full">
-          <TabsList className="bg-slate-900 border border-slate-800 p-1 h-14 rounded-lg mb-8 w-full md:w-auto">
-            <TabsTrigger value="order" className="rounded-md h-full px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold">
-              Place Order
-            </TabsTrigger>
-            <TabsTrigger value="reviews" className="rounded-md h-full px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold">
-              Reviews
-            </TabsTrigger>
-            <TabsTrigger value="about" className="rounded-md h-full px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold">
-              Information
-            </TabsTrigger>
-            <TabsTrigger value="contact" className="rounded-md h-full px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold">
-              Location & Contact
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            <TabsList className="bg-slate-900 border border-slate-800 p-1 h-14 rounded-lg mb-8 w-max md:w-auto min-w-full md:min-w-0 justify-start md:justify-center">
+              <TabsTrigger value="order" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
+                Place Order
+              </TabsTrigger>
+              <TabsTrigger value="reviews" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
+                Reviews
+              </TabsTrigger>
+              <TabsTrigger value="about" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
+                Information
+              </TabsTrigger>
+              <TabsTrigger value="contact" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
+                Location & Contact
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <div className="bg-transparent">
             <TabsContent value="order" className="mt-0 outline-none">

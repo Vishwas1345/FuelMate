@@ -100,8 +100,8 @@ const Contact = () => {
                 <div className="grid lg:grid-cols-2 gap-12">
                     {/* Contact Form with Premium Glassmorphism */}
                     <div className="group relative">
-                        <div className="absolute -inset-0.5 bg-gradient-to-br from-orange-500/10 to-blue-600/10 rounded-3xl opacity-0 blur transition duration-500 group-hover:opacity-100"></div>
-                        <div className="relative bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 h-full transition-all duration-300">
+                        <div className="absolute -inset-0.5 bg-gradient-to-br from-orange-500/10 to-blue-600/10 rounded-xl opacity-0 blur transition duration-500 group-hover:opacity-100"></div>
+                        <div className="relative bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-xl p-8 h-full transition-all duration-300">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
@@ -178,8 +178,8 @@ const Contact = () => {
                                     href={info.link}
                                     className="group relative block"
                                 >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-blue-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
-                                    <div className="relative flex items-center gap-6 p-6 bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl hover:border-orange-500/40 transition-all duration-300 group-hover:translate-x-2">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-blue-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+                                    <div className="relative flex items-center gap-6 p-6 bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-lg hover:border-orange-500/40 transition-all duration-300 group-hover:translate-x-2">
                                         <div className="flex-shrink-0 w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
                                             {info.icon}
                                         </div>
@@ -194,8 +194,8 @@ const Contact = () => {
 
                         {/* Business Hours & Map Placeholder */}
                         <div className="relative group hidden md:block">
-                            <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-3xl opacity-0 blur transition duration-500 group-hover:opacity-100"></div>
-                            <div className="relative bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8">
+                            <div className="absolute -inset-0.5 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl opacity-0 blur transition duration-500 group-hover:opacity-100"></div>
+                            <div className="relative bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-xl p-8">
                                 <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                                     Business Hours
                                 </h3>

@@ -23,7 +23,7 @@ const CTASection = ({
             </div>
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 md:p-12 text-center transform hover:scale-[1.01] transition-all duration-500 hover:border-orange-500/30 shadow-2xl overflow-hidden group">
+                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-xl p-8 md:p-12 text-center transform hover:scale-[1.01] transition-all duration-500 hover:border-orange-500/30 shadow-2xl overflow-hidden group">
 
                     {/* Glowing highlight effect on hover */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-shimmer pointer-events-none"></div>
@@ -45,7 +45,7 @@ const CTASection = ({
                         <Link to="/auth" className="w-full sm:w-auto">
                             <Button
                                 size="lg"
-                                className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-orange-500/25 transition-all duration-300 group/btn"
+                                className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold px-8 py-6 text-lg rounded-md shadow-lg hover:shadow-orange-500/25 transition-all duration-300 group/btn"
                             >
                                 Get Started Now
                                 <ArrowRight className="ml-2 group-hover/btn:translate-x-1 transition-transform" size={20} />
