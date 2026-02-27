@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Onboarding from "./pages/Onboarding";
+import ChatWidget from "@/components/ChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -94,6 +95,7 @@ const App = () => (
           {/* Catch-all for undefined routes */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ChatWidget />
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
