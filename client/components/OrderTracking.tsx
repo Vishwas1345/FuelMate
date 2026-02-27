@@ -160,11 +160,11 @@ const OrderTracking = ({ activeOrders, trackingOrderId, onTrackOrder }: OrderTra
               </div>
             </div>
 
-            <div className="pt-4 flex gap-3">
-              <Button className="flex-1 bg-slate-800 border border-slate-700 text-white hover:bg-slate-700 font-bold text-xs h-10">
+            <div className="pt-4 flex flex-col sm:flex-row gap-3">
+              <Button className="flex-1 bg-slate-800 border border-slate-700 text-white hover:bg-slate-700 font-bold text-[10px] md:text-xs h-10">
                 SUPPORT TICKET
               </Button>
-              <Button variant="outline" className="flex-1 bg-transparent border-slate-800 text-slate-400 hover:text-white font-bold text-xs h-10">
+              <Button variant="outline" className="flex-1 bg-transparent border-slate-800 text-slate-400 hover:text-white font-bold text-[10px] md:text-xs h-10">
                 FULL LOGS
               </Button>
             </div>

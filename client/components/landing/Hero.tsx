@@ -22,7 +22,7 @@ const Hero = () => {
                         </div>
 
                         {/* Heading */}
-                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
+                        <h1 className="text-3xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
                             Fuel delivered
                             <span className="block bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                                 Anywhere, Anytime
@@ -30,26 +30,26 @@ const Hero = () => {
                         </h1>
 
                         {/* Description */}
-                        <p className="text-xl text-gray-400 max-w-2xl">
+                        <p className="text-lg md:text-xl text-gray-400 max-w-2xl px-4 md:px-0">
                             Never run out of fuel again. Get premium quality fuel delivered directly to your vehicle. Fast, reliable, and convenient.
                         </p>
 
                         {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <Link to="/auth">
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start px-4 md:px-0">
+                            <Link to="/auth" className="w-full sm:w-auto">
                                 <Button
                                     size="lg"
-                                    className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-6 text-lg group rounded-md shadow-lg shadow-orange-500/10"
+                                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-6 text-lg group rounded-md shadow-lg shadow-orange-500/10"
                                 >
                                     Get Started
                                     <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
                                 </Button>
                             </Link>
-                            <a href="#features">
+                            <a href="#features" className="w-full sm:w-auto">
                                 <Button
                                     size="lg"
                                     variant="outline"
-                                    className="border-slate-700 text-white hover:bg-slate-800 px-8 py-6 text-lg"
+                                    className="w-full border-slate-700 text-white hover:bg-slate-800 px-8 py-6 text-lg"
                                 >
                                     Learn More
                                 </Button>
@@ -57,18 +57,18 @@ const Hero = () => {
                         </div>
 
                         {/* Stats */}
-                        <div className="grid grid-cols-3 gap-8 pt-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8 pt-8">
                             <div>
-                                <div className="text-3xl font-bold text-white">10K+</div>
-                                <div className="text-sm text-gray-400">Happy Customers</div>
+                                <div className="text-2xl md:text-3xl font-bold text-white">10K+</div>
+                                <div className="text-xs text-gray-400">Happy Customers</div>
                             </div>
                             <div>
-                                <div className="text-3xl font-bold text-white">50+</div>
-                                <div className="text-sm text-gray-400">Partner Stations</div>
+                                <div className="text-2xl md:text-3xl font-bold text-white">50+</div>
+                                <div className="text-xs text-gray-400">Partner Stations</div>
                             </div>
                             <div>
-                                <div className="text-3xl font-bold text-white">24/7</div>
-                                <div className="text-sm text-gray-400">Available</div>
+                                <div className="text-2xl md:text-3xl font-bold text-white">24/7</div>
+                                <div className="text-xs text-gray-400">Available</div>
                             </div>
                         </div>
                     </div>
