@@ -1,17 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import AppSidebar from './AppSidebar';
+import { Menu, X } from 'lucide-react';
+import { Button } from './ui/button';
 
 const AppLayout: React.FC = () => {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const closeSidebar = () => {
+        setIsSidebarOpen(false);
+    };
+
     return (
         <div className="flex min-h-screen bg-[#020817] overflow-hidden">
-            {/* Sidebar - Fixed width */}
-            <AppSidebar />
+            {/* Mobile Overlay */}
+            {isSidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    onClick={closeSidebar}
+                />
+            )}
+
+            {/* Sidebar - Responsive */}
+            <AppSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col ml-64 min-h-screen">
+            <div className="flex-1 flex flex-col md:ml-64 min-h-screen">
+                {/* Mobile Header with Menu Button */}
+                <div className="md:hidden sticky top-0 z-30 bg-[#020817] border-b border-slate-800/50 px-4 py-3 flex items-center gap-3">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleSidebar}
+                        className="text-white hover:bg-slate-800/50"
+                    >
+                        {isSidebarOpen ? (
+                            <X className="w-5 h-5" />
+                        ) : (
+                            <Menu className="w-5 h-5" />
+                        )}
+                    </Button>
+                    <span className="text-lg font-semibold text-white">FuelMate</span>
+                </div>
+
                 {/* Main Content Scrollable */}
-                <main className="flex-1 px-8 py-8 bg-[#020817]">
+                <main className="flex-1 px-4 md:px-8 py-6 md:py-8 bg-[#020817]">
                     <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                         <Outlet />
                     </div>

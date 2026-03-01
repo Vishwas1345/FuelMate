@@ -7,14 +7,20 @@ import {
     Settings,
     LogOut,
     ChevronRight,
-    Briefcase
+    Briefcase,
+    X
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogoIcon } from './Logo';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
-const AppSidebar = () => {
+interface AppSidebarProps {
+    isOpen?: boolean;
+    onClose?: () => void;
+}
+
+const AppSidebar: React.FC<AppSidebarProps> = ({ isOpen = true, onClose }) => {
     const { user, logout } = useAuth();
     const location = useLocation();
 
@@ -39,14 +45,28 @@ const AppSidebar = () => {
     const isActive = (path: string) => location.pathname === path;
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-64 bg-[#020817] border-r border-slate-800/50 flex flex-col z-50">
-            {/* Logo Section */}
-            <div className="px-6 py-6 border-b border-slate-800/50">
-                <Link to="/" className="flex items-center gap-3">
-                    <LogoIcon className="w-5 h-5 text-orange-500" />
-                    <span className="text-lg font-semibold text-white tracking-tight">FuelMate</span>
-                </Link>
-            </div>
+        <aside className={`
+            fixed left-0 top-0 h-screen w-64 bg-[#020817] border-r border-slate-800/50 flex flex-col z-50
+            transform transition-transform duration-300 ease-in-out
+            md:translate-x-0 md:static md:z-auto
+            ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}>
+                {/* Logo Section */}
+                <div className="px-6 py-6 border-b border-slate-800/50 flex items-center justify-between">
+                    <Link to="/" className="flex items-center gap-3" onClick={onClose}>
+                        <LogoIcon className="w-5 h-5 text-orange-500" />
+                        <span className="text-lg font-semibold text-white tracking-tight">FuelMate</span>
+                    </Link>
+                    {/* Close button for mobile */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onClose}
+                        className="md:hidden text-slate-400 hover:text-white hover:bg-slate-800/50"
+                    >
+                        <X className="w-5 h-5" />
+                    </Button>
+                </div>
 
             {/* Navigation section */}
             <nav className="flex-1 px-3 py-6 space-y-1">
@@ -55,6 +75,7 @@ const AppSidebar = () => {
                     <Link
                         key={item.name}
                         to={item.path}
+                        onClick={onClose}
                         className={`flex items-center gap-3 px-3 py-2.5 transition-all duration-200 group relative ${isActive(item.path)
                             ? 'bg-orange-500 text-white rounded-md'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-md'
@@ -86,7 +107,10 @@ const AppSidebar = () => {
                 </div>
 
                 <button
-                    onClick={() => logout()}
+                    onClick={() => {
+                        onClose?.();
+                        logout();
+                    }}
                     className="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800/30 transition-all rounded-md text-sm font-medium group w-full"
                 >
                     <LogOut className="w-4 h-4" />
