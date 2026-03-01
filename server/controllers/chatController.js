@@ -7,9 +7,10 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Read README.md and SYSTEM_ARCHITECTURE.md for more details
+// Read documentation files for AI context
 let readmeContent = "";
 let architectureContent = "";
+let overviewContent = "";
 try {
     const readmePath = path.join(__dirname, "../../README.md");
     if (fs.existsSync(readmePath)) {
@@ -18,6 +19,10 @@ try {
     const archPath = path.join(__dirname, "../../SYSTEM_ARCHITECTURE.md");
     if (fs.existsSync(archPath)) {
         architectureContent = fs.readFileSync(archPath, "utf8");
+    }
+    const overviewPath = path.join(__dirname, "../../project_overview.md");
+    if (fs.existsSync(overviewPath)) {
+        overviewContent = fs.readFileSync(overviewPath, "utf8");
     }
 } catch (error) {
     logger.error("Error reading documentation files for chat context:", error);
@@ -73,6 +78,9 @@ ${readmeContent}
 
 SYSTEM ARCHITECTURE DETAILS:
 ${architectureContent}
+
+COMPREHENSIVE PROJECT OVERVIEW:
+${overviewContent}
 `;
 
 export const handleChat = async (req, res) => {
