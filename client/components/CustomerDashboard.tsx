@@ -119,16 +119,12 @@ const CustomerDashboard = () => {
 
   const handleOrderSubmit = async (orderData: any) => {
     try {
-      // Use the specific fuel type endpoint
-      if (orderData.fuelType === 'Petrol') {
-        await api.createPetrolOrder(orderData);
-      } else {
-        await api.createDieselOrder(orderData);
-      }
+      // Use the dedicated place order endpoint
+      const response = await api.placeOrder(orderData);
 
       toast({
-        title: "Order Successful",
-        description: `Your ${orderData.fuelType} order has been placed.`,
+        title: "Order Placed Successfully",
+        description: `Your ${orderData.fuelType} order has been placed and is being processed.`,
       });
 
       setSelectedStation(null);
@@ -136,9 +132,10 @@ const CustomerDashboard = () => {
     } catch (error: any) {
       toast({
         title: "Order Failed",
-        description: error.message || "Could not process order.",
+        description: error.message || "Could not process order. Please try again.",
         variant: "destructive",
       });
+      throw error;
     }
   };
 
@@ -168,42 +165,42 @@ const CustomerDashboard = () => {
         {/* Station Header - Full width grid aligned */}
         <div className="grid grid-cols-12 gap-6 mb-6">
           <div className="col-span-12 bg-slate-900/50 border border-slate-800/50 rounded-md p-6">
-            <div className="flex flex-col md:flex-row gap-3 items-start">
-              {/* Station Logo */}
-              <div className="flex justify-center md:justify-start flex-shrink-0">
-                <div className="w-20 h-20 rounded-md overflow-hidden bg-white border border-slate-800/50">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              {/* Logo and Name - Tightly Aligned */}
+              <div className="flex items-center gap-2">
+                <div className="w-12 h-12 rounded-md overflow-hidden bg-white border border-slate-800/50 flex-shrink-0">
                   <img
                     src={selectedStation.avatar || '/placeholder-station.png'}
                     alt={selectedStation.businessName}
                     className="w-full h-full object-cover"
                   />
                 </div>
+                <h1 className="text-xl font-semibold text-white tracking-tight">{selectedStation.businessName}</h1>
               </div>
               
-              {/* Station Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col md:flex-row flex-wrap items-start gap-2 md:gap-3 mb-3">
-                  <h1 className="text-2xl font-semibold text-white tracking-tight">{selectedStation.businessName}</h1>
-                  <Badge variant="secondary" className="bg-slate-800/50 text-slate-300 border-slate-700">
+              {/* Badge and Details */}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="secondary" className="bg-slate-800/50 text-slate-300 border-slate-700 text-xs">
                     {selectedStation.fuelProvider}
                   </Badge>
                 </div>
-                <div className="flex flex-col md:flex-row flex-wrap gap-3 md:gap-5 text-sm text-slate-400">
-                  <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-orange-500" /> {selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</p>
-                  <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-orange-500" /> Open 24/7</p>
-                  <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-orange-500" /> {selectedStation.phone || "Contact Available"}</p>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
+                  <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" /> {selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</p>
+                  <p className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" /> Open 24/7</p>
+                  <p className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" /> {selectedStation.phone || "Contact Available"}</p>
                 </div>
               </div>
               
               {/* Price Cards - Horizontal and Compact */}
-              <div className="flex gap-2 flex-shrink-0">
-                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center flex-1">
+              <div className="flex gap-2 flex-shrink-0 sm:ml-auto">
+                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center min-w-[65px]">
                   <p className="text-[10px] text-slate-500 font-medium mb-0.5">Petrol</p>
-                  <p className="text-lg font-semibold text-white">₹{selectedStation.fuelPrices.petrol}</p>
+                  <p className="text-base font-semibold text-white">₹{selectedStation.fuelPrices.petrol}</p>
                 </div>
-                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center flex-1">
+                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center min-w-[65px]">
                   <p className="text-[10px] text-slate-500 font-medium mb-0.5">Diesel</p>
-                  <p className="text-lg font-semibold text-white">₹{selectedStation.fuelPrices.diesel}</p>
+                  <p className="text-base font-semibold text-white">₹{selectedStation.fuelPrices.diesel}</p>
                 </div>
               </div>
             </div>
