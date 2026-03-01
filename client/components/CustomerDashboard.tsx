@@ -145,7 +145,7 @@ const CustomerDashboard = () => {
   // ── STATION DETAIL VIEW ───────────────────────────────────────────────────
   if (selectedStation) {
     return (
-      <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-500">
         {/* Top Navigation Bar - Aligned with grid */}
         <div className="grid grid-cols-12 gap-6 mb-6">
           <div className="col-span-12 flex items-center justify-between">
@@ -168,10 +168,10 @@ const CustomerDashboard = () => {
         {/* Station Header - Full width grid aligned */}
         <div className="grid grid-cols-12 gap-6 mb-6">
           <div className="col-span-12 bg-slate-900/50 border border-slate-800/50 rounded-md p-6">
-            <div className="grid grid-cols-12 gap-6 items-start">
+            <div className="flex flex-col md:flex-row gap-3 items-start">
               {/* Station Logo */}
-              <div className="col-span-12 md:col-span-2 flex justify-center md:justify-start">
-                <div className="w-20 h-20 rounded-md overflow-hidden bg-white border border-slate-800/50 flex-shrink-0">
+              <div className="flex justify-center md:justify-start flex-shrink-0">
+                <div className="w-20 h-20 rounded-md overflow-hidden bg-white border border-slate-800/50">
                   <img
                     src={selectedStation.avatar || '/placeholder-station.png'}
                     alt={selectedStation.businessName}
@@ -181,7 +181,7 @@ const CustomerDashboard = () => {
               </div>
               
               {/* Station Info */}
-              <div className="col-span-12 md:col-span-7">
+              <div className="flex-1 min-w-0">
                 <div className="flex flex-col md:flex-row flex-wrap items-start gap-2 md:gap-3 mb-3">
                   <h1 className="text-2xl font-semibold text-white tracking-tight">{selectedStation.businessName}</h1>
                   <Badge variant="secondary" className="bg-slate-800/50 text-slate-300 border-slate-700">
@@ -195,15 +195,15 @@ const CustomerDashboard = () => {
                 </div>
               </div>
               
-              {/* Price Cards */}
-              <div className="col-span-12 md:col-span-3 grid grid-cols-2 md:grid-cols-1 gap-3">
-                <div className="bg-slate-950/50 border border-slate-800/50 p-3 rounded-md text-center">
-                  <p className="text-xs text-slate-500 font-medium mb-1">Petrol</p>
-                  <p className="text-xl font-semibold text-white">₹{selectedStation.fuelPrices.petrol}</p>
+              {/* Price Cards - Horizontal and Compact */}
+              <div className="flex gap-2 flex-shrink-0">
+                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center flex-1">
+                  <p className="text-[10px] text-slate-500 font-medium mb-0.5">Petrol</p>
+                  <p className="text-lg font-semibold text-white">₹{selectedStation.fuelPrices.petrol}</p>
                 </div>
-                <div className="bg-slate-950/50 border border-slate-800/50 p-3 rounded-md text-center">
-                  <p className="text-xs text-slate-500 font-medium mb-1">Diesel</p>
-                  <p className="text-xl font-semibold text-white">₹{selectedStation.fuelPrices.diesel}</p>
+                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center flex-1">
+                  <p className="text-[10px] text-slate-500 font-medium mb-0.5">Diesel</p>
+                  <p className="text-lg font-semibold text-white">₹{selectedStation.fuelPrices.diesel}</p>
                 </div>
               </div>
             </div>
@@ -252,7 +252,7 @@ const CustomerDashboard = () => {
 
   // ── DASHBOARD MAIN VIEW ───────────────────────────────────────────────────
   return (
-    <div className="w-full">
+    <div className="w-full max-w-6xl mx-auto">
       <div className="grid grid-cols-12 gap-6 mb-8">
         <div className="col-span-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
