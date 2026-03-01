@@ -11,6 +11,7 @@ import {
   BarChart3, Droplets, Users, Settings, Zap, Target, ArrowLeft
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { api } from '@/services/api';
 import MapView from './MapView';
 
 type Driver = {
@@ -85,16 +86,21 @@ const FuelStationDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const headers = { 'Authorization': `Bearer ${token}` };
+        const [stats, fetchedOrders] = await Promise.all([
+          api.getAnalytics().catch(() => null),
+          api.getOrders().catch(() => [])
+        ]);
 
-        const statsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/dashboard-stats`, { headers });
-        if (statsRes.ok) {
-          const data = await statsRes.json();
-          setDashboardStats(data);
-          if (data.recentOrders) {
-            setOrders(data.recentOrders);
-          }
+        if (stats) {
+          // Map new analytics structure to old UI expectations if necessary
+          setDashboardStats({
+            totalRevenue: stats.totalAmount,
+            petrolSold: stats.fuelTypeBreakdown.petrol,
+            dieselSold: stats.fuelTypeBreakdown.diesel,
+            recentOrders: fetchedOrders.slice(0, 5),
+            graphData: stats.dailyTrends
+          });
+          setOrders(fetchedOrders);
         }
       } catch (error) {
         console.error("Failed to fetch dashboard data", error);

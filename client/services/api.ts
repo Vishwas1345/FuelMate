@@ -383,6 +383,10 @@ class Api {
   async getStations(): Promise<User[]> {
     return this.fetch('/api/users/stations');
   }
+
+  async getAnalytics(): Promise<any> {
+    return this.fetch('/api/analytics/summary');
+  }
 }
 
 export const api = Api.getInstance(); 

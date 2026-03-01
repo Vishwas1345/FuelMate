@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
-import { Fuel, Truck, ArrowLeft, TrendingUp, MapPin, AlertCircle, Info, MessageSquare, Phone, Store, Clock, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Fuel, Truck, ArrowLeft, TrendingUp, MapPin, AlertCircle, Info, MessageSquare, Phone, Store, Clock, ShieldCheck, ChevronRight, Activity, Zap } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import FuelOrderForm from './FuelOrderForm';
 import OrderTracking from './OrderTracking';
 import { useAuth } from '@/contexts/AuthContext';
@@ -68,6 +69,7 @@ const CustomerDashboard = () => {
   const { user } = useAuth();
   const [stations, setStations] = useState<any[]>([]);
   const [activeOrders, setActiveOrders] = useState<CustomerOrder[]>([]);
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
   const [trackingOrderId, setTrackingOrderId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedStation, setSelectedStation] = useState<any | null>(null);
@@ -75,12 +77,14 @@ const CustomerDashboard = () => {
   const fetchDashboardData = async () => {
     setIsLoading(true);
     try {
-      const [fetchedStations, fetchedOrders] = await Promise.all([
+      const [fetchedStations, fetchedOrders, fetchedAnalytics] = await Promise.all([
         api.getStations(),
-        api.getOrders()
+        api.getOrders(),
+        api.getAnalytics().catch(() => null)
       ]);
 
       setStations(fetchedStations);
+      setAnalyticsData(fetchedAnalytics);
 
       const formattedOrders = fetchedOrders.map((order: any) => ({
         id: order._id,
@@ -252,33 +256,131 @@ const CustomerDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Sidebar: Active Tracking */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-              <Truck className="w-4 h-4 text-[#f97316]" /> Active Shipments
-            </h2>
-            <div className="bg-[#f97316]/10 text-[#f97316] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#f97316]/20">
-              {activeOrders.length}
-            </div>
-          </div>
-
-          <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 min-h-[400px]">
-            <div className="flex items-center gap-2 text-[#f97316] mb-6">
-              <TrendingUp className="w-4 h-4 rotate-45" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Live Manifest</span>
+          <Tabs defaultValue="manifest" className="w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[#f97316]" /> Logistics Hub
+              </h2>
+              <TabsList className="bg-[#020817] border border-slate-800 p-0.5 h-8">
+                <TabsTrigger value="manifest" className="text-[9px] font-black uppercase px-3 h-7 data-[state=active]:bg-[#f97316] data-[state=active]:text-white transition-all">Manifest</TabsTrigger>
+                <TabsTrigger value="analytics" className="text-[9px] font-black uppercase px-3 h-7 data-[state=active]:bg-[#f97316] data-[state=active]:text-white transition-all">Telemetry</TabsTrigger>
+              </TabsList>
             </div>
 
-            <div className="bg-[#020817] border border-slate-800 rounded-lg p-3 mb-8 flex justify-between items-center group cursor-pointer hover:border-slate-700 transition-colors">
-              <span className="text-xs font-bold text-slate-400">Select Active Shipment</span>
-              <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors rotate-90" />
-            </div>
+            <TabsContent value="manifest" className="m-0">
+              <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 min-h-[480px] shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <Truck className="w-32 h-32 rotate-12" />
+                </div>
 
-            <div className="flex flex-col items-center justify-center py-20 text-center opacity-40">
-              <div className="w-16 h-16 rounded-full border-2 border-slate-800 flex items-center justify-center mb-4">
-                <ShieldCheck className="w-8 h-8 text-slate-700" />
+                <div className="flex items-center gap-2 text-[#f97316] mb-8 relative">
+                  <TrendingUp className="w-4 h-4 rotate-45" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Live Manifest System</span>
+                </div>
+
+                <div className="bg-[#020817] border border-slate-800 rounded-lg p-3 mb-8 flex justify-between items-center group cursor-pointer hover:border-[#f97316]/30 transition-all">
+                  <span className="text-xs font-bold text-slate-400">Select Active Shipment</span>
+                  <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-[#f97316] transition-colors rotate-90" />
+                </div>
+
+                {activeOrders.length > 0 ? (
+                  <div className="space-y-6">
+                    <OrderTracking
+                      activeOrders={activeOrders}
+                      trackingOrderId={trackingOrderId}
+                      onTrackOrder={setTrackingOrderId}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-24 text-center">
+                    <div className="w-20 h-20 rounded-full border-2 border-slate-800/50 flex items-center justify-center mb-6 bg-[#020817] shadow-inner">
+                      <ShieldCheck className="w-10 h-10 text-slate-700" />
+                    </div>
+                    <h3 className="text-white font-black uppercase tracking-widest text-xs mb-2">Standby Mode</h3>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest max-w-[220px] leading-relaxed">System monitoring sector for active fuel manifestations. No data found.</p>
+                  </div>
+                )}
+
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#020817]/90 to-transparent pt-12">
+                  <div className="h-1 w-full bg-slate-950 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#f97316] w-1/4 animate-[shimmer_2s_infinite] shadow-[0_0_10px_#f97316]" />
+                  </div>
+                </div>
               </div>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">No operational manifest found.</p>
-            </div>
-          </div>
+            </TabsContent>
+
+            <TabsContent value="analytics" className="m-0">
+              <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 min-h-[480px] shadow-2xl flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2 text-[#f97316] mb-8">
+                    <Zap className="w-4 h-4" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Telemetry Metrics</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="p-4 bg-[#020817] border border-slate-800 rounded-xl group hover:border-[#f97316]/20 transition-all">
+                      <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Throughput</p>
+                      <p className="text-2xl font-black text-white">{analyticsData?.totalFuel || 0} <span className="text-[10px] text-slate-600">LT</span></p>
+                    </div>
+                    <div className="p-4 bg-[#020817] border border-slate-800 rounded-xl group hover:border-[#f97316]/20 transition-all">
+                      <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Manifests</p>
+                      <p className="text-2xl font-black text-white">{analyticsData?.monthlyTrends?.reduce((acc: any, curr: any) => acc + curr.quantity, 0) ? analyticsData.monthlyTrends.length : 0}</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#020817] border border-slate-800 rounded-xl p-5 mb-6 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-6">
+                      <p className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">Fuel Index Trend</p>
+                      <Badge variant="outline" className="text-[8px] border-slate-800 text-slate-500 font-black uppercase">Real-Time</Badge>
+                    </div>
+
+                    <div className="h-40 w-full">
+                      {analyticsData?.dailyTrends?.length > 0 ? (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={analyticsData.dailyTrends}>
+                            <defs>
+                              <linearGradient id="telemetryGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+                                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                            <XAxis dataKey="date" hide />
+                            <YAxis hide />
+                            <Tooltip
+                              contentStyle={{ backgroundColor: '#020817', border: '1px solid #1e293b', borderRadius: '8px' }}
+                              itemStyle={{ color: '#f97316', fontWeight: 'bold' }}
+                              labelStyle={{ color: '#64748b', fontSize: '10px' }}
+                            />
+                            <Area type="monotone" dataKey="quantity" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#telemetryGradient)" />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      ) : (
+                        <div className="h-full w-full flex flex-col items-center justify-center opacity-30">
+                          <Activity className="w-8 h-8 mb-2" />
+                          <span className="text-[9px] font-black uppercase tracking-widest text-center">Initial telemetry collection in progress</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-[#f97316]/5 border border-[#f97316]/20 rounded-xl relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-12 h-12 bg-white/5 -rotate-45 translate-x-6 -translate-y-6" />
+                  <div className="relative">
+                    <p className="text-[10px] font-black text-[#f97316] uppercase tracking-wider mb-1 flex items-center gap-2">
+                      <Activity className="w-3 h-3" /> System Audit
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-bold leading-relaxed">
+                      {analyticsData?.totalFuel > 100
+                        ? "Heavy sector consumption detected. Logistics optimization recommended."
+                        : "Operational parameters nominal. Manifest logs synchronized with network."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Main Content: Station Grid */}
