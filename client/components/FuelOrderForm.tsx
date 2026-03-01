@@ -76,61 +76,61 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl mx-auto">
-      <form onSubmit={handleOpenPayment} className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
+    <div className="w-full animate-in fade-in duration-500">
+      <form onSubmit={handleOpenPayment} className="grid grid-cols-12 gap-6">
 
         {/* Left Column: Form Controls */}
-        <div className="lg:col-span-3 space-y-6 md:space-y-8">
+        <div className="col-span-12 lg:col-span-7 space-y-6">
           {/* Fuel Selector */}
-          <div className="space-y-4">
-            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">1. Select Fuel Type</Label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+          <div className="space-y-3">
+            <Label className="text-slate-400 font-medium text-sm">Select Fuel Type</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 type="button"
                 onClick={() => setFuelType('petrol')}
-                className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${fuelType === 'petrol'
+                className={`flex items-center justify-between p-4 rounded-md border transition-all ${fuelType === 'petrol'
                     ? 'border-orange-500 bg-orange-500/5'
-                    : 'border-slate-800 bg-slate-900/50 grayscale hover:grayscale-0'
+                    : 'border-slate-800/50 bg-slate-900/50 hover:border-slate-700'
                   }`}
               >
                 <div className="text-left">
-                  <p className={`font-black tracking-tight ${fuelType === 'petrol' ? 'text-white' : 'text-slate-500'}`}>PETROL</p>
-                  <p className="text-xs font-mono text-orange-500/70">₹{prices.petrol}/L</p>
+                  <p className={`font-semibold text-base ${fuelType === 'petrol' ? 'text-white' : 'text-slate-400'}`}>Petrol</p>
+                  <p className="text-xs text-orange-500/70 mt-0.5">₹{prices.petrol}/L</p>
                 </div>
-                <FuelIcon className={`w-6 h-6 sm:w-8 sm:h-8 ${fuelType === 'petrol' ? 'text-orange-500' : 'text-slate-700'}`} />
+                <FuelIcon className={`w-6 h-6 ${fuelType === 'petrol' ? 'text-orange-500' : 'text-slate-600'}`} />
               </button>
 
               <button
                 type="button"
                 onClick={() => setFuelType('diesel')}
-                className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${fuelType === 'diesel'
+                className={`flex items-center justify-between p-4 rounded-md border transition-all ${fuelType === 'diesel'
                     ? 'border-blue-500 bg-blue-500/5'
-                    : 'border-slate-800 bg-slate-900/50 grayscale hover:grayscale-0'
+                    : 'border-slate-800/50 bg-slate-900/50 hover:border-slate-700'
                   }`}
               >
                 <div className="text-left">
-                  <p className={`font-black tracking-tight ${fuelType === 'diesel' ? 'text-white' : 'text-slate-500'}`}>DIESEL</p>
-                  <p className="text-xs font-mono text-blue-500/70">₹{prices.diesel}/L</p>
+                  <p className={`font-semibold text-base ${fuelType === 'diesel' ? 'text-white' : 'text-slate-400'}`}>Diesel</p>
+                  <p className="text-xs text-blue-500/70 mt-0.5">₹{prices.diesel}/L</p>
                 </div>
-                <FuelIcon className={`w-6 h-6 sm:w-8 sm:h-8 ${fuelType === 'diesel' ? 'text-blue-500' : 'text-slate-700'}`} />
+                <FuelIcon className={`w-6 h-6 ${fuelType === 'diesel' ? 'text-blue-500' : 'text-slate-600'}`} />
               </button>
             </div>
           </div>
 
           {/* Quantity Selector */}
-          <div className="space-y-4">
-            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">2. Specify Quantity</Label>
+          <div className="space-y-3">
+            <Label className="text-slate-400 font-medium text-sm">Quantity (Liters)</Label>
             <div className="relative">
               <Input
                 type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="bg-slate-900 border-slate-800 text-white font-mono text-xl md:text-2xl h-14 md:h-16 rounded-lg focus:border-orange-500 transition-all text-center"
+                className="bg-slate-900/50 border-slate-800/50 text-white font-mono text-xl h-12 rounded-md focus:border-orange-500 transition-all text-center"
                 placeholder="0"
                 max="20"
                 min="1"
               />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm md:text-base">LITRES</div>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium text-sm">L</div>
             </div>
             <div className="flex flex-wrap gap-2">
               {['5', '10', '15', '20'].map((val) => (
@@ -138,7 +138,7 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                   key={val}
                   type="button"
                   onClick={() => setQuantity(val)}
-                  className={`flex-1 min-w-[60px] py-2 rounded-md text-xs font-bold transition-all border ${quantity === val ? 'bg-orange-500 border-orange-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'
+                  className={`flex-1 min-w-[60px] py-2 rounded-md text-xs font-medium transition-all border ${quantity === val ? 'bg-orange-500 border-orange-500 text-white' : 'bg-slate-900/50 border-slate-800/50 text-slate-400 hover:border-slate-700'
                     }`}
                 >
                   {val}L
@@ -148,18 +148,18 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
           </div>
 
           {/* Logistics */}
-          <div className="space-y-4">
-            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">3. Logistics & Location</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-3">
+            <Label className="text-slate-400 font-medium text-sm">Delivery Details</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Select value={selectedAddress} onValueChange={setSelectedAddress}>
-                  <SelectTrigger className="bg-slate-900 border-slate-800 text-white h-12 rounded-lg">
-                    <SelectValue placeholder="Select Destination" />
+                  <SelectTrigger className="bg-slate-900/50 border-slate-800/50 text-white h-11 rounded-md">
+                    <SelectValue placeholder="Select Address" />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-900 border-slate-800 text-white">
                     {user?.addresses?.map((addr: any, i: number) => (
                       <SelectItem key={i} value={addr.addressLine + ", " + addr.city}>
-                        {addr.label.toUpperCase()} : {addr.addressLine}
+                        {addr.label}: {addr.addressLine}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -167,13 +167,13 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
               </div>
               <div className="space-y-2">
                 <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
-                  <SelectTrigger className="bg-slate-900 border-slate-800 text-white h-12 rounded-lg">
+                  <SelectTrigger className="bg-slate-900/50 border-slate-800/50 text-white h-11 rounded-md">
                     <SelectValue placeholder="Select Vehicle" />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-900 border-slate-800 text-white">
                     {user?.vehicles?.map((v: any, i: number) => (
                       <SelectItem key={i} value={v.plateNumber}>
-                        {v.model.toUpperCase()} ({v.plateNumber})
+                        {v.model} ({v.plateNumber})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -184,62 +184,62 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
         </div>
 
         {/* Right Column: Checkout Summary */}
-        <div className="lg:col-span-2">
-          <Card className="bg-slate-900 border-slate-800 rounded-lg overflow-hidden flex flex-col h-full shadow-lg">
-            <div className="p-6 bg-slate-800/20 border-b border-slate-800 flex items-center justify-between">
-              <h3 className="text-white font-bold flex items-center gap-2">
+        <div className="col-span-12 lg:col-span-5">
+          <Card className="bg-slate-900/50 border-slate-800/50 rounded-md overflow-hidden flex flex-col h-full">
+            <div className="p-4 bg-slate-800/30 border-b border-slate-800/50 flex items-center justify-between">
+              <h3 className="text-white font-medium flex items-center gap-2 text-sm">
                 <ShoppingCart className="w-4 h-4 text-orange-500" /> Order Summary
               </h3>
-              <Badge className="bg-slate-950 font-mono text-orange-400 border border-slate-800">PREVIEW</Badge>
+              <Badge className="bg-slate-950 text-orange-400 border border-slate-800/50 text-xs">Preview</Badge>
             </div>
 
-            <CardContent className="p-8 space-y-6 flex-1">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center group">
-                  <span className="text-slate-500 font-medium text-sm">Unit Price ({fuelType})</span>
-                  <span className="text-white font-mono">₹{prices[fuelType].toFixed(2)}</span>
+            <CardContent className="p-6 space-y-5 flex-1">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400 text-sm">Unit Price</span>
+                  <span className="text-white font-medium">₹{prices[fuelType].toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium text-sm">Volume Requested</span>
-                  <span className="text-white font-mono">{quantity || 0} L</span>
+                  <span className="text-slate-400 text-sm">Quantity</span>
+                  <span className="text-white font-medium">{quantity || 0} L</span>
                 </div>
 
-                <div className="h-px bg-slate-800 my-4" />
+                <div className="h-px bg-slate-800/50 my-4" />
 
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium text-sm">Fuel Cost</span>
-                  <span className="text-white font-mono">₹{bill.fuelCost.toFixed(2)}</span>
+                  <span className="text-slate-400 text-sm">Fuel Cost</span>
+                  <span className="text-white font-medium">₹{bill.fuelCost.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium text-sm">Platform Service</span>
-                  <span className="text-white font-mono">₹{bill.platformFee.toFixed(2)}</span>
+                  <span className="text-slate-400 text-sm">Platform Fee</span>
+                  <span className="text-white font-medium">₹{bill.platformFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium text-sm">Delivery Logistics</span>
-                  <span className={`font-mono ${bill.deliveryFee === 0 ? 'text-green-500' : 'text-white'}`}>
-                    {bill.deliveryFee === 0 ? 'COMPLIMENTARY' : `₹${bill.deliveryFee.toFixed(2)}`}
+                  <span className="text-slate-400 text-sm">Delivery</span>
+                  <span className={`font-medium ${bill.deliveryFee === 0 ? 'text-green-500' : 'text-white'}`}>
+                    {bill.deliveryFee === 0 ? 'Free' : `₹${bill.deliveryFee.toFixed(2)}`}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-auto pt-8 border-t border-slate-800">
-                <div className="flex justify-between items-end mb-8">
+              <div className="mt-auto pt-5 border-t border-slate-800/50">
+                <div className="flex justify-between items-end mb-5">
                   <div>
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-tighter">Total Payable</p>
-                    <p className="text-4xl font-black text-white">₹{bill.total.toFixed(2)}</p>
+                    <p className="text-xs text-slate-500 font-medium mb-1">Total</p>
+                    <p className="text-3xl font-semibold text-white">₹{bill.total.toFixed(2)}</p>
                   </div>
                 </div>
 
                 <Button
                   type="submit"
                   disabled={!quantity || !selectedAddress || !selectedVehicle}
-                  className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white text-lg font-black rounded-lg shadow-lg hover:shadow-orange-500/10 transition-all gap-3"
+                  className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-md transition-all gap-2"
                 >
-                  PROCEED TO PAYMENT <ChevronRight className="w-5 h-5" />
+                  Proceed to Payment <ChevronRight className="w-4 h-4" />
                 </Button>
 
-                <p className="text-[9px] text-slate-500 text-center mt-4 uppercase tracking-widest font-bold">
-                  Secure Server Connection Active
+                <p className="text-xs text-slate-500 text-center mt-3">
+                  Secure connection
                 </p>
               </div>
             </CardContent>

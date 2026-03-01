@@ -77,54 +77,54 @@ export const CustomerOrdersDashboard = () => {
     }, []);
 
     return (
-        <div className="max-w-7xl mx-auto py-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-4xl font-black text-white tracking-tight mb-2">
-                        Logistics <span className="text-[#f97316]">Intelligence</span>
+                    <h1 className="text-3xl font-semibold text-white tracking-tight mb-1.5">
+                        Orders <span className="text-orange-500">Dashboard</span>
                     </h1>
-                    <p className="text-slate-400 font-medium">Real-time tracking and consumption analytics for {user?.name}</p>
+                    <p className="text-slate-400 text-sm">Track your orders and view consumption analytics</p>
                 </div>
-                <div className="flex gap-4">
-                    <Badge className="bg-[#0a101f] border border-slate-800 text-slate-300 py-2 px-4 rounded-lg flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                        <span className="text-xs font-bold uppercase tracking-wider">Network Online</span>
+                <div className="flex gap-3">
+                    <Badge className="bg-slate-900/50 border border-slate-800/50 text-slate-300 py-1.5 px-3 rounded-md flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <span className="text-xs font-medium">Online</span>
                     </Badge>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Tracking Section */}
                 <div className="lg:col-span-12">
                     <Tabs defaultValue="manifest" className="w-full">
-                        <TabsList className="bg-[#0a101f] border border-slate-800 p-1 h-14 rounded-xl mb-8">
-                            <TabsTrigger value="manifest" className="rounded-lg h-full px-8 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-black uppercase text-xs tracking-widest">
+                        <TabsList className="bg-slate-900/50 border border-slate-800/50 p-1 h-11 rounded-md mb-6">
+                            <TabsTrigger value="manifest" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium text-sm">
                                 Live Tracking
                             </TabsTrigger>
-                            <TabsTrigger value="analytics" className="rounded-lg h-full px-8 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-black uppercase text-xs tracking-widest">
-                                Consumption Analytics
+                            <TabsTrigger value="analytics" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium text-sm">
+                                Analytics
                             </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="manifest" className="outline-none">
-                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                                 <div className="lg:col-span-1">
-                                    <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 h-full shadow-2xl">
-                                        <h3 className="text-xs font-black text-[#f97316] uppercase tracking-[0.2em] mb-6">Status Overview</h3>
-                                        <div className="space-y-4">
-                                            <div className="p-4 bg-[#020817] border border-slate-800 rounded-lg">
-                                                <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Active Manifests</p>
-                                                <p className="text-2xl font-black text-white">{activeOrders.length}</p>
+                                    <div className="bg-slate-900/50 border border-slate-800/50 rounded-md p-5 h-full">
+                                        <h3 className="text-xs font-medium text-orange-500 uppercase tracking-wider mb-5">Status Overview</h3>
+                                        <div className="space-y-3">
+                                            <div className="p-4 bg-slate-950/50 border border-slate-800/50 rounded-md">
+                                                <p className="text-xs text-slate-500 font-medium mb-1">Active Orders</p>
+                                                <p className="text-2xl font-semibold text-white">{activeOrders.length}</p>
                                             </div>
-                                            <div className="p-4 bg-[#020817] border border-slate-800 rounded-lg">
-                                                <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Fleet Status</p>
-                                                <p className="text-sm font-black text-green-500 uppercase">Operational</p>
+                                            <div className="p-4 bg-slate-950/50 border border-slate-800/50 rounded-md">
+                                                <p className="text-xs text-slate-500 font-medium mb-1">Status</p>
+                                                <p className="text-sm font-medium text-green-500">Operational</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="lg:col-span-3">
-                                    <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 min-h-[500px] shadow-2xl relative overflow-hidden">
+                                    <div className="bg-slate-900/50 border border-slate-800/50 rounded-md p-6 min-h-[500px] relative overflow-hidden">
                                         {activeOrders.length > 0 ? (
                                             <OrderTracking
                                                 activeOrders={activeOrders}
@@ -132,12 +132,12 @@ export const CustomerOrdersDashboard = () => {
                                                 onTrackOrder={setTrackingOrderId}
                                             />
                                         ) : (
-                                            <div className="flex flex-col items-center justify-center py-32 text-center">
-                                                <div className="w-24 h-24 rounded-full border-2 border-slate-800 flex items-center justify-center mb-8 bg-[#020817]">
-                                                    <ShieldCheck className="w-12 h-12 text-slate-700" />
+                                            <div className="flex flex-col items-center justify-center py-24 text-center">
+                                                <div className="w-16 h-16 rounded-md border-2 border-slate-800/50 flex items-center justify-center mb-4 bg-slate-950/50">
+                                                    <ShieldCheck className="w-8 h-8 text-slate-600" />
                                                 </div>
-                                                <h3 className="text-white font-black uppercase tracking-widest text-sm mb-2">No Active Logistics</h3>
-                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest max-w-sm leading-relaxed">The system is in standby. No active fuel shipments are currently being tracked in your sector.</p>
+                                                <h3 className="text-white font-semibold text-base mb-2">No Active Orders</h3>
+                                                <p className="text-sm text-slate-500 max-w-sm">No active fuel orders are currently being tracked.</p>
                                             </div>
                                         )}
                                     </div>
@@ -146,54 +146,50 @@ export const CustomerOrdersDashboard = () => {
                         </TabsContent>
 
                         <TabsContent value="analytics" className="outline-none">
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 {/* Highlights */}
-                                <div className="lg:col-span-1 space-y-6">
-                                    <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 shadow-2xl">
-                                        <div className="flex items-center gap-2 text-[#f97316] mb-8">
+                                <div className="lg:col-span-1 space-y-4">
+                                    <div className="bg-slate-900/50 border border-slate-800/50 rounded-md p-5">
+                                        <div className="flex items-center gap-2 text-orange-500 mb-6">
                                             <Zap className="w-4 h-4" />
-                                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Operational Summary</span>
+                                            <span className="text-xs font-medium uppercase tracking-wider">Summary</span>
                                         </div>
-                                        <div className="space-y-4">
-                                            <div className="p-5 bg-[#020817] border border-slate-800 rounded-xl">
-                                                <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2">Total Throughput</p>
-                                                <p className="text-3xl font-black text-white">{analyticsData?.totalFuel || 0} <span className="text-xs text-slate-600">Liters</span></p>
+                                        <div className="space-y-3">
+                                            <div className="p-4 bg-slate-950/50 border border-slate-800/50 rounded-md">
+                                                <p className="text-xs text-slate-500 font-medium mb-2">Total Fuel</p>
+                                                <p className="text-2xl font-semibold text-white">{analyticsData?.totalFuel || 0} <span className="text-sm text-slate-500">L</span></p>
                                             </div>
-                                            <div className="p-5 bg-[#020817] border border-slate-800 rounded-xl">
-                                                <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2">Total Expenditure</p>
-                                                <p className="text-3xl font-black text-white">₹{analyticsData?.totalAmount?.toLocaleString() || 0}</p>
+                                            <div className="p-4 bg-slate-950/50 border border-slate-800/50 rounded-md">
+                                                <p className="text-xs text-slate-500 font-medium mb-2">Total Spent</p>
+                                                <p className="text-2xl font-semibold text-white">₹{analyticsData?.totalAmount?.toLocaleString() || 0}</p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="p-6 bg-[#f97316]/5 border border-[#f97316]/20 rounded-xl">
-                                        <p className="text-[10px] font-black text-[#f97316] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                                            <Activity className="w-4 h-4" /> Usage Insight
+                                    <div className="p-5 bg-orange-500/5 border border-orange-500/20 rounded-md">
+                                        <p className="text-xs font-medium text-orange-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                            <Activity className="w-4 h-4" /> Insight
                                         </p>
-                                        <p className="text-xs text-slate-400 font-bold leading-relaxed px-1">
+                                        <p className="text-sm text-slate-400 leading-relaxed">
                                             {analyticsData?.totalFuel > 100
-                                                ? "Your consumption profile indicates high operational activity. Recommend auditing bulk fuel sources for better pricing."
-                                                : "Operational parameters remain within standard thresholds for individual logistics profiling."}
+                                                ? "High consumption detected. Consider bulk ordering for better pricing."
+                                                : "Consumption within normal range."}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Graph */}
                                 <div className="lg:col-span-2">
-                                    <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-8 min-h-[500px] shadow-2xl flex flex-col">
-                                        <div className="flex justify-between items-center mb-12">
-                                            <div className="flex items-center gap-2 text-[#f97316]">
-                                                <TrendingUp className="w-4 h-4 rotate-45" />
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Volume Index Trend</span>
+                                    <div className="bg-slate-900/50 border border-slate-800/50 rounded-md p-6 min-h-[500px] flex flex-col">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <div className="flex items-center gap-2 text-orange-500">
+                                                <TrendingUp className="w-4 h-4" />
+                                                <span className="text-xs font-medium uppercase tracking-wider">Consumption Trend</span>
                                             </div>
-                                            <Badge variant="outline" className="text-[9px] border-slate-800 text-slate-500 font-black uppercase px-3 py-1">Synced with Server</Badge>
+                                            <Badge variant="outline" className="text-xs border-slate-800/50 text-slate-500 font-medium px-2 py-0.5">Synced</Badge>
                                         </div>
 
-                                        <div className="flex-1 bg-[#020817]/50 border border-slate-800/50 rounded-2xl p-8 relative overflow-hidden">
-                                            <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                                                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-                                            </div>
-
+                                        <div className="flex-1 bg-slate-950/30 border border-slate-800/50 rounded-md p-6 relative overflow-hidden">
                                             {analyticsData?.dailyTrends?.length > 0 ? (
                                                 <ResponsiveContainer width="100%" height="100%">
                                                     <AreaChart data={analyticsData.dailyTrends}>
@@ -207,27 +203,27 @@ export const CustomerOrdersDashboard = () => {
                                                         <XAxis dataKey="date"
                                                             axisLine={false}
                                                             tickLine={false}
-                                                            tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }}
+                                                            tick={{ fill: '#64748b', fontSize: 11, fontWeight: '500' }}
                                                             dy={15}
                                                         />
                                                         <YAxis
                                                             axisLine={false}
                                                             tickLine={false}
-                                                            tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }}
+                                                            tick={{ fill: '#64748b', fontSize: 11, fontWeight: '500' }}
                                                         />
                                                         <Tooltip
-                                                            contentStyle={{ backgroundColor: '#020817', border: '1px solid #1e293b', borderRadius: '12px', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.5)' }}
-                                                            itemStyle={{ color: '#f97316', fontWeight: '900', textTransform: 'uppercase', fontSize: '10px' }}
-                                                            labelStyle={{ color: '#64748b', fontSize: '10px', marginBottom: '4px', fontWeight: 'bold' }}
-                                                            cursor={{ stroke: '#f97316', strokeWidth: 2, strokeDasharray: '4 4' }}
+                                                            contentStyle={{ backgroundColor: '#020817', border: '1px solid #1e293b', borderRadius: '6px' }}
+                                                            itemStyle={{ color: '#f97316', fontWeight: '600', fontSize: '12px' }}
+                                                            labelStyle={{ color: '#94a3b8', fontSize: '11px', marginBottom: '4px', fontWeight: '500' }}
+                                                            cursor={{ stroke: '#f97316', strokeWidth: 2 }}
                                                         />
-                                                        <Area type="monotone" dataKey="quantity" stroke="#f97316" strokeWidth={4} fillOpacity={1} fill="url(#mainTelemetry)" />
+                                                        <Area type="monotone" dataKey="quantity" stroke="#f97316" strokeWidth={2} fillOpacity={1} fill="url(#mainTelemetry)" />
                                                     </AreaChart>
                                                 </ResponsiveContainer>
                                             ) : (
-                                                <div className="h-full w-full flex flex-col items-center justify-center opacity-20">
-                                                    <Activity className="w-12 h-12 mb-4" />
-                                                    <p className="text-xs font-black uppercase tracking-widest">Aggregating Historical Logs...</p>
+                                                <div className="h-full w-full flex flex-col items-center justify-center opacity-30">
+                                                    <Activity className="w-10 h-10 mb-3" />
+                                                    <p className="text-sm font-medium text-slate-500">No data available</p>
                                                 </div>
                                             )}
                                         </div>

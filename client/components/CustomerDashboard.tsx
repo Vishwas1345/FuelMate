@@ -145,88 +145,103 @@ const CustomerDashboard = () => {
   // ── STATION DETAIL VIEW ───────────────────────────────────────────────────
   if (selectedStation) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <div className="flex items-center justify-between mb-8">
-          <Button
-            variant="ghost"
-            className="text-slate-400 hover:text-white hover:bg-slate-800/50 -ml-4 gap-2 border border-transparent hover:border-slate-800"
-            onClick={() => setSelectedStation(null)}
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-          </Button>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status:</span>
-            <Badge variant="outline" className="bg-green-500/5 border-green-500/20 text-green-400 font-bold px-3">
-              LIVE & OPERATIONAL
-            </Badge>
-          </div>
-        </div>
-
-        {/* Professional Minimal Header */}
-        <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 md:p-8 mb-8 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-left">
-            <div className="w-24 h-24 rounded-lg overflow-hidden bg-white border border-slate-800 shadow-sm flex-shrink-0">
-              <img
-                src={selectedStation.avatar || '/placeholder-station.png'}
-                alt={selectedStation.businessName}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1 w-full">
-              <div className="flex flex-col md:flex-row flex-wrap items-center md:items-start gap-2 md:gap-4 mb-3">
-                <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">{selectedStation.businessName}</h1>
-                <Badge variant="secondary" className="bg-slate-800 text-slate-400 border-transparent">
-                  {selectedStation.fuelProvider}
-                </Badge>
-              </div>
-              <div className="flex flex-col md:flex-row flex-wrap items-center justify-center md:justify-start gap-4 md:gap-6 text-sm text-slate-400">
-                <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-orange-500" /> {selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</p>
-                <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-orange-500" /> Open 24/7</p>
-                <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-orange-500" /> {selectedStation.phone || "Contact Avail."}</p>
-              </div>
-            </div>
-            <div className="w-full md:w-auto grid grid-cols-2 gap-3 md:gap-4 mt-4 md:mt-0">
-              <div className="bg-slate-950 border border-slate-800/50 p-3 md:p-4 rounded-lg text-center flex-1">
-                <p className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase mb-1">Petrol Price</p>
-                <p className="text-xl md:text-2xl font-mono font-bold text-white">₹{selectedStation.fuelPrices.petrol}</p>
-              </div>
-              <div className="bg-slate-950 border border-slate-800/50 p-3 md:p-4 rounded-lg text-center flex-1">
-                <p className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase mb-1">Diesel Price</p>
-                <p className="text-xl md:text-2xl font-mono font-bold text-white">₹{selectedStation.fuelPrices.diesel}</p>
-              </div>
+      <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
+        {/* Top Navigation Bar - Aligned with grid */}
+        <div className="grid grid-cols-12 gap-6 mb-6">
+          <div className="col-span-12 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              className="text-slate-400 hover:text-white hover:bg-slate-800/50 gap-2"
+              onClick={() => setSelectedStation(null)}
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+            </Button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-slate-500">Status:</span>
+              <Badge variant="outline" className="bg-green-500/10 border-green-500/30 text-green-400 font-medium px-2 py-0.5">
+                Operational
+              </Badge>
             </div>
           </div>
         </div>
 
+        {/* Station Header - Full width grid aligned */}
+        <div className="grid grid-cols-12 gap-6 mb-6">
+          <div className="col-span-12 bg-slate-900/50 border border-slate-800/50 rounded-md p-6">
+            <div className="grid grid-cols-12 gap-6 items-start">
+              {/* Station Logo */}
+              <div className="col-span-12 md:col-span-2 flex justify-center md:justify-start">
+                <div className="w-20 h-20 rounded-md overflow-hidden bg-white border border-slate-800/50 flex-shrink-0">
+                  <img
+                    src={selectedStation.avatar || '/placeholder-station.png'}
+                    alt={selectedStation.businessName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              
+              {/* Station Info */}
+              <div className="col-span-12 md:col-span-7">
+                <div className="flex flex-col md:flex-row flex-wrap items-start gap-2 md:gap-3 mb-3">
+                  <h1 className="text-2xl font-semibold text-white tracking-tight">{selectedStation.businessName}</h1>
+                  <Badge variant="secondary" className="bg-slate-800/50 text-slate-300 border-slate-700">
+                    {selectedStation.fuelProvider}
+                  </Badge>
+                </div>
+                <div className="flex flex-col md:flex-row flex-wrap gap-3 md:gap-5 text-sm text-slate-400">
+                  <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-orange-500" /> {selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</p>
+                  <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-orange-500" /> Open 24/7</p>
+                  <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-orange-500" /> {selectedStation.phone || "Contact Available"}</p>
+                </div>
+              </div>
+              
+              {/* Price Cards */}
+              <div className="col-span-12 md:col-span-3 grid grid-cols-2 md:grid-cols-1 gap-3">
+                <div className="bg-slate-950/50 border border-slate-800/50 p-3 rounded-md text-center">
+                  <p className="text-xs text-slate-500 font-medium mb-1">Petrol</p>
+                  <p className="text-xl font-semibold text-white">₹{selectedStation.fuelPrices.petrol}</p>
+                </div>
+                <div className="bg-slate-950/50 border border-slate-800/50 p-3 rounded-md text-center">
+                  <p className="text-xs text-slate-500 font-medium mb-1">Diesel</p>
+                  <p className="text-xl font-semibold text-white">₹{selectedStation.fuelPrices.diesel}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs - Full width grid aligned */}
         <Tabs defaultValue="order" className="w-full">
-          <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-            <TabsList className="bg-slate-900 border border-slate-800 p-1 h-14 rounded-lg mb-8 w-max md:w-auto min-w-full md:min-w-0 justify-start md:justify-center">
-              <TabsTrigger value="order" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
-                Place Order
-              </TabsTrigger>
-              <TabsTrigger value="reviews" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
-                Reviews
-              </TabsTrigger>
-              <TabsTrigger value="about" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
-                Information
-              </TabsTrigger>
-              <TabsTrigger value="contact" className="rounded-md h-full px-6 md:px-8 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-bold whitespace-nowrap">
-                Location & Contact
-              </TabsTrigger>
-            </TabsList>
+          <div className="grid grid-cols-12 gap-6 mb-6">
+            <div className="col-span-12">
+              <TabsList className="bg-slate-900/50 border border-slate-800/50 p-1 h-11 rounded-md w-full md:w-auto justify-start">
+                <TabsTrigger value="order" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
+                  Place Order
+                </TabsTrigger>
+                <TabsTrigger value="reviews" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
+                  Reviews
+                </TabsTrigger>
+                <TabsTrigger value="about" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
+                  Information
+                </TabsTrigger>
+                <TabsTrigger value="contact" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
+                  Contact
+                </TabsTrigger>
+              </TabsList>
+            </div>
           </div>
 
-          <div className="bg-transparent">
-            <TabsContent value="order" className="mt-0 outline-none">
+          <div className="grid grid-cols-12 gap-6">
+            <TabsContent value="order" className="col-span-12 mt-0 outline-none">
               <FuelOrderForm onSubmit={handleOrderSubmit} station={selectedStation} />
             </TabsContent>
-            <TabsContent value="reviews" className="mt-0 outline-none">
+            <TabsContent value="reviews" className="col-span-12 mt-0 outline-none">
               <StationReviews stationId={selectedStation._id} />
             </TabsContent>
-            <TabsContent value="about" className="mt-0 outline-none">
+            <TabsContent value="about" className="col-span-12 mt-0 outline-none">
               <StationAbout station={selectedStation as any} />
             </TabsContent>
-            <TabsContent value="contact" className="mt-0 outline-none">
+            <TabsContent value="contact" className="col-span-12 mt-0 outline-none">
               <StationContact station={selectedStation as any} />
             </TabsContent>
           </div>
@@ -237,71 +252,73 @@ const CustomerDashboard = () => {
 
   // ── DASHBOARD MAIN VIEW ───────────────────────────────────────────────────
   return (
-    <div className="max-w-7xl mx-auto py-8">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div>
-          <h1 className="text-4xl font-black text-white tracking-tight mb-2">
-            Fuel <span className="text-[#f97316]">Partners</span>
-          </h1>
-          <p className="text-slate-400 font-medium">Select a licensed partner to initiate a fuel delivery request.</p>
-        </div>
-        <div className="flex gap-4">
-          <Badge className="bg-[#0a101f] border border-slate-800 text-slate-300 py-2 px-4 rounded-lg flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider">Stations Online</span>
-          </Badge>
+    <div className="w-full">
+      <div className="grid grid-cols-12 gap-6 mb-8">
+        <div className="col-span-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold text-white tracking-tight mb-1.5">
+              Fuel <span className="text-orange-500">Partners</span>
+            </h1>
+            <p className="text-slate-400 text-sm">Select a partner station to place your fuel order.</p>
+          </div>
+          <div className="flex gap-3">
+            <Badge className="bg-slate-900/50 border border-slate-800/50 text-slate-300 py-1.5 px-3 rounded-md flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="text-xs font-medium">Online</span>
+            </Badge>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-8">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-          <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-            <Store className="w-4 h-4 text-[#f97316]" /> Operational Nodes
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-12 flex items-center justify-between border-b border-slate-800/50 pb-3 mb-6">
+          <h2 className="text-sm font-medium text-white flex items-center gap-2">
+            <Store className="w-4 h-4 text-orange-500" /> Available Stations
           </h2>
-          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
-            {stations.length} ACTIVE PARTNERS VERIFIED
+          <div className="text-xs text-slate-500 font-medium">
+            {stations.length} Active
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stations.map(station => (
-            <Card key={station._id} className="bg-[#0a101f] border-slate-800 hover:border-[#f97316]/30 transition-all duration-500 shadow-2xl overflow-hidden flex flex-col group relative">
-              <div className="p-6 border-b border-slate-800 flex items-center gap-4 relative z-10">
-                <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-slate-800 bg-white p-1 shadow-lg group-hover:border-[#f97316]/50 transition-colors">
+            <Card key={station._id} className="bg-slate-900/50 border-slate-800/50 hover:border-orange-500/30 transition-all duration-300 overflow-hidden flex flex-col group">
+              <div className="p-5 border-b border-slate-800/50 flex items-center gap-4">
+                <div className="w-14 h-14 rounded-md overflow-hidden border border-slate-800/50 bg-white p-1 group-hover:border-orange-500/50 transition-colors">
                   <img src={station.avatar || '/placeholder-station.png'} className="w-full h-full object-contain" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-white font-black text-xl truncate group-hover:text-[#f97316] transition-colors">{station.businessName}</h3>
+                  <h3 className="text-white font-semibold text-lg truncate group-hover:text-orange-500 transition-colors">{station.businessName}</h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="text-[8px] border-slate-700 text-slate-400 font-black uppercase px-2">{station.fuelProvider}</Badge>
-                    <div className={`w-1.5 h-1.5 rounded-full ${station.isAvailable ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                    <Badge variant="outline" className="text-xs border-slate-700 text-slate-400 font-medium px-2 py-0">{station.fuelProvider}</Badge>
+                    <div className={`w-1.5 h-1.5 rounded-full ${station.isAvailable ? 'bg-green-500' : 'bg-red-500'}`} />
                   </div>
                 </div>
               </div>
 
-              <CardContent className="p-6 flex-1 space-y-8 relative z-10">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-5 rounded-2xl bg-[#020817] border border-slate-800/50 group-hover:border-[#f97316]/10 transition-colors">
-                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-3">Petrol</p>
-                    <p className="text-3xl font-black text-white">₹{station.fuelPrices.petrol}</p>
+              <CardContent className="p-5 flex-1 space-y-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-4 rounded-md bg-slate-950/50 border border-slate-800/50 group-hover:border-orange-500/20 transition-colors">
+                    <p className="text-xs text-slate-500 font-medium mb-2">Petrol</p>
+                    <p className="text-2xl font-semibold text-white">₹{station.fuelPrices.petrol}</p>
                   </div>
-                  <div className="text-center p-5 rounded-2xl bg-[#020817] border border-slate-800/50 group-hover:border-[#f97316]/10 transition-colors">
-                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-3">Diesel</p>
-                    <p className="text-3xl font-black text-white">₹{station.fuelPrices.diesel}</p>
+                  <div className="text-center p-4 rounded-md bg-slate-950/50 border border-slate-800/50 group-hover:border-orange-500/20 transition-colors">
+                    <p className="text-xs text-slate-500 font-medium mb-2">Diesel</p>
+                    <p className="text-2xl font-semibold text-white">₹{station.fuelPrices.diesel}</p>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-slate-500">
-                    <MapPin className="w-3.5 h-3.5 text-[#f97316]" />
-                    <span className="text-[10px] font-black uppercase tracking-widest truncate">{station.pumpLocation.city}, {station.pumpLocation.state}</span>
+                  <div className="flex items-center gap-2 text-slate-400 text-sm">
+                    <MapPin className="w-4 h-4 text-orange-500" />
+                    <span className="truncate">{station.pumpLocation.city}, {station.pumpLocation.state}</span>
                   </div>
                   <Button
-                    className="w-full bg-[#f97316] text-white hover:bg-white hover:text-[#f97316] font-black uppercase text-xs tracking-[0.2em] h-14 rounded-xl transition-all shadow-[0_10px_20px_-10px_rgba(249,115,22,0.4)]"
+                    className="w-full bg-orange-500 text-white hover:bg-orange-600 font-medium h-11 rounded-md transition-all"
                     onClick={() => setSelectedStation(station)}
                     disabled={!station.isAvailable}
                   >
-                    INITIATE ORDER
+                    Place Order
                   </Button>
                 </div>
               </CardContent>
@@ -309,12 +326,12 @@ const CustomerDashboard = () => {
           ))}
 
           {stations.length === 0 && !isLoading && (
-            <div className="col-span-full py-48 bg-[#0a101f]/50 border-2 border-dashed border-slate-800 rounded-[2rem] text-center">
-              <div className="w-24 h-24 rounded-full border-4 border-slate-800 flex items-center justify-center mx-auto mb-8">
-                <AlertCircle className="w-10 h-10 text-slate-700" />
+            <div className="col-span-full py-32 bg-slate-900/30 border border-dashed border-slate-800/50 rounded-md text-center">
+              <div className="w-16 h-16 rounded-md border-2 border-slate-800/50 flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-slate-600" />
               </div>
-              <h3 className="text-white font-black uppercase tracking-widest text-lg">Network Search Failure</h3>
-              <p className="text-slate-500 max-w-sm mx-auto text-xs mt-4 leading-relaxed font-bold uppercase tracking-widest px-8">No operational fuel partners detected within the specified logistics perimeter. Scanning for new connections...</p>
+              <h3 className="text-white font-semibold text-base mb-2">No Stations Available</h3>
+              <p className="text-slate-500 max-w-sm mx-auto text-sm">No fuel stations are currently available in your area.</p>
             </div>
           )}
         </div>

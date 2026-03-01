@@ -11,16 +11,16 @@ const AppLayout: React.FC = () => {
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col ml-64 min-h-screen">
                 {/* Main Content Scrollable */}
-                <main className="flex-1 px-8 py-10 bg-[#020817]">
-                    <div className="animate-in fade-in slide-in-from-top-4 duration-1000">
+                <main className="flex-1 px-6 py-8 bg-[#020817]">
+                    <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                         <Outlet />
                     </div>
                 </main>
 
-                {/* Footer info subtler as in reference */}
-                <footer className="py-4 border-t border-slate-900 bg-[#020817]">
-                    <p className="text-[9px] text-slate-700 font-bold uppercase tracking-[0.3em] text-center">
-                        FuelMate Operations Dashboard © 2026 • Secure & Encrypted
+                {/* Footer */}
+                <footer className="py-3 border-t border-slate-800/50 bg-[#020817]">
+                    <p className="text-xs text-slate-600 font-medium uppercase tracking-wider text-center">
+                        FuelMate © 2026 • Secure & Encrypted
                     </p>
                 </footer>
             </div>
