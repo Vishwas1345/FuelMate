@@ -13,6 +13,78 @@ class OrderService {
         });
     }
 
+    async placeOrder(orderData, userId) {
+        // Validate required fields
+        if (!orderData.fuelType || !orderData.quantity || !orderData.deliveryAddress || !orderData.paymentMethod) {
+            const error = new Error('Missing required order fields: fuelType, quantity, deliveryAddress, and paymentMethod are required');
+            error.status = 400;
+            error.code = 'MISSING_FIELDS';
+            throw error;
+        }
+
+        // Validate quantity
+        const quantity = parseFloat(orderData.quantity);
+        if (isNaN(quantity) || quantity < 1 || quantity > 20) {
+            const error = new Error('Quantity must be between 1 and 20 liters');
+            error.status = 400;
+            error.code = 'INVALID_QUANTITY';
+            throw error;
+        }
+
+        // Validate fuel type
+        if (!['Petrol', 'Diesel'].includes(orderData.fuelType)) {
+            const error = new Error('Invalid fuel type. Must be Petrol or Diesel');
+            error.status = 400;
+            error.code = 'INVALID_FUEL_TYPE';
+            throw error;
+        }
+
+        // Validate payment method
+        const validPaymentMethods = ['cash', 'card', 'upi', 'netbanking'];
+        if (!validPaymentMethods.includes(orderData.paymentMethod)) {
+            const error = new Error('Invalid payment method');
+            error.status = 400;
+            error.code = 'INVALID_PAYMENT_METHOD';
+            throw error;
+        }
+
+        // Validate totalPrice
+        if (!orderData.totalPrice || isNaN(parseFloat(orderData.totalPrice))) {
+            const error = new Error('Total price is required and must be a valid number');
+            error.status = 400;
+            error.code = 'INVALID_TOTAL_PRICE';
+            throw error;
+        }
+
+        // Validate selectedStation (required by model)
+        if (!orderData.selectedStation) {
+            const error = new Error('Selected station is required');
+            error.status = 400;
+            error.code = 'MISSING_STATION';
+            throw error;
+        }
+
+        // Calculate estimated delivery time (30 minutes from now)
+        const estimatedDelivery = new Date(Date.now() + 1000 * 60 * 30);
+
+        // Create order with all validated data
+        const order = await Order.create({
+            userId,
+            fuelType: orderData.fuelType,
+            quantity: quantity,
+            brand: orderData.brand || orderData.selectedStation,
+            stationId: orderData.stationId || null,
+            selectedStation: orderData.selectedStation,
+            deliveryAddress: orderData.deliveryAddress,
+            paymentMethod: orderData.paymentMethod,
+            totalPrice: parseFloat(orderData.totalPrice),
+            status: 'pending',
+            estimatedDelivery,
+        });
+
+        return order;
+    }
+
     async updateOrderStatus(orderId, userId, updateData) {
         const { status, driver } = updateData;
 

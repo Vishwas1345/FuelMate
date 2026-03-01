@@ -40,6 +40,43 @@ class OrderController {
         return this.createOrder(req, res);
     }
 
+    async placeOrder(req, res) {
+        try {
+            logger.info('Placing new order', { 
+                userId: req.user.id, 
+                fuelType: req.body.fuelType, 
+                quantity: req.body.quantity,
+                stationId: req.body.stationId 
+            });
+            
+            const order = await orderService.placeOrder(req.body, req.user.id);
+            
+            logger.info('Order placed successfully', { 
+                userId: req.user.id, 
+                orderId: order._id,
+                status: order.status 
+            });
+            
+            res.status(201).json({
+                success: true,
+                message: 'Order placed successfully',
+                order
+            });
+        } catch (error) {
+            logger.error('Error placing order', { 
+                error: error.message, 
+                stack: error.stack, 
+                userId: req.user?.id,
+                code: error.code 
+            });
+            res.status(error.status || 500).json({ 
+                success: false,
+                message: error.message,
+                code: error.code || 'ORDER_PLACEMENT_ERROR'
+            });
+        }
+    }
+
     async updateOrderStatus(req, res) {
         try {
             logger.info('Updating order status', { orderId: req.params.orderId, userId: req.user.id, newStatus: req.body.status });

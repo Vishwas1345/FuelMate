@@ -13,6 +13,9 @@ router.post('/', orderController.createOrder);
 router.post('/petrol', orderController.createPetrolOrder);
 router.post('/diesel', orderController.createDieselOrder);
 
+// Place order endpoint - dedicated endpoint for order placement
+router.post('/place', orderController.placeOrder);
+
 // Get order history (completed orders)
 router.get('/history', orderController.getOrderHistory);
 

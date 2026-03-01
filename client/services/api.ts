@@ -357,6 +357,14 @@ class Api {
     });
   }
 
+  async placeOrder(orderData: any): Promise<Order> {
+    const response = await this.fetch('/api/orders/place', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    });
+    return response.order || response;
+  }
+
   async getOrders(): Promise<Order[]> {
     return this.fetch('/api/orders');
   }
