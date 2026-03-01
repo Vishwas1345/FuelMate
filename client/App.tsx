@@ -21,6 +21,7 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Onboarding from "./pages/Onboarding";
 import ChatWidget from "@/components/ChatWidget";
+import AppLayout from "@/components/AppLayout";
 
 const queryClient = new QueryClient();
 
@@ -50,47 +51,14 @@ const App = () => (
             }
           />
 
-          {/* Protected Dashboard Routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/station"
-            element={
-              <ProtectedRoute>
-                <StationDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/customer"
-            element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <UserProfile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            }
-          />
+          {/* Protected Dashboard Routes with Sidebar Layout */}
+          <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+            <Route path="/dashboard" element={<Index />} />
+            <Route path="/station" element={<StationDashboard />} />
+            <Route path="/customer" element={<Index />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
 
           {/* Catch-all for undefined routes */}
           <Route path="*" element={<NotFound />} />
