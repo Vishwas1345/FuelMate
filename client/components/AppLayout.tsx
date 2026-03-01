@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import AppSidebar from './AppSidebar';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const AppLayout: React.FC = () => {
+    const isMobile = useIsMobile();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    // On desktop, sidebar should always be open
+    useEffect(() => {
+        if (!isMobile) {
+            setIsSidebarOpen(true);
+        }
+    }, [isMobile]);
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -26,7 +35,7 @@ const AppLayout: React.FC = () => {
             )}
 
             {/* Sidebar - Responsive */}
-            <AppSidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+            <AppSidebar isOpen={isMobile ? isSidebarOpen : true} onClose={closeSidebar} />
 
             {/* Main Content Area */}
             <div className="flex-1 flex flex-col md:ml-64 min-h-screen">

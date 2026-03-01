@@ -142,7 +142,7 @@ const CustomerDashboard = () => {
   // ── STATION DETAIL VIEW ───────────────────────────────────────────────────
   if (selectedStation) {
     return (
-      <div className="w-full max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
         {/* Top Navigation Bar - Aligned with grid */}
         <div className="grid grid-cols-12 gap-6 mb-6">
           <div className="col-span-12 flex items-center justify-between">
@@ -249,7 +249,7 @@ const CustomerDashboard = () => {
 
   // ── DASHBOARD MAIN VIEW ───────────────────────────────────────────────────
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="w-full">
       <div className="grid grid-cols-12 gap-6 mb-8">
         <div className="col-span-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
