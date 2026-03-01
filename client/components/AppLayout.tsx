@@ -57,7 +57,7 @@ const AppLayout: React.FC = () => {
                 </div>
 
                 {/* Main Content Scrollable */}
-                <main className="flex-1 px-4 md:px-8 py-6 md:py-8 bg-[#020817]">
+                <main className="flex-1 px-4 md:pl-0 md:pr-8 py-6 md:py-8 bg-[#020817]">
                     <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                         <Outlet />
                     </div>

@@ -48,7 +48,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isOpen = true, onClose }) => {
         <aside className={`
             fixed left-0 top-0 h-screen w-64 bg-[#020817] border-r border-slate-800/50 flex flex-col z-50
             transform transition-transform duration-300 ease-in-out
-            md:translate-x-0 md:static md:z-auto
+            md:translate-x-0
             ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
                 {/* Logo Section */}
