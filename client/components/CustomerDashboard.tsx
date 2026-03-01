@@ -241,204 +241,82 @@ const CustomerDashboard = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
           <h1 className="text-4xl font-black text-white tracking-tight mb-2">
-            Operations <span className="text-[#f97316]">Center</span>
+            Fuel <span className="text-[#f97316]">Partners</span>
           </h1>
-          <p className="text-slate-400 font-medium">Monitoring fuel partners and delivery logistics for {user?.name}</p>
+          <p className="text-slate-400 font-medium">Select a licensed partner to initiate a fuel delivery request.</p>
         </div>
         <div className="flex gap-4">
           <Badge className="bg-[#0a101f] border border-slate-800 text-slate-300 py-2 px-4 rounded-lg flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider">System Stable</span>
+            <span className="text-xs font-bold uppercase tracking-wider">Stations Online</span>
           </Badge>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Sidebar: Active Tracking */}
-        <div className="lg:col-span-4 space-y-6">
-          <Tabs defaultValue="manifest" className="w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                <Activity className="w-4 h-4 text-[#f97316]" /> Logistics Hub
-              </h2>
-              <TabsList className="bg-[#020817] border border-slate-800 p-0.5 h-8">
-                <TabsTrigger value="manifest" className="text-[9px] font-black uppercase px-3 h-7 data-[state=active]:bg-[#f97316] data-[state=active]:text-white transition-all">Manifest</TabsTrigger>
-                <TabsTrigger value="analytics" className="text-[9px] font-black uppercase px-3 h-7 data-[state=active]:bg-[#f97316] data-[state=active]:text-white transition-all">Telemetry</TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value="manifest" className="m-0">
-              <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 min-h-[480px] shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                  <Truck className="w-32 h-32 rotate-12" />
-                </div>
-
-                <div className="flex items-center gap-2 text-[#f97316] mb-8 relative">
-                  <TrendingUp className="w-4 h-4 rotate-45" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">Live Manifest System</span>
-                </div>
-
-                <div className="bg-[#020817] border border-slate-800 rounded-lg p-3 mb-8 flex justify-between items-center group cursor-pointer hover:border-[#f97316]/30 transition-all">
-                  <span className="text-xs font-bold text-slate-400">Select Active Shipment</span>
-                  <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-[#f97316] transition-colors rotate-90" />
-                </div>
-
-                {activeOrders.length > 0 ? (
-                  <div className="space-y-6">
-                    <OrderTracking
-                      activeOrders={activeOrders}
-                      trackingOrderId={trackingOrderId}
-                      onTrackOrder={setTrackingOrderId}
-                    />
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-24 text-center">
-                    <div className="w-20 h-20 rounded-full border-2 border-slate-800/50 flex items-center justify-center mb-6 bg-[#020817] shadow-inner">
-                      <ShieldCheck className="w-10 h-10 text-slate-700" />
-                    </div>
-                    <h3 className="text-white font-black uppercase tracking-widest text-xs mb-2">Standby Mode</h3>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest max-w-[220px] leading-relaxed">System monitoring sector for active fuel manifestations. No data found.</p>
-                  </div>
-                )}
-
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#020817]/90 to-transparent pt-12">
-                  <div className="h-1 w-full bg-slate-950 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#f97316] w-1/4 animate-[shimmer_2s_infinite] shadow-[0_0_10px_#f97316]" />
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="analytics" className="m-0">
-              <div className="bg-[#0a101f] border border-slate-800 rounded-xl p-6 min-h-[480px] shadow-2xl flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 text-[#f97316] mb-8">
-                    <Zap className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Telemetry Metrics</span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-8">
-                    <div className="p-4 bg-[#020817] border border-slate-800 rounded-xl group hover:border-[#f97316]/20 transition-all">
-                      <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Total Throughput</p>
-                      <p className="text-2xl font-black text-white">{analyticsData?.totalFuel || 0} <span className="text-[10px] text-slate-600">LT</span></p>
-                    </div>
-                    <div className="p-4 bg-[#020817] border border-slate-800 rounded-xl group hover:border-[#f97316]/20 transition-all">
-                      <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1">Manifests</p>
-                      <p className="text-2xl font-black text-white">{analyticsData?.monthlyTrends?.reduce((acc: any, curr: any) => acc + curr.quantity, 0) ? analyticsData.monthlyTrends.length : 0}</p>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#020817] border border-slate-800 rounded-xl p-5 mb-6 relative overflow-hidden">
-                    <div className="flex justify-between items-center mb-6">
-                      <p className="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">Fuel Index Trend</p>
-                      <Badge variant="outline" className="text-[8px] border-slate-800 text-slate-500 font-black uppercase">Real-Time</Badge>
-                    </div>
-
-                    <div className="h-40 w-full">
-                      {analyticsData?.dailyTrends?.length > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={analyticsData.dailyTrends}>
-                            <defs>
-                              <linearGradient id="telemetryGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
-                              </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                            <XAxis dataKey="date" hide />
-                            <YAxis hide />
-                            <Tooltip
-                              contentStyle={{ backgroundColor: '#020817', border: '1px solid #1e293b', borderRadius: '8px' }}
-                              itemStyle={{ color: '#f97316', fontWeight: 'bold' }}
-                              labelStyle={{ color: '#64748b', fontSize: '10px' }}
-                            />
-                            <Area type="monotone" dataKey="quantity" stroke="#f97316" strokeWidth={3} fillOpacity={1} fill="url(#telemetryGradient)" />
-                          </AreaChart>
-                        </ResponsiveContainer>
-                      ) : (
-                        <div className="h-full w-full flex flex-col items-center justify-center opacity-30">
-                          <Activity className="w-8 h-8 mb-2" />
-                          <span className="text-[9px] font-black uppercase tracking-widest text-center">Initial telemetry collection in progress</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-[#f97316]/5 border border-[#f97316]/20 rounded-xl relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-12 h-12 bg-white/5 -rotate-45 translate-x-6 -translate-y-6" />
-                  <div className="relative">
-                    <p className="text-[10px] font-black text-[#f97316] uppercase tracking-wider mb-1 flex items-center gap-2">
-                      <Activity className="w-3 h-3" /> System Audit
-                    </p>
-                    <p className="text-[10px] text-slate-400 font-bold leading-relaxed">
-                      {analyticsData?.totalFuel > 100
-                        ? "Heavy sector consumption detected. Logistics optimization recommended."
-                        : "Operational parameters nominal. Manifest logs synchronized with network."}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+            <Store className="w-4 h-4 text-[#f97316]" /> Operational Nodes
+          </h2>
+          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
+            {stations.length} ACTIVE PARTNERS VERIFIED
+          </div>
         </div>
 
-        {/* Main Content: Station Grid */}
-        <div className="lg:col-span-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-              <Store className="w-4 h-4 text-[#f97316]" /> Fuel Partners
-            </h2>
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">
-              SHOWING {stations.length} AVAILABLE LOCATIONS
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {stations.map(station => (
+            <Card key={station._id} className="bg-[#0a101f] border-slate-800 hover:border-[#f97316]/30 transition-all duration-500 shadow-2xl overflow-hidden flex flex-col group relative">
+              <div className="p-6 border-b border-slate-800 flex items-center gap-4 relative z-10">
+                <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-slate-800 bg-white p-1 shadow-lg group-hover:border-[#f97316]/50 transition-colors">
+                  <img src={station.avatar || '/placeholder-station.png'} className="w-full h-full object-contain" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-white font-black text-xl truncate group-hover:text-[#f97316] transition-colors">{station.businessName}</h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="text-[8px] border-slate-700 text-slate-400 font-black uppercase px-2">{station.fuelProvider}</Badge>
+                    <div className={`w-1.5 h-1.5 rounded-full ${station.isAvailable ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                  </div>
+                </div>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {stations.map(station => (
-              <Card key={station._id} className="bg-[#0a101f] border-slate-800 hover:border-slate-700 transition-all duration-300 shadow-xl overflow-hidden flex flex-col group">
-                <div className="p-6 border-b border-slate-800 flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-lg overflow-hidden border border-slate-800 bg-white p-1">
-                    <img src={station.avatar || '/placeholder-station.png'} className="w-full h-full object-contain" />
+              <CardContent className="p-6 flex-1 space-y-8 relative z-10">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-5 rounded-2xl bg-[#020817] border border-slate-800/50 group-hover:border-[#f97316]/10 transition-colors">
+                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-3">Petrol</p>
+                    <p className="text-3xl font-black text-white">₹{station.fuelPrices.petrol}</p>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-white font-black text-lg truncate group-hover:text-[#f97316] transition-colors">{station.businessName}</h3>
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider">{station.fuelProvider} Partner</p>
+                  <div className="text-center p-5 rounded-2xl bg-[#020817] border border-slate-800/50 group-hover:border-[#f97316]/10 transition-colors">
+                    <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-3">Diesel</p>
+                    <p className="text-3xl font-black text-white">₹{station.fuelPrices.diesel}</p>
                   </div>
-                  <div className={`w-2 h-2 rounded-full ${station.isAvailable ? 'bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.6)]' : 'bg-red-500'}`} />
                 </div>
 
-                <CardContent className="p-6 flex-1 space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 rounded-lg bg-[#020817] border border-slate-800/50">
-                      <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-2">Petrol</p>
-                      <p className="text-2xl font-black text-white">₹{station.fuelPrices.petrol}</p>
-                    </div>
-                    <div className="text-center p-4 rounded-lg bg-[#020817] border border-slate-800/50">
-                      <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest mb-2">Diesel</p>
-                      <p className="text-2xl font-black text-white">₹{station.fuelPrices.diesel}</p>
-                    </div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 text-slate-500">
+                    <MapPin className="w-3.5 h-3.5 text-[#f97316]" />
+                    <span className="text-[10px] font-black uppercase tracking-widest truncate">{station.pumpLocation.city}, {station.pumpLocation.state}</span>
                   </div>
-
                   <Button
-                    className="w-full bg-[#1e293b] border border-slate-700 text-white hover:bg-white hover:text-[#020817] font-black uppercase text-xs tracking-widest h-12 transition-all"
+                    className="w-full bg-[#f97316] text-white hover:bg-white hover:text-[#f97316] font-black uppercase text-xs tracking-[0.2em] h-14 rounded-xl transition-all shadow-[0_10px_20px_-10px_rgba(249,115,22,0.4)]"
                     onClick={() => setSelectedStation(station)}
                     disabled={!station.isAvailable}
                   >
-                    View & Order
+                    INITIATE ORDER
                   </Button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
 
-            {stations.length === 0 && !isLoading && (
-              <div className="col-span-full py-40 bg-[#0a101f]/50 border border-dashed border-slate-800 rounded-2xl text-center">
-                <AlertCircle className="w-12 h-12 text-slate-700 mx-auto mb-4" />
-                <h3 className="text-white font-black uppercase tracking-widest">No Operational Partners</h3>
-                <p className="text-slate-500 max-w-xs mx-auto text-xs mt-4 leading-relaxed font-bold">There are currently no active fuel delivery partners in your area. Logistics systems are monitoring for updates.</p>
+          {stations.length === 0 && !isLoading && (
+            <div className="col-span-full py-48 bg-[#0a101f]/50 border-2 border-dashed border-slate-800 rounded-[2rem] text-center">
+              <div className="w-24 h-24 rounded-full border-4 border-slate-800 flex items-center justify-center mx-auto mb-8">
+                <AlertCircle className="w-10 h-10 text-slate-700" />
               </div>
-            )}
-          </div>
+              <h3 className="text-white font-black uppercase tracking-widest text-lg">Network Search Failure</h3>
+              <p className="text-slate-500 max-w-sm mx-auto text-xs mt-4 leading-relaxed font-bold uppercase tracking-widest px-8">No operational fuel partners detected within the specified logistics perimeter. Scanning for new connections...</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
