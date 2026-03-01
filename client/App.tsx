@@ -16,6 +16,7 @@ import Index from "./pages/Index";
 import StationDashboard from "./pages/StationDashboard";
 import UserProfile from "./pages/UserProfile";
 import Settings from "./pages/Settings";
+import OrdersDashboard from "./pages/OrdersDashboard";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/dashboard" element={<Index />} />
             <Route path="/station" element={<StationDashboard />} />
             <Route path="/customer" element={<Index />} />
+            <Route path="/orders-dashboard" element={<OrdersDashboard />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/settings" element={<Settings />} />
           </Route>

@@ -29,7 +29,7 @@ const AppSidebar = () => {
         }
         return [
             { name: 'Order fuel', icon: Fuel, path: '/customer' },
-            { name: 'Your ordering dashboard', icon: LayoutDashboard, path: '/customer' },
+            { name: 'Your ordering dashboard', icon: LayoutDashboard, path: '/orders-dashboard' },
             { name: 'Account access', icon: User, path: '/profile' },
             { name: 'Settings', icon: Settings, path: '/settings' },
         ];
