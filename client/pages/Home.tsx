@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { FastDeliveryImage, QualityFuelImage, AvailabilityImage, TrackingImage } from '@/components/FeatureIllustrations';
 import CTASection from '@/components/landing/CTASection';
+import Hero from '@/components/landing/Hero';
 import { MobileScrollSlider } from '@/components/ui/MobileScrollSlider';
 const Home = () => {
     const initialTestimonials: any[] = [];
@@ -160,83 +161,7 @@ const Home = () => {
         <div className="min-h-screen bg-slate-950">
             <Navbar />
 
-            {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 pt-16">
-                {/* Animated background elements */}
-                <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-                </div>
-
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
-                        {/* Left Content */}
-                        <div className="text-center lg:text-left space-y-8">
-                            {/* Badge */}
-                            <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-sm font-medium">
-                                <Sparkles size={16} className="animate-pulse" />
-                                <span>On-Demand Fuel Delivery</span>
-                            </div>
-
-                            {/* Heading */}
-                            <h1 className="animate-fade-in-up delay-100 text-4xl sm:text-5xl font-bold text-white leading-tight">
-                                Fuel Delivered
-                                <span className="block bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                                    Anytime, Anywhere
-                                </span>
-                            </h1>
-
-                            {/* Description */}
-                            <p className="animate-fade-in-up delay-200 text-base sm:text-lg text-gray-400 max-w-2xl">
-                                Never run out of fuel again. Get premium quality fuel delivered directly to your vehicle, anywhere, anytime. Fast, reliable, and convenient.
-                            </p>
-
-                            {/* CTA Buttons */}
-                            <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                                <Link to="/auth">
-                                    <Button
-                                        size="lg"
-                                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 text-base group"
-                                    >
-                                        Get Started
-                                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
-                                    </Button>
-                                </Link>
-                                <Link to="/features">
-                                    <Button
-                                        size="lg"
-                                        variant="outline"
-                                        className="border-slate-700 text-white hover:bg-slate-800 px-6 py-3 text-base"
-                                    >
-                                        Explore Features
-                                    </Button>
-                                </Link>
-                            </div>
-                        </div>
-
-                        {/* Right Content - Hero Image */}
-                        <div className="relative animate-fade-in-up delay-200">
-                            <div className="relative z-10">
-                                <img
-                                    src="/fuel_delivery_hero.png"
-                                    alt="Fuel Delivery Service - On-demand fuel delivery to your location"
-                                    className="w-full h-auto rounded-2xl shadow-2xl"
-                                />
-                            </div>
-                            {/* Decorative elements */}
-                            <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full blur-2xl"></div>
-                            <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-gradient-to-tr from-blue-500/20 to-transparent rounded-full blur-2xl"></div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Scroll indicator */}
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-                    <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center">
-                        <div className="w-1 h-3 bg-orange-500 rounded-full mt-2 animate-pulse"></div>
-                    </div>
-                </div>
-            </section>
+            <Hero />
 
             {/* Features Highlight Section */}
             <section className="py-24 bg-slate-950">
