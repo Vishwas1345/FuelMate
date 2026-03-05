@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 const Hero = () => {
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
             opacity: 1,
@@ -19,7 +19,7 @@ const Hero = () => {
         }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, y: 15 },
         visible: {
             opacity: 1,
@@ -67,16 +67,6 @@ const Hero = () => {
                         animate="visible"
                         className="text-center lg:text-left space-y-5"
                     >
-                        {/* Premium Badge */}
-                        <motion.div
-                            variants={itemVariants}
-                            className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-full text-orange-400 text-[10px] font-bold tracking-widest uppercase shadow-xl"
-                        >
-                            <span className="flex h-1.5 w-1.5 rounded-full bg-orange-500 animate-pulse" />
-                            <Sparkles size={12} className="text-orange-500 shrink-0" />
-                            <span>Revolutionizing Fuel Delivery</span>
-                        </motion.div>
-
                         {/* Main Heading */}
                         <motion.h1
                             variants={itemVariants}
@@ -124,14 +114,13 @@ const Hero = () => {
                                 </Button>
                             </Link>
                         </motion.div>
-
                     </motion.div>
 
                     {/* Right Column: Visual Elements */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+                        transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
                         className="relative hidden lg:block"
                     >
                         {/* Hero Image Wrapper */}
