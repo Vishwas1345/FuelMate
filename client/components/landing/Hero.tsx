@@ -110,7 +110,7 @@ const Hero = () => {
                                     size="lg"
                                     className="w-full sm:w-auto border-slate-800 bg-slate-900/40 backdrop-blur-md text-white hover:bg-slate-800 hover:border-slate-700 px-8 py-6 text-base rounded-xl transition-all active:scale-95"
                                 >
-                                    See How it Works
+                                    Explore Features
                                 </Button>
                             </Link>
                         </motion.div>
@@ -130,8 +130,8 @@ const Hero = () => {
 
                             <div className="relative rounded-[2rem] overflow-hidden border border-slate-800 shadow-2xl">
                                 <img
-                                    src="/premium_hero.png"
-                                    alt="FuelMate Premium Service"
+                                    src="/graphical_hero_v4.png"
+                                    alt="FuelMate Delivery System - Premium Fuel Delivery Illustration"
                                     className="w-full h-auto object-cover"
                                 />
                                 {/* Overlay Gradient */}
