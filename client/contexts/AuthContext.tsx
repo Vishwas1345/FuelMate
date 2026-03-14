@@ -16,7 +16,6 @@ interface AuthContextType {
   createOrder: (orderData: any) => Promise<Order>;
   getOrders: () => Promise<Order[]>;
   updateOrderStatus: (orderId: string, status: string, driver?: any) => Promise<Order>;
-  loginAsGuest: () => Promise<void>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
@@ -223,10 +222,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const getOrders = async () => {
     try {
-      if (user?._id.startsWith('guest-id-')) {
-        return [];
-      }
-
       const orders = await api.getOrders();
       setUserOrders(orders);
 
@@ -343,37 +338,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loginAsGuest = async () => {
-    try {
-      // Create a guest user object that fully complies with the User type
-      const guestUser: User = {
-        _id: 'guest-id-' + Date.now(),
-        name: 'Guest User',
-        email: 'guest@example.com',
-        role: 'customer', // Treat guest as a customer
-        isProfileComplete: true,
-        addresses: [],
-        vehicles: []
-      };
-
-      setUser(guestUser);
-      setIsAuthenticated(true);
-
-      toast({
-        title: "Guest login successful",
-        description: "Welcome! You are logged in as a guest.",
-      });
-
-      navigate("/customer");
-    } catch (error: any) {
-      toast({
-        title: "Guest login failed",
-        description: "An error occurred during guest login",
-        variant: "destructive",
-      });
-      throw error;
-    }
-  };
 
   const updatePassword = async (currentPassword: string, newPassword: string) => {
     try {
@@ -406,7 +370,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     createOrder,
     getOrders,
     updateOrderStatus,
-    loginAsGuest,
     updatePassword,
   };
 

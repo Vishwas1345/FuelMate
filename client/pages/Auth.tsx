@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoIcon } from "@/components/Logo";
-import { User, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 
 export default function Auth() {
@@ -18,7 +18,7 @@ export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { login, signup, loginAsGuest } = useAuth();
+  const { login, signup } = useAuth();
 
   // Clear errors when switching tabs
   const handleTabChange = (value: string) => {
@@ -106,21 +106,6 @@ export default function Auth() {
     }
   };
 
-  const handleGuestLogin = async () => {
-    setIsLoading(true);
-    try {
-      await loginAsGuest();
-      // Navigation is handled in AuthContext
-    } catch (error: any) {
-      toast({
-        title: "Guest login failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
@@ -199,16 +184,7 @@ export default function Auth() {
                   </div>
                   <div className="mt-4 space-y-3">
                     <GoogleSignInButton />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full bg-slate-800 border-slate-700 text-white hover:bg-slate-700 hover:border-orange-500/50 transition-all duration-300 group flex items-center justify-center"
-                      onClick={handleGuestLogin}
-                      disabled={isLoading}
-                    >
-                      <User className="mr-2 w-4 h-4 text-slate-400 group-hover:text-orange-500 transition-colors" />
-                      {isLoading ? "Logging in..." : "Continue as Guest"}
-                    </Button>
+
                   </div>
                 </div>
               </CardContent>
