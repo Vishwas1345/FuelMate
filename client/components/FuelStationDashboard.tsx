@@ -259,7 +259,7 @@ const FuelStationDashboard = () => {
   };
 
   return (
-    <div className="container px-4 py-6 md:py-8">
+    <div className="w-full">
       <div className="mb-4">
         <Button variant="ghost" className="text-gray-400 hover:text-white pl-0 gap-2" onClick={() => window.history.back()}>
           <ArrowLeft className="w-4 h-4" /> Back

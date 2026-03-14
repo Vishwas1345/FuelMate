@@ -207,8 +207,7 @@ const UserProfile = () => {
   const isStation = profileData.role === 'station';
 
   return (
-    <div className="container px-4 py-8 max-w-7xl mx-auto">
-
+    <div className="w-full">
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 

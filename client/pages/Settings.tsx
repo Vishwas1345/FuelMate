@@ -100,7 +100,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="container px-4 py-6 md:py-8 max-w-5xl">
+    <div className="w-full">
 
       <h1 className="text-2xl md:text-3xl font-bold text-white mb-6">Settings</h1>
 

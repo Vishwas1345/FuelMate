@@ -28,7 +28,7 @@ const AppLayout: React.FC = () => {
         <div className="flex min-h-screen bg-[#020817] overflow-hidden">
             {/* Mobile Overlay */}
             {isSidebarOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black/50 z-40 md:hidden"
                     onClick={closeSidebar}
                 />
@@ -57,7 +57,7 @@ const AppLayout: React.FC = () => {
                 </div>
 
                 {/* Main Content Scrollable */}
-                <main className="flex-1 px-4 md:pl-0 md:pr-8 py-6 md:py-8 bg-[#020817]">
+                <main className="flex-1 px-4 md:pl-8 md:pr-8 py-6 md:py-8 bg-[#020817]">
                     <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                         <Outlet />
                     </div>
