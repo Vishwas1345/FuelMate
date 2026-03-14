@@ -14,6 +14,8 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import Index from "./pages/Index";
 import StationDashboard from "./pages/StationDashboard";
+import StationOrders from "./pages/StationOrders";
+import StationDrivers from "./pages/StationDrivers";
 import UserProfile from "./pages/UserProfile";
 import Settings from "./pages/Settings";
 import OrdersDashboard from "./pages/OrdersDashboard";
@@ -56,6 +58,8 @@ const App = () => (
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route path="/dashboard" element={<Index />} />
             <Route path="/station" element={<StationDashboard />} />
+            <Route path="/station/orders" element={<StationOrders />} />
+            <Route path="/station/drivers" element={<StationDrivers />} />
             <Route path="/customer" element={<Index />} />
             <Route path="/orders-dashboard" element={<OrdersDashboard />} />
             <Route path="/profile" element={<UserProfile />} />

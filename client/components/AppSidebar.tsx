@@ -27,10 +27,10 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isOpen = true, onClose }) => {
     const getMenuItems = () => {
         if (user?.role === 'station') {
             return [
-                { name: 'Station Dashboard', icon: LayoutDashboard, path: '/station' },
-                { name: 'Order Management', icon: Fuel, path: '/station' },
+                { name: 'Dashboard', icon: LayoutDashboard, path: '/station' },
+                { name: 'Manage Orders', icon: Briefcase, path: '/station/orders' },
+                { name: 'Delivery Partners', icon: Fuel, path: '/station/drivers' },
                 { name: 'Account', icon: User, path: '/profile' },
-                { name: 'Settings', icon: Settings, path: '/settings' },
             ];
         }
         return [
@@ -51,22 +51,22 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isOpen = true, onClose }) => {
             md:translate-x-0
             ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
-                {/* Logo Section */}
-                <div className="px-6 py-6 border-b border-slate-800/50 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-3" onClick={onClose}>
-                        <LogoIcon className="w-5 h-5 text-orange-500" />
-                        <span className="text-lg font-semibold text-white tracking-tight">FuelMate</span>
-                    </Link>
-                    {/* Close button for mobile */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        className="md:hidden text-slate-400 hover:text-white hover:bg-slate-800/50"
-                    >
-                        <X className="w-5 h-5" />
-                    </Button>
-                </div>
+            {/* Logo Section */}
+            <div className="px-6 py-6 border-b border-slate-800/50 flex items-center justify-between">
+                <Link to="/" className="flex items-center gap-3" onClick={onClose}>
+                    <LogoIcon className="w-5 h-5 text-orange-500" />
+                    <span className="text-lg font-semibold text-white tracking-tight">FuelMate</span>
+                </Link>
+                {/* Close button for mobile */}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onClose}
+                    className="md:hidden text-slate-400 hover:text-white hover:bg-slate-800/50"
+                >
+                    <X className="w-5 h-5" />
+                </Button>
+            </div>
 
             {/* Navigation section */}
             <nav className="flex-1 px-3 py-6 space-y-1">
