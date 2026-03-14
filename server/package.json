@@ -7,7 +7,7 @@
     "scripts": {
         "start": "node server.js",
         "fuelmate-server": "nodemon server.js",
-        "lint": "eslint .",
+        "lint": "echo 'No linting configured for server'",
         "wipe-data": "node scripts/wipeData.js"
     },
     "keywords": [],

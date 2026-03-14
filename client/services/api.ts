@@ -70,6 +70,7 @@ export type User = {
   // Legacy/Compatibility
   id?: string;
   address?: string;
+  [key: string]: any;
 };
 
 export type Review = {

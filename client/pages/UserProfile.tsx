@@ -100,27 +100,16 @@ const UserProfile = () => {
         role: (user.role as 'customer' | 'station') || 'customer',
         joinDate: user.createdAt ? new Date(user.createdAt) : new Date(),
         avatar: user.avatar,
-        // @ts-ignore
         dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : undefined,
-        // @ts-ignore
         gender: user.gender,
-        // @ts-ignore
         addresses: user.addresses || [],
-        // @ts-ignore
         vehicles: user.vehicles || [],
-        // @ts-ignore
         businessName: user.businessName,
-        // @ts-ignore
         businessPhone: user.businessPhone,
-        // @ts-ignore
         fuelProvider: user.fuelProvider,
-        // @ts-ignore
         gstNumber: user.gstNumber,
-        // @ts-ignore
         pumpLocation: user.pumpLocation,
-        // @ts-ignore
         trucksNeeded: user.trucksNeeded,
-        // @ts-ignore
         driversNeeded: user.driversNeeded,
       });
     }
@@ -149,19 +138,12 @@ const UserProfile = () => {
       await updateProfile({
         name: profileData.name,
         phone: profileData.phone,
-        // @ts-ignore
         dob: profileData.dob,
-        // @ts-ignore
-        gender: profileData.gender,
-        // @ts-ignore
-        addresses: profileData.addresses,
-        // @ts-ignore
-        vehicles: profileData.vehicles,
-        // @ts-ignore
+        gender: profileData.gender as any,
+        addresses: profileData.addresses as any,
+        vehicles: profileData.vehicles as any,
         businessName: profileData.businessName,
-        // @ts-ignore
         businessPhone: profileData.businessPhone,
-        // @ts-ignore
         pumpLocation: profileData.pumpLocation
       });
       setIsEditing(false);

@@ -47,7 +47,6 @@ const Header = () => {
   };
 
   const handleCopyReferCode = () => {
-    // @ts-ignore
     const referCode = `FUELMATE-${user?.id?.slice(0, 6).toUpperCase()}`;
     navigator.clipboard.writeText(referCode);
     toast({
@@ -129,7 +128,6 @@ const Header = () => {
                   <p className="text-sm text-gray-400 mb-2">Your Referral Code:</p>
                   <div className="flex items-center gap-2">
                     <code className="text-orange-400 font-mono text-sm">
-                      {/* @ts-ignore */}
                       FUELMATE-{user?.id?.slice(0, 6).toUpperCase()}
                     </code>
                     <Button

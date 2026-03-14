@@ -77,21 +77,15 @@ export default function Onboarding() {
                 ...prev,
                 name: user.name || '',
                 phone: user.phone || '',
-                // @ts-ignore
                 dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
-                // @ts-ignore
                 gender: user.gender || '',
-                // @ts-ignore
                 vehicles: user.vehicles && user.vehicles.length > 0 ? user.vehicles : prev.vehicles,
                 avatar: user.avatar || '',
                 addresses: user.addresses?.length ? user.addresses : prev.addresses,
                 businessName: user.businessName || '',
                 businessPhone: user.businessPhone || '',
-                // @ts-ignore
                 fuelProvider: user.fuelProvider || '',
-                // @ts-ignore
                 pumpLocation: (user.pumpLocation && typeof user.pumpLocation === 'object') ? { ...user.pumpLocation, coordinates: user.pumpLocation.coordinates || { lat: 0, lng: 0 } } : prev.pumpLocation,
-                // @ts-ignore
                 trucksNeeded: user.trucksNeeded || 0,
                 driversNeeded: user.driversNeeded || 0
             }));
@@ -110,14 +104,12 @@ export default function Onboarding() {
 
     const handleAddressChange = (index: number, field: string, value: string) => {
         const newAddresses = [...formData.addresses];
-        // @ts-ignore
         newAddresses[index] = { ...newAddresses[index], [field]: value };
         setFormData(prev => ({ ...prev, addresses: newAddresses }));
     };
 
     const handleVehicleChange = (index: number, field: string, value: string) => {
         const newVehicles = [...formData.vehicles];
-        // @ts-ignore
         newVehicles[index] = { ...newVehicles[index], [field]: value };
         setFormData(prev => ({ ...prev, vehicles: newVehicles }));
     };
