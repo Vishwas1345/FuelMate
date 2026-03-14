@@ -4,8 +4,8 @@ import logger from '../utils/logger.js';
 class OrderController {
     async getUserOrders(req, res) {
         try {
-            logger.info('Fetching user orders', { userId: req.user.id });
-            const orders = await orderService.getUserOrders(req.user.id);
+            logger.info('Fetching user orders', { userId: req.user.id, role: req.user.role });
+            const orders = await orderService.getUserOrders(req.user.id, req.user.role);
             logger.info('User orders fetched successfully', { userId: req.user.id, count: orders.length });
             res.json(orders);
         } catch (error) {
@@ -42,34 +42,34 @@ class OrderController {
 
     async placeOrder(req, res) {
         try {
-            logger.info('Placing new order', { 
-                userId: req.user.id, 
-                fuelType: req.body.fuelType, 
+            logger.info('Placing new order', {
+                userId: req.user.id,
+                fuelType: req.body.fuelType,
                 quantity: req.body.quantity,
-                stationId: req.body.stationId 
+                stationId: req.body.stationId
             });
-            
+
             const order = await orderService.placeOrder(req.body, req.user.id);
-            
-            logger.info('Order placed successfully', { 
-                userId: req.user.id, 
+
+            logger.info('Order placed successfully', {
+                userId: req.user.id,
                 orderId: order._id,
-                status: order.status 
+                status: order.status
             });
-            
+
             res.status(201).json({
                 success: true,
                 message: 'Order placed successfully',
                 order
             });
         } catch (error) {
-            logger.error('Error placing order', { 
-                error: error.message, 
-                stack: error.stack, 
+            logger.error('Error placing order', {
+                error: error.message,
+                stack: error.stack,
                 userId: req.user?.id,
-                code: error.code 
+                code: error.code
             });
-            res.status(error.status || 500).json({ 
+            res.status(error.status || 500).json({
                 success: false,
                 message: error.message,
                 code: error.code || 'ORDER_PLACEMENT_ERROR'

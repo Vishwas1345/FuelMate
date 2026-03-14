@@ -82,7 +82,7 @@ class UserService {
         return await User.find({
             role: 'station',
             isAvailable: true
-        }).select('businessName pumpLocation fuelProvider isAvailable fuelPrices avatar about history startingYear businessPhone email phone');
+        }).select('_id businessName pumpLocation fuelProvider isAvailable fuelPrices avatar about history startingYear businessPhone email phone');
     }
 
     async toggleAvailability(userId) {

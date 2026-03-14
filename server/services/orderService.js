@@ -1,7 +1,25 @@
 import Order from '../models/Order.js';
 
 class OrderService {
-    async getUserOrders(userId) {
+    async getUserOrders(userId, role) {
+        console.log('Fetching orders for role:', role, 'userId:', userId);
+        if (role === 'station') {
+            const orders = await Order.find({ stationId: userId })
+                .populate('userId', 'name email phone avatar')
+                .sort({ createdAt: -1 })
+                .lean();
+            console.log(`Found ${orders.length} orders for station ${userId}`);
+            if (orders.length > 0) {
+                console.log('First order stationId:', orders[0].stationId);
+                console.log('First order status:', orders[0].status);
+            }
+            return orders.map(order => ({
+                ...order,
+                customer: order.userId,
+                id: order._id.toString(),
+                _id: order._id.toString()
+            }));
+        }
         return await Order.find({ userId })
             .sort({ createdAt: -1 });
     }
@@ -67,6 +85,8 @@ class OrderService {
         // Calculate estimated delivery time (30 minutes from now)
         const estimatedDelivery = new Date(Date.now() + 1000 * 60 * 30);
 
+        console.log('Creating order with stationId:', orderData.stationId);
+
         // Create order with all validated data
         const order = await Order.create({
             userId,
@@ -96,7 +116,7 @@ class OrderService {
             throw error;
         }
 
-        if (order.userId.toString() !== userId.toString()) {
+        if (order.userId.toString() !== userId.toString() && (!order.stationId || order.stationId.toString() !== userId.toString())) {
             const error = new Error('Not authorized to update this order');
             error.status = 403;
             error.code = 'UNAUTHORIZED';

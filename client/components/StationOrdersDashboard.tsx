@@ -50,6 +50,7 @@ export const StationOrdersDashboard = () => {
         const fetchOrders = async () => {
             try {
                 const fetchedOrders = await api.getOrders().catch(() => []);
+                console.log('StationOrdersDashboard: Fetched orders:', fetchedOrders);
                 setOrders(fetchedOrders);
             } catch (error) {
                 console.error("Failed to fetch orders", error);
