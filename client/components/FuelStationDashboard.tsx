@@ -433,7 +433,7 @@ const FuelStationDashboard = () => {
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2 text-white">
               <Clock className="h-5 w-5 text-orange-500" />
@@ -446,7 +446,7 @@ const FuelStationDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2 text-white">
               <Truck className="h-5 w-5 text-blue-500" />
@@ -459,7 +459,7 @@ const FuelStationDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2 text-white">
               <Droplets className="h-5 w-5 text-green-500" />
@@ -474,7 +474,7 @@ const FuelStationDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2 text-white">
               <IndianRupee className="h-5 w-5 text-yellow-500" />
@@ -490,7 +490,7 @@ const FuelStationDashboard = () => {
 
       {/* Additional Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -503,7 +503,7 @@ const FuelStationDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>

@@ -127,7 +127,7 @@ export const StationDriversManager = () => {
                 </Card>
             </div>
 
-            <Card className="bg-slate-800 border-slate-700">
+            <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
                 <CardHeader>
                     <CardTitle className="text-white">Partner Roster</CardTitle>
                     <CardDescription className="text-slate-400">View and manage your station's delivery workforce</CardDescription>

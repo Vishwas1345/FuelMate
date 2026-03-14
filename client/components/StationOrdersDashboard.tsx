@@ -149,7 +149,7 @@ export const StationOrdersDashboard = () => {
 
             <div className="grid gap-6 md:grid-cols-12">
                 <div className="md:col-span-5 lg:col-span-4 space-y-6">
-                    <Card className="bg-slate-800 border-slate-700">
+                    <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
                         <CardHeader>
                             <CardTitle className="text-white">Order Queue</CardTitle>
                         </CardHeader>
@@ -263,7 +263,7 @@ export const StationOrdersDashboard = () => {
                 </div>
 
                 <div className="md:col-span-7 lg:col-span-8">
-                    <Card className="bg-slate-800 border-slate-700">
+                    <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
                         <CardHeader>
                             <CardTitle className="text-white">Order Details & Dispatch</CardTitle>
                         </CardHeader>
