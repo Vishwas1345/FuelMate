@@ -102,7 +102,7 @@ const Settings = () => {
   return (
     <div className="w-full">
 
-      <h1 className="text-2xl md:text-3xl font-bold text-white mb-6">Settings</h1>
+      <h1 className="text-2xl md:text-3xl font-semibold text-white mb-6">Settings</h1>
 
       <div className="grid gap-6">
         <Card className="bg-slate-900 border-slate-800 text-white">

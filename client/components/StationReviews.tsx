@@ -76,7 +76,7 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
                 <div className="lg:col-span-4 space-y-6">
                     <div className="bg-slate-900 border border-slate-800 p-8 rounded-lg text-center shadow-sm">
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-4">Partner Performance Index</p>
-                        <div className="text-6xl font-black text-white mb-2">{averageRating}</div>
+                        <div className="text-6xl font-semibold text-white mb-2">{averageRating}</div>
                         <div className="flex justify-center gap-1.5 mb-2 text-orange-500">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <Star
@@ -131,7 +131,7 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
             {/* List */}
             <div className="space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight">Review Logs</h3>
+                    <h3 className="text-xl font-semibold text-white uppercase tracking-tight">Review Logs</h3>
                     <Button variant="ghost" size="sm" className="text-slate-500 text-[10px] font-bold uppercase gap-2">
                         <Filter className="w-3 h-3" /> Filter: Most Recent
                     </Button>

@@ -59,7 +59,7 @@ const OrderTracking = ({ activeOrders, trackingOrderId, onTrackOrder }: OrderTra
   return (
     <Card className="bg-slate-900 border-slate-800 rounded-lg shadow-sm overflow-hidden">
       <CardHeader className="bg-slate-800/20 border-b border-slate-800 py-4">
-        <CardTitle className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+        <CardTitle className="text-sm font-semibold text-white uppercase tracking-widest flex items-center gap-2">
           <Navigation className="h-4 w-4 text-orange-500" /> Live Manifest
         </CardTitle>
       </CardHeader>
@@ -94,7 +94,7 @@ const OrderTracking = ({ activeOrders, trackingOrderId, onTrackOrder }: OrderTra
             {/* Logistic Progress */}
             <div className="space-y-4">
               <div className="flex justify-between items-end">
-                <span className={`text-[10px] font-black uppercase tracking-widest ${statusMap[selectedOrder.status].color}`}>
+                <span className={`text-[10px] font-semibold uppercase tracking-widest ${statusMap[selectedOrder.status].color}`}>
                   {statusMap[selectedOrder.status].label}
                 </span>
                 <span className="text-white font-mono text-xs">{getStatusProgress(selectedOrder.status)}%</span>
@@ -134,7 +134,7 @@ const OrderTracking = ({ activeOrders, trackingOrderId, onTrackOrder }: OrderTra
                     <Truck className="h-5 w-5 text-orange-500" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Courier In-Charge</p>
+                    <p className="text-[9px] text-slate-500 font-semibold uppercase tracking-widest">Courier In-Charge</p>
                     <p className="text-sm font-bold text-white uppercase">{selectedOrder.driver.name}</p>
                   </div>
                   <div className="flex gap-2">
@@ -151,7 +151,7 @@ const OrderTracking = ({ activeOrders, trackingOrderId, onTrackOrder }: OrderTra
 
             {/* Live Telemetry View */}
             <div className="space-y-3">
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em]">Operational Telemetry</p>
+              <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-[0.2em]">Operational Telemetry</p>
               <div className="h-48 rounded-lg overflow-hidden border border-slate-800 shadow-inner bg-slate-950">
                 <MapboxMap
                   address={selectedOrder.deliveryAddress}

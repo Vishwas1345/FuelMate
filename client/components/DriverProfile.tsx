@@ -94,7 +94,7 @@ const DriverProfile = () => {
     <div className="container px-4 py-6 md:py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Driver Profile</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold text-white">Driver Profile</h1>
           <p className="text-gray-400">Manage your profile and track your performance</p>
         </div>
       </div>

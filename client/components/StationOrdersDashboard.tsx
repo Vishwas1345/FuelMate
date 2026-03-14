@@ -140,7 +140,7 @@ export const StationOrdersDashboard = () => {
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight mb-2">
+                    <h1 className="text-3xl font-semibold text-white tracking-tight mb-2">
                         Manage <span className="text-[#f97316]">Orders</span>
                     </h1>
                     <p className="text-slate-400 font-medium tracking-tight">Review, accept, and dispatch fuel deliveries</p>

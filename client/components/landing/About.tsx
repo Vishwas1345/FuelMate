@@ -22,7 +22,7 @@ const About = () => {
                             Intelligence Dashboard
                         </div>
 
-                        <h2 className="text-4xl sm:text-5xl font-black text-white leading-tight uppercase tracking-tighter">
+                        <h2 className="text-4xl sm:text-5xl font-semibold text-white leading-tight uppercase tracking-tighter">
                             Fuel Logistic
                             <span className="block text-orange-500">
                                 REIMAGINED
@@ -38,11 +38,11 @@ const About = () => {
                         {/* Values */}
                         <div className="grid grid-cols-2 gap-4 pt-6">
                             <div className="space-y-2 border-l-2 border-slate-800 pl-4">
-                                <div className="text-white font-black uppercase text-xs tracking-widest">Core Vision</div>
+                                <div className="text-white font-semibold uppercase text-xs tracking-widest">Core Vision</div>
                                 <p className="text-slate-500 text-xs font-medium">Global energy accessibility and distribution optimization.</p>
                             </div>
                             <div className="space-y-2 border-l-2 border-slate-800 pl-4">
-                                <div className="text-white font-black uppercase text-xs tracking-widest">Compliance</div>
+                                <div className="text-white font-semibold uppercase text-xs tracking-widest">Compliance</div>
                                 <p className="text-slate-500 text-xs font-medium">Tier-1 security and certified energy handling standards.</p>
                             </div>
                         </div>
@@ -51,7 +51,7 @@ const About = () => {
                     {/* Right Content - Stats */}
                     <div className="space-y-6">
                         <div className="bg-slate-900 border border-slate-800 rounded-lg p-8">
-                            <h3 className="text-sm font-black text-white mb-8 uppercase tracking-widest">Operational Metadata</h3>
+                            <h3 className="text-sm font-semibold text-white mb-8 uppercase tracking-widest">Operational Metadata</h3>
 
                             <div className="grid grid-cols-2 gap-6">
                                 {stats.map((stat, index) => (
@@ -63,7 +63,7 @@ const About = () => {
                                             {stat.icon}
                                         </div>
                                         <div>
-                                            <div className="text-3xl font-black text-white tracking-tighter">{stat.value}</div>
+                                            <div className="text-3xl font-semibold text-white tracking-tighter">{stat.value}</div>
                                             <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{stat.label}</div>
                                         </div>
                                     </div>
@@ -73,7 +73,7 @@ const About = () => {
 
                         {/* Team Section */}
                         <div className="bg-slate-900 border border-slate-800 rounded-lg p-8">
-                            <h3 className="text-sm font-black text-white mb-4 uppercase tracking-widest">Partner Operations</h3>
+                            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-widest">Partner Operations</h3>
                             <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">
                                 Join our network of certified energy distribution partners. Scale your station's reach through our logistics layer.
                             </p>

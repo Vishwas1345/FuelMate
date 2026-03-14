@@ -268,7 +268,7 @@ const FuelStationDashboard = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight mb-2">
+          <h1 className="text-3xl font-semibold text-white tracking-tight mb-2">
             Operations <span className="text-[#f97316]">Console</span>
           </h1>
           <p className="text-slate-400 font-medium tracking-tight">Real-time terminal management for {user?.businessName || user?.name}</p>
@@ -276,7 +276,7 @@ const FuelStationDashboard = () => {
 
         <div className="flex items-center gap-4 bg-[#0a101f] border border-slate-800 p-3 rounded-xl px-6 shadow-xl">
           <div className="flex flex-col items-end mr-4">
-            <span className={`text-[10px] font-black tracking-widest ${isAvailable ? 'text-green-500' : 'text-slate-500'}`}>
+            <span className={`text-[10px] font-semibold tracking-widest ${isAvailable ? 'text-green-500' : 'text-slate-500'}`}>
               {isAvailable ? 'TERMINAL ONLINE' : 'TERMINAL OFFLINE'}
             </span>
             <span className="text-[10px] text-slate-600 font-bold uppercase tracking-tighter">
@@ -295,13 +295,13 @@ const FuelStationDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+            <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
               <IndianRupee className="h-3 w-3 text-[#f97316]" />
               Total Revenue
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-white mb-1">
+            <div className="text-3xl font-semibold text-white mb-1">
               ₹{dashboardStats?.totalRevenue?.toLocaleString() || todayStats.totalRevenue.toFixed(2)}
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-green-500 uppercase tracking-wider">
@@ -313,13 +313,13 @@ const FuelStationDashboard = () => {
 
         <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+            <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
               <Droplets className="h-3 w-3 text-orange-500" />
               Petrol Sold
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-white mb-1">
+            <div className="text-3xl font-semibold text-white mb-1">
               {dashboardStats?.petrolSold?.toFixed(1) || (todayStats.totalFuel * 0.6).toFixed(1)} <span className="text-sm font-bold text-slate-500 tracking-normal">LT</span>
             </div>
             <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Inventory Throughput</p>
@@ -328,13 +328,13 @@ const FuelStationDashboard = () => {
 
         <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+            <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
               <Droplets className="h-3 w-3 text-blue-500" />
               Diesel Sold
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-white mb-1">
+            <div className="text-3xl font-semibold text-white mb-1">
               {dashboardStats?.dieselSold?.toFixed(1) || (todayStats.totalFuel * 0.4).toFixed(1)} <span className="text-sm font-bold text-slate-500 tracking-normal">LT</span>
             </div>
             <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Inventory Throughput</p>
@@ -343,13 +343,13 @@ const FuelStationDashboard = () => {
 
         <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+            <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
               <Truck className="h-3 w-3 text-green-500" />
               Pending Logistics
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-black text-white mb-1">
+            <div className="text-3xl font-semibold text-white mb-1">
               {orders.filter(o => o.status === 'confirmed' || o.status === 'in-transit').length}
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-blue-500 uppercase tracking-wider">
@@ -364,7 +364,7 @@ const FuelStationDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         <Card className="lg:col-span-2 bg-[#0a101f] border-slate-800 shadow-xl">
           <CardHeader className="border-b border-slate-900/50 pb-4">
-            <CardTitle className="text-sm font-black text-white uppercase tracking-[0.2em] flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-white uppercase tracking-[0.2em] flex items-center gap-2">
               <BarChart3 className="text-blue-500 w-4 h-4" /> Operational Metrics
             </CardTitle>
           </CardHeader>
@@ -377,11 +377,11 @@ const FuelStationDashboard = () => {
                       className="w-full bg-[#f97316]/10 group-hover:bg-[#f97316]/30 rounded-lg transition-all relative border border-white/5"
                       style={{ height: `${Math.max((d.amount / (Math.max(...dashboardStats.graphData.map(x => x.amount)) || 1)) * 100, 10)}%` }}
                     >
-                      <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white text-[#020817] text-[10px] font-black px-2 py-1 rounded shadow-xl whitespace-nowrap z-10 transition-all">
+                      <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white text-[#020817] text-[10px] font-semibold px-2 py-1 rounded shadow-xl whitespace-nowrap z-10 transition-all">
                         ₹{d.amount}
                       </div>
                     </div>
-                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-tighter w-full text-center group-hover:text-slate-400 transition-colors">
+                    <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-tighter w-full text-center group-hover:text-slate-400 transition-colors">
                       {new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })}
                     </span>
                   </div>
@@ -391,7 +391,7 @@ const FuelStationDashboard = () => {
                   <div className="w-16 h-16 rounded-full border-2 border-slate-800 flex items-center justify-center">
                     <BarChart3 className="w-8 h-8" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest">Awaiting terminal data</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest">Awaiting terminal data</span>
                 </div>
               )}
             </div>
@@ -400,7 +400,7 @@ const FuelStationDashboard = () => {
 
         <Card className="bg-[#0a101f] border-slate-800 shadow-xl flex flex-col">
           <CardHeader className="border-b border-slate-900/50 pb-4">
-            <CardTitle className="text-sm font-black text-white uppercase tracking-[0.2em] flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-white uppercase tracking-[0.2em] flex items-center gap-2">
               <Zap className="text-yellow-500 w-4 h-4" /> Logistics AI
             </CardTitle>
           </CardHeader>
@@ -408,7 +408,7 @@ const FuelStationDashboard = () => {
             <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
               <div className="flex items-center gap-3 mb-2">
                 <Target className="w-4 h-4 text-green-500" />
-                <p className="text-[11px] font-black text-white uppercase tracking-wider">Demand Surge Detected</p>
+                <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Demand Surge Detected</p>
               </div>
               <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Diesel manifest trends indicate a 24% volume increase this weekend. Review inventory buffer.</p>
             </div>
@@ -416,7 +416,7 @@ const FuelStationDashboard = () => {
             <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
               <div className="flex items-center gap-3 mb-2">
                 <Clock className="w-4 h-4 text-orange-500" />
-                <p className="text-[11px] font-black text-white uppercase tracking-wider">Logistics Optimization</p>
+                <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Logistics Optimization</p>
               </div>
               <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Peak operational window identified: 18:00 - 21:00. Pre-assign drivers for manifest speed.</p>
             </div>
@@ -424,7 +424,7 @@ const FuelStationDashboard = () => {
             <div className="mt-auto pt-4 text-center">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#f97316]/5 border border-[#f97316]/10 rounded-full">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#f97316] animate-pulse" />
-                <span className="text-[9px] font-black text-[#f97316] uppercase tracking-widest">AI Core Active</span>
+                <span className="text-[9px] font-semibold text-[#f97316] uppercase tracking-widest">AI Core Active</span>
               </div>
             </div>
           </CardContent>
@@ -441,7 +441,7 @@ const FuelStationDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">{pendingOrders.length}</div>
+            <div className="text-3xl font-semibold text-white">{pendingOrders.length}</div>
             <p className="text-sm text-gray-400">Awaiting confirmation</p>
           </CardContent>
         </Card>
@@ -454,7 +454,7 @@ const FuelStationDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">{activeOrders.length}</div>
+            <div className="text-3xl font-semibold text-white">{activeOrders.length}</div>
             <p className="text-sm text-gray-400">Currently in progress</p>
           </CardContent>
         </Card>
@@ -467,7 +467,7 @@ const FuelStationDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">{todayStats.totalFuel.toFixed(2)}L</div>
+            <div className="text-3xl font-semibold text-white">{todayStats.totalFuel.toFixed(2)}L</div>
             <p className="text-sm text-gray-400">
               {todayStats.deliveredOrders} completed order{todayStats.deliveredOrders !== 1 ? 's' : ''}
             </p>
@@ -482,7 +482,7 @@ const FuelStationDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">₹{todayStats.totalRevenue.toFixed(2)}</div>
+            <div className="text-3xl font-semibold text-white">₹{todayStats.totalRevenue.toFixed(2)}</div>
             <p className="text-sm text-gray-400">From completed orders</p>
           </CardContent>
         </Card>

@@ -15,7 +15,7 @@ const StationContact: React.FC<StationContactProps> = ({ station }) => {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 {/* Contact Column */}
                 <div className="lg:col-span-2 space-y-4">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight mb-8">Official Contact Points</h3>
+                    <h3 className="text-xl font-semibold text-white uppercase tracking-tight mb-8">Official Contact Points</h3>
 
                     <div className="bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-sm group">
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-3">Support Line</p>
@@ -74,7 +74,7 @@ const StationContact: React.FC<StationContactProps> = ({ station }) => {
                 <div className="lg:col-span-3">
                     <div className="bg-slate-900 border border-slate-800 rounded-lg overflow-hidden h-full min-h-[500px] relative shadow-2xl">
                         <div className="absolute top-6 left-6 z-10">
-                            <div className="bg-slate-950/90 backdrop-blur-md px-4 py-2 rounded border border-slate-800 flex items-center gap-3 text-[10px] font-black text-white uppercase tracking-widest">
+                            <div className="bg-slate-950/90 backdrop-blur-md px-4 py-2 rounded border border-slate-800 flex items-center gap-3 text-[10px] font-semibold text-white uppercase tracking-widest">
                                 <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
                                 Precision Tracking Active
                             </div>

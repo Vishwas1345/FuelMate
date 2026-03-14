@@ -281,9 +281,9 @@ const UserProfile = () => {
         <div className="lg:col-span-3">
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="bg-[#0a101f] border border-slate-800 p-1 h-12 rounded-lg w-auto inline-flex">
-              <TabsTrigger value="overview" className="h-full rounded-md px-6 text-[11px] font-black uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Overview</TabsTrigger>
-              <TabsTrigger value="orders" className="h-full rounded-md px-6 text-[11px] font-black uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Orders & History</TabsTrigger>
-              <TabsTrigger value="settings" className="h-full rounded-md px-6 text-[11px] font-black uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Settings</TabsTrigger>
+              <TabsTrigger value="overview" className="h-full rounded-md px-6 text-[11px] font-semibold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Overview</TabsTrigger>
+              <TabsTrigger value="orders" className="h-full rounded-md px-6 text-[11px] font-semibold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Orders & History</TabsTrigger>
+              <TabsTrigger value="settings" className="h-full rounded-md px-6 text-[11px] font-semibold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Settings</TabsTrigger>
             </TabsList>
 
             {/* OVERVIEW TAB */}

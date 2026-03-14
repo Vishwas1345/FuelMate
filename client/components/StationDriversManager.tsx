@@ -73,7 +73,7 @@ export const StationDriversManager = () => {
         <div className="w-full">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight mb-2">
+                    <h1 className="text-3xl font-semibold text-white tracking-tight mb-2">
                         Delivery <span className="text-[#f97316]">Partners</span>
                     </h1>
                     <p className="text-slate-400 font-medium tracking-tight">Manage partner payrolls, leaves, and activity</p>
@@ -86,13 +86,13 @@ export const StationDriversManager = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                        <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
                             <User className="h-3 w-3 text-[#f97316]" />
                             Total Partners
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-black text-white mb-1">
+                        <div className="text-3xl font-semibold text-white mb-1">
                             {drivers.length}
                         </div>
                     </CardContent>
@@ -100,13 +100,13 @@ export const StationDriversManager = () => {
 
                 <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                        <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
                             <Car className="h-3 w-3 text-green-500" />
                             Active Today
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-black text-white mb-1">
+                        <div className="text-3xl font-semibold text-white mb-1">
                             {drivers.filter(d => d.status === 'Active').length}
                         </div>
                     </CardContent>
@@ -114,13 +114,13 @@ export const StationDriversManager = () => {
 
                 <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                        <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
                             <Wallet className="h-3 w-3 text-blue-500" />
                             Monthly Payroll
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-black text-white mb-1">
+                        <div className="text-3xl font-semibold text-white mb-1">
                             ₹{(drivers.reduce((acc, curr) => acc + curr.salary, 0)).toLocaleString()}
                         </div>
                     </CardContent>
@@ -157,15 +157,15 @@ export const StationDriversManager = () => {
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full md:w-auto mt-4 md:mt-0">
                                     <div className="flex flex-col border-l border-slate-800 pl-4">
-                                        <span className="text-[10px] uppercase font-black tracking-wider text-slate-500 mb-1">Base Salary</span>
+                                        <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500 mb-1">Base Salary</span>
                                         <span className="text-white font-bold">₹{driver.salary.toLocaleString()}/mo</span>
                                     </div>
                                     <div className="flex flex-col border-l border-slate-800 pl-4">
-                                        <span className="text-[10px] uppercase font-black tracking-wider text-slate-500 mb-1">Leaves Used</span>
+                                        <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500 mb-1">Leaves Used</span>
                                         <span className="text-white font-bold">{driver.leavesUsed} <span className="text-slate-500">/ {driver.leavesTotal}</span></span>
                                     </div>
                                     <div className="flex flex-col border-l border-slate-800 pl-4 col-span-2 md:col-span-1">
-                                        <span className="text-[10px] uppercase font-black tracking-wider text-slate-500 mb-1">Trips Today</span>
+                                        <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500 mb-1">Trips Today</span>
                                         <span className="text-white font-bold">{driver.tripsToday}</span>
                                     </div>
                                 </div>

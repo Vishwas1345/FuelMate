@@ -29,7 +29,7 @@ const StationAbout: React.FC<StationAboutProps> = ({ station }) => {
                     </div>
                     <div>
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">In Operation Since</p>
-                        <p className="text-white font-black text-xl">{station.startingYear || "N/A"}</p>
+                        <p className="text-white font-semibold text-xl">{station.startingYear || "N/A"}</p>
                     </div>
                 </div>
                 <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg shadow-sm flex items-center gap-4">
@@ -38,7 +38,7 @@ const StationAbout: React.FC<StationAboutProps> = ({ station }) => {
                     </div>
                     <div>
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Business Type</p>
-                        <p className="text-white font-black text-xl">Fuel Partner</p>
+                        <p className="text-white font-semibold text-xl">Fuel Partner</p>
                     </div>
                 </div>
                 <div className="bg-slate-900 border border-slate-800 p-6 rounded-lg shadow-sm flex items-center gap-4">
@@ -47,7 +47,7 @@ const StationAbout: React.FC<StationAboutProps> = ({ station }) => {
                     </div>
                     <div>
                         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Verification</p>
-                        <p className="text-green-500 font-black text-xl">CERTIFIED</p>
+                        <p className="text-green-500 font-semibold text-xl">CERTIFIED</p>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@ const StationAbout: React.FC<StationAboutProps> = ({ station }) => {
                 {/* About Section */}
                 {station.about && (
                     <div className="p-10 rounded-lg bg-slate-900 border border-slate-800 shadow-sm">
-                        <h3 className="text-sm font-black text-white mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
+                        <h3 className="text-sm font-semibold text-white mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
                             <Info className="w-4 h-4 text-orange-500" /> Organizational Overview
                         </h3>
                         <p className="text-slate-400 leading-8 text-lg whitespace-pre-wrap font-medium">
@@ -69,7 +69,7 @@ const StationAbout: React.FC<StationAboutProps> = ({ station }) => {
                 {station.history && (
                     <div className="p-10 rounded-lg bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-[60px] pointer-events-none" />
-                        <h3 className="text-sm font-black text-white mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
+                        <h3 className="text-sm font-semibold text-white mb-6 uppercase tracking-[0.2em] flex items-center gap-3">
                             <History className="w-4 h-4 text-orange-500" /> Operational Legacy
                         </h3>
                         <div className="border-l-2 border-slate-800 pl-8 ml-2">

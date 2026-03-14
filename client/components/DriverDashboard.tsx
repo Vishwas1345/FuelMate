@@ -191,7 +191,7 @@ const DriverDashboard = () => {
     <div className="container px-4 py-6 md:py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Driver Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold text-white">Driver Dashboard</h1>
           <p className="text-gray-400">Manage your deliveries</p>
         </div>
       </div>
@@ -206,7 +206,7 @@ const DriverDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">{driverStats.todayDeliveries}</div>
+            <div className="text-3xl font-semibold text-white">{driverStats.todayDeliveries}</div>
             <p className="text-sm text-gray-400">Completed today</p>
           </CardContent>
         </Card>
@@ -219,7 +219,7 @@ const DriverDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">{driverStats.todayFuelDelivered.toFixed(2)}L</div>
+            <div className="text-3xl font-semibold text-white">{driverStats.todayFuelDelivered.toFixed(2)}L</div>
             <p className="text-sm text-gray-400">From completed deliveries</p>
           </CardContent>
         </Card>
@@ -232,7 +232,7 @@ const DriverDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">₹{driverStats.todayEarnings.toFixed(2)}</div>
+            <div className="text-3xl font-semibold text-white">₹{driverStats.todayEarnings.toFixed(2)}</div>
             <p className="text-sm text-gray-400">From completed deliveries</p>
           </CardContent>
         </Card>
@@ -245,7 +245,7 @@ const DriverDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-white">₹{driverStats.averageOrderValue.toFixed(2)}</div>
+            <div className="text-3xl font-semibold text-white">₹{driverStats.averageOrderValue.toFixed(2)}</div>
             <p className="text-sm text-gray-400">Per delivery</p>
           </CardContent>
         </Card>
