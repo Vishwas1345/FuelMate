@@ -73,15 +73,6 @@
     line-height: 1.2;
   }
 
-  /* Reduce excessive border radius globally for professional look */
-  .rounded-xl {
-    border-radius: 0.375rem;
-  }
-
-  .rounded-2xl {
-    border-radius: 0.5rem;
-  }
-
   /* Custom fuel app colors */
   .fuel-primary {
     @apply bg-orange-500 text-white;
