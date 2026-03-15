@@ -55,13 +55,8 @@ const AuthCallback = () => {
                 // Redirect based on profile completion
                 const userObj = userData.user || userData;
 
-                if (!userObj.isProfileComplete) {
-                    navigate('/onboarding');
-                } else if (userObj.role === 'station') {
-                    navigate('/station');
-                } else {
-                    navigate('/customer');
-                }
+                // Redirect to Under Construction as the main app is still building
+                navigate('/under-construction');
             } catch (error) {
                 console.error('OAuth callback error:', error);
                 setError('Authentication failed. Please try again.');

@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Onboarding from "./pages/Onboarding";
+import UnderConstruction from "./pages/UnderConstruction";
 import ChatWidget from "@/components/ChatWidget";
 import AppLayout from "@/components/AppLayout";
 
@@ -45,6 +46,14 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/login" element={<Navigate to="/auth" replace />} />
+          <Route
+            path="/under-construction"
+            element={
+              <ProtectedRoute>
+                <UnderConstruction />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/onboarding"
             element={
