@@ -1,10 +1,14 @@
 import 'dotenv/config';
 
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import routes from './routes/index.route.js';
 import connectDB from './lib/mongodb.js';
@@ -36,7 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
   logger.info('Health check endpoint accessed');
   res.json({ message: 'FuelMate API is running 🚀' });
 });
