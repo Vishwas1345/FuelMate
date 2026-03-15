@@ -4,11 +4,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Fuel, MapPin, Car, ChevronRight, ShoppingCart, Clock, Zap, TrendingDown, Info, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Fuel, MapPin, Car, ChevronRight, ShoppingCart, Clock, Zap, TrendingDown, Info, CheckCircle2, AlertCircle, Plus, Compass } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import PaymentDialog from './PaymentDialog';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface FuelOrderFormProps {
   onSubmit: (data: any) => void;
@@ -16,13 +17,22 @@ interface FuelOrderFormProps {
 }
 
 const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const [fuelType, setFuelType] = useState<'petrol' | 'diesel'>('petrol');
   const [quantity, setQuantity] = useState<string>('5');
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [selectedVehicle, setSelectedVehicle] = useState<string>('');
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [newAddress, setNewAddress] = useState({
+    label: 'home',
+    addressLine: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'India'
+  });
 
   useEffect(() => {
     if (user?.addresses?.length) {
@@ -63,6 +73,26 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
   }, [fuelType, quantity, station, user, prices]);
 
   // Quick quantity suggestions based on vehicle type
+  const handleAddAddress = async () => {
+    if (!newAddress.addressLine || !newAddress.city) return;
+    try {
+      const updatedAddresses = [...(user.addresses || []), newAddress];
+      await updateProfile({ addresses: updatedAddresses });
+      setSelectedAddress(newAddress.addressLine + ", " + newAddress.city);
+      setIsAddressDialogOpen(false);
+      setNewAddress({
+        label: 'home',
+        addressLine: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: 'India'
+      });
+    } catch (error) {
+      console.error("Failed to add address", error);
+    }
+  };
+
   const getQuickQuantities = () => {
     const selectedVeh = user?.vehicles?.find((v: any) => v.plateNumber === selectedVehicle);
     if (selectedVeh?.type === 'bike') return ['3', '5', '7', '10'];
@@ -109,14 +139,14 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
           <div className="col-span-12 lg:col-span-7 space-y-6">
             
             {/* Fuel Type Selection - Enhanced */}
-            <Card className="bg-slate-900/50 border-slate-800/50 rounded-md">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
-                  <Fuel className="w-4 h-4 text-orange-500" />
-                  Select Fuel Type
+            <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl rounded-xl overflow-hidden">
+              <CardHeader className="border-b border-slate-800/50 pb-4">
+                <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Fuel className="w-4 h-4 text-[#f97316]" />
+                  Fuel Selection
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -127,11 +157,11 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                         : 'border-slate-800/50 bg-slate-900/30 hover:border-slate-700'
                     }`}
                   >
-                    {fuelType === 'petrol' && (
-                      <div className="absolute top-2 right-2">
-                        <CheckCircle2 className="w-5 h-5 text-orange-500" />
-                      </div>
-                    )}
+                  {fuelType === 'petrol' && (
+                    <div className="absolute top-3 right-3">
+                      <CheckCircle2 className="w-4 h-4 text-[#f97316]" />
+                    </div>
+                  )}
                     <div className="flex items-center justify-between">
                       <div>
                         <p className={`font-semibold text-lg mb-1 ${fuelType === 'petrol' ? 'text-white' : 'text-slate-300'}`}>
@@ -172,24 +202,24 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
             </Card>
 
             {/* Quantity Selector - Enhanced */}
-            <Card className="bg-slate-900/50 border-slate-800/50 rounded-md">
-              <CardHeader className="pb-3">
+            <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl rounded-xl overflow-hidden">
+              <CardHeader className="border-b border-slate-800/50 pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-orange-500" />
-                    Quantity (Liters)
+                  <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-[#f97316]" />
+                    Load Capacity (Liters)
                   </CardTitle>
                   <Tooltip>
                     <TooltipTrigger>
-                      <Info className="w-4 h-4 text-slate-500 hover:text-slate-400" />
+                      <Info className="w-3.5 h-3.5 text-slate-500 hover:text-slate-400" />
                     </TooltipTrigger>
-                    <TooltipContent className="bg-slate-900 border-slate-800 text-white">
-                      <p className="text-sm">Maximum 20 liters per order</p>
+                    <TooltipContent className="bg-slate-900 border-slate-800 text-[10px] text-white">
+                      <p className="font-bold uppercase tracking-widest">Protocol Limit: 20L</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="pt-6 space-y-6">
                 <div className="relative">
                   <Input
                     type="number"
@@ -242,30 +272,97 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
             </Card>
 
             {/* Delivery Details - Clean and Simple */}
-            <Card className="bg-slate-900/50 border-slate-800/50 rounded-md">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-orange-500" />
-                  Delivery Details
+            <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl rounded-xl overflow-hidden">
+              <CardHeader className="border-b border-slate-800/50 pb-4 flex flex-row items-center justify-between">
+                <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-[#f97316]" />
+                  Delivery adress
                 </CardTitle>
+                <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-7 text-[9px] font-bold uppercase tracking-widest text-[#f97316] hover:bg-[#f97316]/5 border border-[#f97316]/20 px-2">
+                      <Plus className="w-3 h-3 mr-1" /> Add Node
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-[#0a101f] border-slate-800 text-white rounded-2xl shadow-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-white uppercase tracking-widest text-sm font-bold">New Delivery Node</DialogTitle>
+                      <DialogDescription className="text-slate-500 text-xs">Define a new operational coordinate for fuel drops.</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label className="text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Label</Label>
+                        <Select value={newAddress.label} onValueChange={(val) => setNewAddress({ ...newAddress, label: val })}>
+                          <SelectTrigger className="col-span-3 bg-[#020817] border-slate-800 text-white rounded-xl h-11">
+                            <SelectValue placeholder="Node Type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#0a101f] border-slate-800 text-white">
+                            <SelectItem value="home">Home Base</SelectItem>
+                            <SelectItem value="work">Operation Center</SelectItem>
+                            <SelectItem value="other">Secondary Node</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <Label className="text-right text-[10px] font-bold uppercase tracking-widest text-slate-500">Address</Label>
+                        <Input
+                          value={newAddress.addressLine}
+                          onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
+                          className="col-span-3 bg-[#020817] border-slate-800 text-white rounded-xl h-11"
+                          placeholder="Sector, Landmark"
+                        />
+                      </div>
+                      <div className="flex gap-4">
+                         <div className="flex-1 space-y-2">
+                             <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">City</Label>
+                             <Input
+                              value={newAddress.city}
+                              onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+                              className="bg-[#020817] border-slate-800 text-white rounded-xl h-11"
+                              placeholder="City"
+                             />
+                         </div>
+                         <div className="flex-1 space-y-2">
+                             <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Zip</Label>
+                             <Input
+                              value={newAddress.zipCode}
+                              onChange={(e) => setNewAddress({ ...newAddress, zipCode: e.target.value })}
+                              className="bg-[#020817] border-slate-800 text-white rounded-xl h-11"
+                              placeholder="6-Digit"
+                             />
+                         </div>
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="ghost" onClick={() => setIsAddressDialogOpen(false)} className="text-slate-500 uppercase tracking-widest text-[10px] font-bold hover:bg-slate-800/50">Abort</Button>
+                      <Button onClick={handleAddAddress} className="bg-[#f97316] hover:bg-[#f97316]/90 text-white uppercase tracking-widest text-[10px] font-bold px-6 shadow-lg shadow-orange-500/20">Establish Node</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </CardHeader>
-              <CardContent className="pt-0">
+              <CardContent className="pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Delivery Address */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-400">Delivery Address</Label>
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">End Node Address</Label>
                     <Select value={selectedAddress} onValueChange={setSelectedAddress}>
-                      <SelectTrigger className="bg-slate-950/50 border-slate-800/50 text-white h-11 rounded-md pl-3">
-                        <SelectValue placeholder="Select address" />
+                      <SelectTrigger className="bg-[#020817] border-slate-800/60 text-white h-12 rounded-xl pl-3 shadow-inner">
+                        <SelectValue placeholder="Target Node" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                      <SelectContent className="bg-[#0a101f] border-slate-800 text-white shadow-2xl rounded-xl">
                         {user?.addresses?.map((addr: any, i: number) => (
-                          <SelectItem key={i} value={addr.addressLine + ", " + addr.city} className="pl-3">
-                            <div className="flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
-                              <div>
-                                <p className="font-medium text-sm capitalize">{addr.label}</p>
-                                <p className="text-xs text-slate-400 truncate">{addr.addressLine}</p>
+                          <SelectItem key={i} value={addr.addressLine + ", " + addr.city} className="focus:bg-slate-800/50 focus:text-white py-3 cursor-pointer">
+                            <div className="flex items-start gap-3 w-full max-w-[280px]">
+                              <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                                <MapPin className="w-3.5 h-3.5 text-[#f97316]" />
+                              </div>
+                              <div className="flex-1 overflow-hidden">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="font-bold text-[10px] uppercase tracking-wider text-white capitalize">{addr.label}</span>
+                                  <div className="h-1 w-1 rounded-full bg-slate-700" />
+                                  <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">{addr.city}</span>
+                                </div>
+                                <p className="text-[11px] text-slate-400 font-medium truncate">{addr.addressLine}</p>
                               </div>
                             </div>
                           </SelectItem>
@@ -281,20 +378,26 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                   </div>
 
                   {/* Vehicle */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-400">Vehicle</Label>
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Operational Unit</Label>
                     <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
-                      <SelectTrigger className="bg-slate-950/50 border-slate-800/50 text-white h-11 rounded-md pl-3">
-                        <SelectValue placeholder="Select vehicle" />
+                      <SelectTrigger className="bg-[#020817] border-slate-800/60 text-white h-12 rounded-xl pl-3 shadow-inner">
+                        <SelectValue placeholder="Select Unit" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-900 border-slate-800 text-white">
+                      <SelectContent className="bg-[#0a101f] border-slate-800 text-white shadow-2xl rounded-xl">
                         {user?.vehicles?.map((v: any, i: number) => (
-                          <SelectItem key={i} value={v.plateNumber} className="pl-3">
-                            <div className="flex items-center gap-1.5">
-                              <Car className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
-                              <div>
-                                <p className="font-medium text-sm capitalize truncate">{v.model}</p>
-                                <p className="text-xs text-slate-400 truncate">{v.plateNumber}</p>
+                          <SelectItem key={i} value={v.plateNumber} className="focus:bg-slate-800/50 focus:text-white py-3 cursor-pointer">
+                            <div className="flex items-start gap-3 w-full max-w-[280px]">
+                              <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                                <Car className="w-3.5 h-3.5 text-blue-500" />
+                              </div>
+                              <div className="flex-1 overflow-hidden">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="font-bold text-[10px] uppercase tracking-wider text-white capitalize">{v.model}</span>
+                                  <div className="h-1 w-1 rounded-full bg-slate-700" />
+                                  <span className="text-[9px] text-blue-500 font-bold uppercase tracking-widest">{v.type}</span>
+                                </div>
+                                <p className="text-[11px] text-slate-500 font-mono font-medium tracking-wider uppercase">{v.plateNumber}</p>
                               </div>
                             </div>
                           </SelectItem>
@@ -307,16 +410,16 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
             </Card>
 
             {/* Value Features Card */}
-            <Card className="bg-gradient-to-br from-orange-500/10 to-blue-500/10 border-orange-500/20 rounded-md">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-orange-500/20 rounded-md">
-                    <TrendingDown className="w-5 h-5 text-orange-500" />
+            <Card className="bg-[#0a101f] border-slate-800 shadow-xl overflow-hidden">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-[#f97316]/10 border border-[#f97316]/20 flex items-center justify-center shrink-0">
+                    <TrendingDown className="w-5 h-5 text-[#f97316]" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-white mb-1">Time & Money Saved</p>
-                    <p className="text-xs text-slate-400">
-                      Save approximately {estimatedDeliveryTime} minutes and ₹{savings.toFixed(0)} by ordering online instead of visiting the station.
+                  <div className="flex-1 space-y-1">
+                    <p className="text-[10px] font-bold text-white uppercase tracking-widest opacity-90">Efficiency Metrics</p>
+                    <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                      Optimizing operations will save approximately {estimatedDeliveryTime} minutes and ₹{savings.toFixed(0)} compared to traditional station transit.
                     </p>
                   </div>
                 </div>
@@ -326,14 +429,14 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
 
           {/* Right Column: Order Summary - Enhanced */}
           <div className="col-span-12 lg:col-span-5">
-            <Card className="bg-slate-900/50 border-slate-800/50 rounded-md overflow-hidden flex flex-col h-full sticky top-6">
-              <CardHeader className="bg-slate-800/30 border-b border-slate-800/50">
+            <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-xl overflow-hidden flex flex-col h-full sticky top-6">
+              <CardHeader className="border-b border-slate-800/50 pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-semibold text-white flex items-center gap-2">
-                    <ShoppingCart className="w-4 h-4 text-orange-500" />
-                    Order Summary
+                  <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
+                    <ShoppingCart className="w-4 h-4 text-[#f97316]" />
+                    Manifest Summary
                   </CardTitle>
-                  <Badge className="bg-slate-950 text-orange-400 border border-slate-800/50 text-xs">Live</Badge>
+                  <Badge variant="outline" className="bg-[#f97316]/5 border-[#f97316]/20 text-[#f97316] text-[10px] font-bold uppercase py-0.5">Live Data</Badge>
                 </div>
               </CardHeader>
 
