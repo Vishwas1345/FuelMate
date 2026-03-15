@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Edit, Mail, Phone, Calendar, Package, MapPin,
   Car, Truck, Building2, Fuel, Plus, Trash2, Save, X, ShieldCheck, Download,
-  LogOut, Star, ArrowLeft
+  LogOut, Star, ArrowLeft, Activity
 } from 'lucide-react';
 import MapView from '@/components/MapView';
 import { toast } from '@/components/ui/use-toast';
@@ -64,12 +64,11 @@ type UserProfileData = {
 };
 
 const UserProfile = () => {
-  const { user, updateProfile, isLoading: isAuthLoading, logout } = useAuth();
+  const { user, updateProfile, isLoading: isAuthLoading, logout, userOrders, getOrders } = useAuth();
 
   const [profileData, setProfileData] = useState<UserProfileData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [orderHistory, setOrderHistory] = useState<any[]>([]);
 
   // Dialog States
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
@@ -117,19 +116,8 @@ const UserProfile = () => {
 
   // Sync Orders
   useEffect(() => {
-    if (window.orderSystem) {
-      const updateHistory = () => {
-        const history = window.orderSystem.orderHistory || [];
-        if (history.length === 0 && window.orderSystem.orders.length > 0) {
-          setOrderHistory([...window.orderSystem.orders, ...window.orderSystem.orderHistory]);
-        } else {
-          setOrderHistory(history);
-        }
-      };
-      updateHistory();
-      window.orderSystem.subscribeToUpdates(updateHistory);
-    }
-  }, []);
+    getOrders();
+  }, [getOrders]);
 
   const handleSaveProfile = async () => {
     if (!profileData) return;
@@ -693,40 +681,52 @@ const UserProfile = () => {
             {/* ORDERS TAB */}
             <TabsContent value="orders">
               <Card className="bg-slate-900 border-slate-800">
-                <CardHeader>
-                  <CardTitle className="text-white flex items-center gap-2">
-                    <Package className="text-orange-500" /> Recent Orders
-                  </CardTitle>
-                  <CardDescription className="text-gray-400">View your fuel order history and receipts.</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Package className="text-orange-500" /> Recent Orders
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">View your fuel order history and receipts.</CardDescription>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => getOrders()}
+                    className="text-slate-400 hover:text-white"
+                  >
+                    <Activity className="w-4 h-4 mr-2" /> Refresh
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {orderHistory.length > 0 ? (
-                      orderHistory.map((order: any, idx) => (
-                        <div key={idx} className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 rounded-lg border border-slate-800 bg-slate-800/50 hover:bg-slate-800 transition-colors gap-4">
+                    {userOrders && userOrders.length > 0 ? (
+                      [...userOrders]
+                        .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+                        .map((order: any, idx) => (
+                        <div key={order._id || order.id || idx} className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 rounded-lg border border-slate-800 bg-slate-800/50 hover:bg-slate-800 transition-colors gap-4">
                           <div className="flex items-start gap-4">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${order.status === 'delivered' ? 'bg-green-500/10 text-green-500' : 'bg-orange-500/10 text-orange-500'}`}>
                               <Fuel className="w-5 h-5" />
                             </div>
                             <div>
                               <h4 className="text-white font-medium opacity-90">
-                                {order.fuelType || 'Fuel'} Order <span className="text-gray-500 text-xs">#{order.id?.slice(-6) || '---'}</span>
+                                {order.fuelType || 'Fuel'} Order <span className="text-gray-500 text-xs">#{order._id?.slice(-6) || order.id?.slice(-6) || '---'}</span>
                               </h4>
                               <p className="text-sm text-gray-400 mt-1">
-                                Ordered on {new Date(order.timestamp || order.createdAt || Date.now()).toLocaleDateString()}
+                                Ordered on {new Date(order.createdAt || order.timestamp || Date.now()).toLocaleDateString()}
                               </p>
                               <div className="flex gap-2 mt-2">
                                 <Badge variant="secondary" className="bg-slate-900 text-gray-300 text-[10px] border border-slate-700">
                                   {order.quantity} Liters
                                 </Badge>
                                 <Badge variant="outline" className={`${order.status === 'delivered' ? 'border-green-500 text-green-400' : 'border-orange-500 text-orange-400'} text-[10px] capitalize`}>
-                                  {order.status || 'Pending'}
+                                  {order.status || 'pending'}
                                 </Badge>
                               </div>
                             </div>
                           </div>
                           <div className="flex flex-row md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-2">
-                            <span className="text-xl font-bold text-white">₹{order.price || order.totalPrice}</span>
+                            <span className="text-xl font-bold text-white">₹{order.totalPrice || order.price || 0}</span>
                             <Button variant="ghost" size="sm" className="h-8 text-xs text-blue-400 hover:text-blue-300">
                               <Download className="w-3 h-3 mr-1" /> Invoice
                             </Button>
