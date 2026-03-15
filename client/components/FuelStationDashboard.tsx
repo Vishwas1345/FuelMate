@@ -13,6 +13,10 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
 import MapView from './MapView';
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  BarChart, Bar, PieChart, Pie, Cell, Legend, LineChart, Line
+} from 'recharts';
 
 type Driver = {
   name: string;
@@ -301,12 +305,23 @@ const FuelStationDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-white mb-1">
-              ₹{dashboardStats?.totalRevenue?.toLocaleString() || todayStats.totalRevenue.toFixed(2)}
-            </div>
-            <div className="flex items-center gap-1 text-[10px] font-bold text-green-500 uppercase tracking-wider">
-              <TrendingUp className="w-3 h-3" />
-              Live terminal earnings
+            <div className="flex items-end justify-between">
+              <div>
+                <div className="text-3xl font-semibold text-white mb-1">
+                  ₹{dashboardStats?.totalRevenue?.toLocaleString() || todayStats.totalRevenue.toFixed(2)}
+                </div>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-green-500 uppercase tracking-wider">
+                  <TrendingUp className="w-3 h-3" />
+                  Live terminal earnings
+                </div>
+              </div>
+              <div className="h-10 w-20 opacity-50">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={dashboardStats?.graphData || []}>
+                    <Line type="monotone" dataKey="amount" stroke="#10b981" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -319,10 +334,21 @@ const FuelStationDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-semibold text-white mb-1">
-              {dashboardStats?.petrolSold?.toFixed(1) || (todayStats.totalFuel * 0.6).toFixed(1)} <span className="text-sm font-bold text-slate-500 tracking-normal">LT</span>
+            <div className="flex items-end justify-between">
+              <div>
+                <div className="text-3xl font-semibold text-white mb-1">
+                  {dashboardStats?.petrolSold?.toFixed(1) || (todayStats.totalFuel * 0.6).toFixed(1)} <span className="text-sm font-bold text-slate-500 tracking-normal">LT</span>
+                </div>
+                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Inventory Throughput</p>
+              </div>
+              <div className="h-10 w-20 opacity-50">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={dashboardStats?.graphData || []}>
+                    <Line type="monotone" dataKey="quantity" stroke="#f59e0b" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Inventory Throughput</p>
           </CardContent>
         </Card>
 
@@ -340,52 +366,94 @@ const FuelStationDashboard = () => {
             <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Inventory Throughput</p>
           </CardContent>
         </Card>
-
         <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
               <Truck className="h-3 w-3 text-green-500" />
-              Pending Logistics
+              Confirmation Rate
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-semibold text-white mb-1">
-              {orders.filter(o => o.status === 'confirmed' || o.status === 'in-transit').length}
+              {orders.length > 0 
+                ? ((orders.filter(o => o.status !== 'cancelled').length / orders.length) * 100).toFixed(0) 
+                : 0}%
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-blue-500 uppercase tracking-wider">
-              <Clock className="w-3 h-3" />
-              Active manifestations
+              <Check className="w-3 h-3" />
+              Terminal Efficiency
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Recommendations & Graphs Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <Card className="lg:col-span-2 bg-[#0a101f] border-slate-800 shadow-xl">
-          <CardHeader className="border-b border-slate-900/50 pb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+        <Card className="lg:col-span-8 bg-[#0a101f] border-slate-800 shadow-xl overflow-hidden">
+          <CardHeader className="border-b border-slate-900/50 pb-4 flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-semibold text-white uppercase tracking-[0.2em] flex items-center gap-2">
-              <BarChart3 className="text-blue-500 w-4 h-4" /> Operational Metrics
+              <TrendingUp className="text-[#f97316] w-4 h-4" /> Revenue & Volume Dynamics
             </CardTitle>
+            <Badge variant="outline" className="text-[9px] border-slate-800 text-slate-500 bg-slate-950 font-bold">LIVE TELEMETRY</Badge>
           </CardHeader>
           <CardContent className="pt-8">
-            <div className="h-[240px] flex items-end justify-between gap-4 px-4 pb-2">
-              {dashboardStats?.graphData ? (
-                dashboardStats.graphData.map((d, i) => (
-                  <div key={i} className="flex flex-col items-center gap-3 flex-1 group">
-                    <div
-                      className="w-full bg-[#f97316]/10 group-hover:bg-[#f97316]/30 rounded-lg transition-all relative border border-white/5"
-                      style={{ height: `${Math.max((d.amount / (Math.max(...dashboardStats.graphData.map(x => x.amount)) || 1)) * 100, 10)}%` }}
-                    >
-                      <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white text-[#020817] text-[10px] font-semibold px-2 py-1 rounded shadow-xl whitespace-nowrap z-10 transition-all">
-                        ₹{d.amount}
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-semibold text-slate-600 uppercase tracking-tighter w-full text-center group-hover:text-slate-400 transition-colors">
-                      {new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' })}
-                    </span>
-                  </div>
-                ))
+            <div className="h-[300px] w-full">
+              {dashboardStats?.graphData && dashboardStats.graphData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={dashboardStats.graphData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f97316" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#f97316" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorQuantity" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                    <XAxis 
+                      dataKey="date" 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }}
+                      tickFormatter={(str) => {
+                        const date = new Date(str);
+                        return date.toLocaleDateString('en-US', { weekday: 'short' });
+                      }}
+                    />
+                    <YAxis 
+                      axisLine={false} 
+                      tickLine={false} 
+                      tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }}
+                      tickFormatter={(val) => `₹${val}`}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#020817', border: '1px solid #1e293b', borderRadius: '12px', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.5)' }}
+                      labelStyle={{ color: '#94a3b8', fontSize: '10px', marginBottom: '4px', fontWeight: 'bold', textTransform: 'uppercase' }}
+                      itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                      cursor={{ stroke: '#f97316', strokeWidth: 1 }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="amount" 
+                      name="Revenue"
+                      stroke="#f97316" 
+                      strokeWidth={3}
+                      fillOpacity={1} 
+                      fill="url(#colorAmount)" 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="quantity" 
+                      name="Volume (L)"
+                      stroke="#3b82f6" 
+                      strokeWidth={2}
+                      fillOpacity={1} 
+                      fill="url(#colorQuantity)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-slate-700 flex-col gap-4 opacity-50">
                   <div className="w-16 h-16 rounded-full border-2 border-slate-800 flex items-center justify-center">
@@ -398,33 +466,101 @@ const FuelStationDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#0a101f] border-slate-800 shadow-xl flex flex-col">
+        <Card className="lg:col-span-4 bg-[#0a101f] border-slate-800 shadow-xl flex flex-col overflow-hidden">
           <CardHeader className="border-b border-slate-900/50 pb-4">
             <CardTitle className="text-sm font-semibold text-white uppercase tracking-[0.2em] flex items-center gap-2">
-              <Zap className="text-yellow-500 w-4 h-4" /> Logistics AI
+              <Droplets className="text-blue-500 w-4 h-4" /> Product Mix
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 pt-6 flex-1">
-            <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
-              <div className="flex items-center gap-3 mb-2">
-                <Target className="w-4 h-4 text-green-500" />
-                <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Demand Surge Detected</p>
-              </div>
-              <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Diesel manifest trends indicate a 24% volume increase this weekend. Review inventory buffer.</p>
+          <CardContent className="pt-6 flex-1 flex flex-col">
+            <div className="h-[200px] w-full mb-6">
+              {dashboardStats ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Petrol', value: dashboardStats.petrolSold },
+                        { name: 'Diesel', value: dashboardStats.dieselSold }
+                      ].filter(x => x.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      <Cell fill="#f59e0b" />
+                      <Cell fill="#3b82f6" />
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#020817', border: '1px solid #1e293b', borderRadius: '8px' }}
+                      itemStyle={{ color: '#fff', fontSize: '11px' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                 <div className="w-full h-full flex items-center justify-center opacity-20">
+                    <Droplets className="w-8 h-8" />
+                 </div>
+              )}
             </div>
-
-            <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
-              <div className="flex items-center gap-3 mb-2">
-                <Clock className="w-4 h-4 text-orange-500" />
-                <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Logistics Optimization</p>
-              </div>
-              <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Peak operational window identified: 18:00 - 21:00. Pre-assign drivers for manifest speed.</p>
+            
+            <div className="space-y-3">
+               <div className="flex justify-between items-center p-3 rounded-lg bg-slate-950/50 border border-slate-800/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-amber-500" />
+                    <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Petrol</span>
+                  </div>
+                  <span className="text-sm font-bold text-white">{dashboardStats?.petrolSold?.toFixed(1) || 0}L</span>
+               </div>
+               <div className="flex justify-between items-center p-3 rounded-lg bg-slate-950/50 border border-slate-800/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Diesel</span>
+                  </div>
+                  <span className="text-sm font-bold text-white">{dashboardStats?.dieselSold?.toFixed(1) || 0}L</span>
+               </div>
             </div>
+          </CardContent>
+        </Card>
+      </div>
 
-            <div className="mt-auto pt-4 text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#f97316]/5 border border-[#f97316]/10 rounded-full">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#f97316] animate-pulse" />
-                <span className="text-[9px] font-semibold text-[#f97316] uppercase tracking-widest">AI Core Active</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <Card className="lg:col-span-3 bg-[#0a101f] border-slate-800 shadow-xl flex flex-col">
+          <CardHeader className="border-b border-slate-900/50 pb-4">
+            <CardTitle className="text-sm font-semibold text-white uppercase tracking-[0.2em] flex items-center gap-2">
+              <Zap className="text-yellow-500 w-4 h-4" /> Operational AI Analysis
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <Target className="w-4 h-4 text-green-500" />
+                  <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Peak Efficiency</p>
+                </div>
+                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Your order confirmation time is 14% faster than average. Logistics throughput is optimal.</p>
+              </div>
+
+              <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <TrendingUp className="w-4 h-4 text-blue-500" />
+                  <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Volume Forecast</p>
+                </div>
+                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Anticipated 30% increase in Diesel demand for industrial clusters by Thursday. Sync tanker arrival.</p>
+              </div>
+
+              <div className="p-4 bg-[#0a101f] rounded-xl border-2 border-dashed border-[#f97316]/20 group hover:border-[#f97316]/50 transition-all flex flex-col justify-center items-center gap-3">
+                 <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#f97316] animate-ping" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#f97316] animate-pulse" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#f97316] animate-bounce" />
+                 </div>
+                 <div className="text-center">
+                    <span className="text-[9px] font-bold text-[#f97316] uppercase tracking-[0.2em] block mb-1">Neural Topology Mapping</span>
+                    <span className="text-[8px] text-slate-600 font-bold uppercase">Synthesizing node telemetry...</span>
+                 </div>
               </div>
             </div>
           </CardContent>

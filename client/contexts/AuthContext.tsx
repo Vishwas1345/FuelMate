@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { api, User, AuthResponse, Order } from "@/services/api";
@@ -12,7 +12,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
-  updateProfile: (data: Partial<User>) => Promise<void>;
+  updateProfile: (data: Partial<User>) => Promise<User | void>;
   createOrder: (orderData: any) => Promise<Order>;
   getOrders: () => Promise<Order[]>;
   updateOrderStatus: (orderId: string, status: string, driver?: any) => Promise<Order>;
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     try {
       const response = await api.login({ email, password });
 
@@ -90,9 +90,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       throw error;
     }
-  };
+  }, [navigate]);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await api.logout();
     } catch (error) {
@@ -103,9 +103,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticated(false);
       navigate("/auth");
     }
-  };
+  }, [navigate]);
 
-  const signup = async (name: string, email: string, password: string) => {
+  const signup = useCallback(async (name: string, email: string, password: string) => {
     try {
       const response = await api.register({ name, email, password });
 
@@ -132,9 +132,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       throw error;
     }
-  };
+  }, [navigate]);
 
-  const updateProfile = async (data: Partial<User>) => {
+  const updateProfile = useCallback(async (data: Partial<User>) => {
     try {
       const updatedUser = await api.updateProfile(data);
 
@@ -167,7 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setIsAuthenticated(true);
 
           // Retry the update
-          return updateProfile(data);
+          return api.updateProfile(data); // Call api directly since we are in the memoized function
         } catch (refreshError) {
           // If refresh fails, then we need to log in again
           toast({
@@ -175,7 +175,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             description: "Please log in again to continue.",
             variant: "destructive",
           });
-          logout();
+          // Call logout directly
+          setUser(null);
+          setUserOrders([]);
+          setIsAuthenticated(false);
+          navigate("/auth");
           return;
         }
       }
@@ -187,9 +191,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       throw error;
     }
-  };
+  }, [navigate]);
 
-  const createOrder = async (orderData: any) => {
+  const createOrder = useCallback(async (orderData: any) => {
     try {
       if (!isAuthenticated) {
         throw new Error('You must be logged in to place an order');
@@ -207,7 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           fuelType: newOrder.fuelType,
           quantity: newOrder.quantity,
           brand: newOrder.brand,
-          price: newOrder.price,
+          price: newOrder.totalPrice,
           deliveryAddress: newOrder.deliveryAddress,
           paymentMethod: newOrder.paymentMethod
         });
@@ -218,56 +222,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Error in createOrder:', error);
       throw error;
     }
-  };
+  }, [isAuthenticated]);
 
-  const getOrders = async () => {
+  const getOrders = useCallback(async () => {
     try {
       const orders = await api.getOrders();
       setUserOrders(orders);
 
-      // Sync with window.orderSystem if it exists
       if (window.orderSystem) {
-        window.orderSystem.orders = orders.map(order => ({
+        window.orderSystem.orders = orders.map((order: any) => ({
           id: order._id,
           status: order.status,
-          customer: typeof order.customer === 'object' ? order.customer.name : order.customer,
+          customer: typeof order.customer === 'object' ? order.customer?.name : order.customer,
           fuelType: order.fuelType,
           quantity: order.quantity,
           brand: order.brand,
-          price: order.price,
+          price: order.totalPrice,
           deliveryAddress: order.deliveryAddress,
           timestamp: new Date(order.createdAt),
-          estimatedDelivery: order.estimatedDelivery ? new Date(order.estimatedDelivery) : undefined,
           paymentMethod: order.paymentMethod,
-          driver: order.driver ? {
-            name: order.driver.name,
-            phone: order.driver.phone || '',
-            email: order.driver.email || '',
-            currentLocation: order.driver.currentLocation
-          } : undefined
+          driver: order.driver
         }));
 
-        // Update order history for delivered orders
-        const deliveredOrders = orders.filter(order => order.status === 'delivered');
-        window.orderSystem.orderHistory = deliveredOrders.map(order => ({
+        const deliveredOrders = orders.filter((order: any) => order.status === 'delivered');
+        window.orderSystem.orderHistory = deliveredOrders.map((order: any) => ({
           id: order._id,
           status: order.status,
-          customer: typeof order.customer === 'object' ? order.customer.name : order.customer,
+          customer: typeof order.customer === 'object' ? order.customer?.name : order.customer,
           fuelType: order.fuelType,
           quantity: order.quantity,
           brand: order.brand,
-          price: order.price,
+          price: order.totalPrice,
           deliveryAddress: order.deliveryAddress,
           timestamp: new Date(order.createdAt),
-          estimatedDelivery: order.estimatedDelivery ? new Date(order.estimatedDelivery) : undefined,
           deliveredAt: order.deliveredAt ? new Date(order.deliveredAt) : undefined,
           paymentMethod: order.paymentMethod,
-          driver: order.driver ? {
-            name: order.driver.name,
-            phone: order.driver.phone || '',
-            email: order.driver.email || '',
-            currentLocation: order.driver.currentLocation
-          } : undefined
+          driver: order.driver
         }));
 
         window.orderSystem.listeners.forEach((callback: () => void) => callback());
@@ -276,16 +266,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return orders;
     } catch (error: any) {
       console.error('Error fetching orders:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to fetch orders",
-        variant: "destructive",
-      });
       return [];
     }
-  };
+  }, []);
 
-  const updateOrderStatus = async (orderId: string, status: string, driver?: any) => {
+  const updateOrderStatus = useCallback(async (orderId: string, status: string, driver?: any) => {
     try {
       const updatedOrder = await api.updateOrderStatus(orderId, status, driver);
 
@@ -294,9 +279,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         order._id === orderId ? updatedOrder : order
       ));
 
-      // Sync with window.orderSystem
       if (window.orderSystem) {
-        const orderIndex = window.orderSystem.orders.findIndex(o => o.id === orderId);
+        const orderIndex = window.orderSystem.orders.findIndex((o: any) => o.id === orderId);
         if (orderIndex !== -1) {
           window.orderSystem.orders[orderIndex] = {
             id: updatedOrder._id,
@@ -305,18 +289,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             fuelType: updatedOrder.fuelType,
             quantity: updatedOrder.quantity,
             brand: updatedOrder.brand,
-            price: updatedOrder.price,
+            price: updatedOrder.totalPrice,
             deliveryAddress: updatedOrder.deliveryAddress,
             timestamp: new Date(updatedOrder.createdAt),
-            estimatedDelivery: updatedOrder.estimatedDelivery ? new Date(updatedOrder.estimatedDelivery) : undefined,
-            deliveredAt: updatedOrder.deliveredAt ? new Date(updatedOrder.deliveredAt) : undefined,
-            paymentMethod: updatedOrder.paymentMethod,
-            driver: updatedOrder.driver ? {
-              name: updatedOrder.driver.name,
-              phone: updatedOrder.driver.phone || '',
-              email: updatedOrder.driver.email || '',
-              currentLocation: updatedOrder.driver.currentLocation
-            } : undefined
+            driver: updatedOrder.driver
           };
 
           if (status === 'delivered') {
@@ -336,13 +312,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       throw error;
     }
-  };
+  }, []);
 
-
-  const updatePassword = async (currentPassword: string, newPassword: string) => {
+  const updatePassword = useCallback(async (currentPassword: string, newPassword: string) => {
     try {
       await api.updatePassword(currentPassword, newPassword);
-
       toast({
         title: "Password updated",
         description: "Your password has been changed successfully.",
@@ -355,7 +329,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       throw error;
     }
-  };
+  }, []);
 
   const value = {
     isAuthenticated,
