@@ -68,29 +68,28 @@ const AboutPage = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <section className="pt-32 pb-16 bg-slate-950 relative overflow-hidden">
+            <section className="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-slate-950 relative overflow-hidden">
                 <div className="absolute inset-0">
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-                    <div className="animate-fade-in-up flex justify-center mb-10">
-                        <AboutHeroImage className="w-full max-w-lg h-auto drop-shadow-2xl" />
+                    <div className="animate-fade-in-up flex justify-center mb-6 sm:mb-10">
+                        <AboutHeroImage className="w-full max-w-[280px] sm:max-w-lg h-auto drop-shadow-2xl" />
                     </div>
 
-                    <div className="animate-fade-in-up delay-100 inline-block px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-sm font-medium mb-6">
+                    <div className="animate-fade-in-up delay-100 inline-block px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                         Our Journey
                     </div>
-                    <h1 className="animate-fade-in-up delay-200 text-5xl sm:text-6xl font-bold text-white mb-6">
+                    <h1 className="animate-fade-in-up delay-200 text-4xl sm:text-6xl font-bold text-white mb-4 sm:mb-6 leading-[1.1]">
                         More Than Just a
                         <span className="block bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                             College Project
                         </span>
                     </h1>
-                    <p className="animate-fade-in-up delay-300 text-xl text-gray-400 max-w-3xl mx-auto">
-                        A solution born availability, fueled by necessity, and built with passion.
-                        Discover the story behind FuelMate.
+                    <p className="animate-fade-in-up delay-300 text-base sm:text-xl text-gray-400 max-w-2xl mx-auto">
+                        A solution born of necessity, fueled by passion, and built for everyone.
                     </p>
                 </div>
             </section>

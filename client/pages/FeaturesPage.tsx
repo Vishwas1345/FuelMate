@@ -160,34 +160,34 @@ const FeaturesPage = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <section className="pt-32 pb-16 bg-slate-950 relative overflow-hidden">
+            <section className="pt-24 pb-12 sm:pt-32 sm:pb-16 bg-slate-950 relative overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-                    <div className="flex justify-center mb-8">
+                    <div className="flex justify-center mb-6 sm:mb-8">
                         <div className="animate-float">
-                            <HeroFeatureImage className="w-32 h-32" />
+                            <HeroFeatureImage className="w-24 h-24 sm:w-32 sm:h-32" />
                         </div>
                     </div>
 
-                    <div className="animate-fade-in-up delay-100 inline-flex items-center px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-sm font-medium mb-6">
+                    <div className="animate-fade-in-up delay-100 inline-flex items-center px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-xs sm:text-sm font-medium mb-4 sm:mb-6">
                         Features & Capabilities
                     </div>
 
-                    <h1 className="animate-fade-in-up delay-200 text-5xl sm:text-6xl font-bold text-white mb-6 leading-tight">
+                    <h1 className="animate-fade-in-up delay-200 text-4xl sm:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight max-w-4xl mx-auto">
                         Everything You Need for
                         <span className="block bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                             Seamless Fuel Delivery
                         </span>
                     </h1>
 
-                    <p className="animate-fade-in-up delay-300 text-xl text-gray-400 max-w-3xl mx-auto">
-                        Discover the powerful features that make FuelMate the most convenient and reliable fuel delivery service
+                    <p className="animate-fade-in-up delay-300 text-base sm:text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                        Discover the powerful features that make FuelMate the most convenient and reliable service.
                     </p>
 
-                    <div className="animate-fade-in-up delay-300 mt-8 flex justify-center">
+                    <div className="animate-fade-in-up delay-300 flex justify-center">
                         <Link to="/auth">
                             <Button
                                 size="lg"
-                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-6 text-lg group"
+                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-6 text-lg group h-14"
                             >
                                 Get Started
                                 <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />

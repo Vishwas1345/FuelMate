@@ -213,30 +213,45 @@ const Home = () => {
             </section>
 
             {/* Benefits Section */}
-            <section className="py-24 bg-slate-950">
+            <section className="py-24 bg-slate-950 relative overflow-hidden">
+                {/* Background Decoration */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-600/5 rounded-full blur-[120px] -z-10"></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px] -z-10"></div>
+
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid lg:grid-cols-2 gap-16 items-center">
-                        <RevealOnScroll>
-                            <div className="space-y-6">
-                                <h2 className="text-3xl sm:text-4xl font-bold text-white">
-                                    Unmatched <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">Benefits</span>
-                                </h2>
-                                <p className="text-lg text-gray-400">
-                                    Experience hassle-free fuel delivery with benefits that make your life easier
-                                </p>
+                    <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                        <RevealOnScroll className="order-2 lg:order-1">
+                            <div className="space-y-8">
                                 <div className="space-y-4">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-widest">
+                                        <Sparkles className="w-3 h-3" />
+                                        Premium Service
+                                    </div>
+                                    <h2 className="text-4xl sm:text-5xl font-black text-white leading-[1.1]">
+                                        Unmatched <br />
+                                        <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent italic">
+                                            Benefits
+                                        </span>
+                                    </h2>
+                                    <p className="text-lg text-gray-400 max-w-lg leading-relaxed">
+                                        Experience hassle-free fuel delivery with features designed to save your time and energy.
+                                    </p>
+                                </div>
+
+                                <div className="grid sm:grid-cols-2 gap-4">
                                     {benefits.map((benefit, index) => (
                                         <div
                                             key={index}
-                                            className="group relative overflow-hidden rounded-xl bg-slate-900/50 border border-slate-800 hover:border-orange-500/50 transition-all duration-300 hover:shadow-[0_0_20px_-5px_rgba(249,115,22,0.2)]"
+                                            className="group relative p-5 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-orange-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/5"
                                         >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                            <div className="relative p-4 flex items-start gap-4">
-                                                <div className="mt-1 relative">
-                                                    <div className="absolute inset-0 bg-orange-500 blur-md opacity-0 group-hover:opacity-40 transition-opacity"></div>
-                                                    <CheckCircle className="w-6 h-6 text-orange-500 relative z-10" />
+                                            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+                                            <div className="relative flex flex-col gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 group-hover:scale-110 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
+                                                    <CheckCircle className="w-5 h-5" />
                                                 </div>
-                                                <p className="text-gray-300 group-hover:text-white transition-colors">{benefit}</p>
+                                                <p className="text-gray-300 font-medium leading-snug group-hover:text-white transition-colors">
+                                                    {benefit}
+                                                </p>
                                             </div>
                                         </div>
                                     ))}
@@ -244,14 +259,16 @@ const Home = () => {
                             </div>
                         </RevealOnScroll>
 
-                        <RevealOnScroll delay={0.2}>
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-blue-500/20 rounded-2xl blur-2xl"></div>
-                                <img
-                                    src="/fast_delivery_mobile.png"
-                                    alt="Fast Fuel Delivery App on Mobile"
-                                    className="w-full h-auto rounded-2xl shadow-2xl border border-slate-700 relative z-10 transform hover:scale-[1.02] transition-transform duration-300"
-                                />
+                        <RevealOnScroll delay={0.2} className="order-1 lg:order-2">
+                            <div className="relative group">
+                                <div className="absolute -inset-4 bg-gradient-to-br from-orange-500/20 to-blue-500/20 rounded-[2.5rem] blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500"></div>
+                                <div className="relative h-full w-full bg-slate-900 rounded-[2rem] border border-slate-800 p-4 shadow-2xl overflow-hidden">
+                                    <img
+                                        src="/fast_delivery_mobile.png"
+                                        alt="Fast Fuel Delivery App on Mobile"
+                                        className="w-full h-auto rounded-xl transform group-hover:scale-[1.02] transition-transform duration-700 ease-out"
+                                    />
+                                </div>
                             </div>
                         </RevealOnScroll>
                     </div>
