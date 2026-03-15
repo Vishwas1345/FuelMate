@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
     ArrowRight,
-    Sparkles
+    Sparkles,
+    Fuel
 } from 'lucide-react';
 
 const Hero = () => {
@@ -67,6 +68,13 @@ const Hero = () => {
                         animate="visible"
                         className="text-center lg:text-left space-y-5"
                     >
+                        {/* Hero Icon Badge */}
+                        <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-xs font-bold uppercase tracking-widest">
+                                <Fuel className="w-3 h-3" />
+                                On-Demand Energy
+                            </div>
+                        </motion.div>
                         {/* Main Heading */}
                         <motion.h1
                             variants={itemVariants}
