@@ -70,33 +70,33 @@ export const StationDriversManager = () => {
     };
 
     return (
-        <div className="w-full">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-1">
+        <div className="w-full px-4 md:px-0 space-y-10 pb-12">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 px-1">
                 <div>
-                    <h1 className="text-2xl md:text-4xl font-bold text-white tracking-tighter mb-1.5">
+                    <h1 className="text-2xl md:text-5xl font-bold text-white tracking-tighter mb-2">
                         Delivery <span className="text-[#f97316]">Partners</span>
                     </h1>
-                    <p className="text-[11px] md:text-sm text-slate-500 font-bold uppercase tracking-[0.15em] opacity-80">
+                    <p className="text-[11px] md:text-sm text-slate-500 font-bold uppercase tracking-[0.2em] opacity-80">
                         Fleet Management & Payroll Protocol
                     </p>
                 </div>
-                <Button className="w-full md:w-auto bg-[#f97316] hover:bg-[#f97316]/90 text-white text-[11px] font-bold uppercase tracking-widest h-11 px-8 shadow-lg shadow-orange-500/20 border-none transition-all hover:scale-[1.02] active:scale-95">
+                <Button className="w-full md:w-auto bg-[#f97316] hover:bg-[#f97316]/90 text-white text-[11px] font-bold uppercase tracking-widest h-12 px-10 shadow-lg shadow-orange-500/20 border-none transition-all hover:scale-[1.02] active:scale-95">
                     + Register Partner
                 </Button>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                 <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                          <User className="h-12 w-12 text-[#f97316]" />
                     </div>
-                    <CardHeader className="pb-1 px-4 pt-4">
-                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                    <CardHeader className="pb-1 px-4 pt-4 md:pt-6">
+                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">
                             Partners
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="px-4 pb-4">
-                        <div className="text-2xl font-bold text-white tracking-tight">
+                    <CardContent className="px-4 pb-4 md:pb-6">
+                        <div className="text-2xl md:text-4xl font-bold text-white tracking-tight">
                             {drivers.length}
                         </div>
                     </CardContent>
@@ -106,13 +106,13 @@ export const StationDriversManager = () => {
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                          <Car className="h-12 w-12 text-green-500" />
                     </div>
-                    <CardHeader className="pb-1 px-4 pt-4">
-                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                    <CardHeader className="pb-1 px-4 pt-4 md:pt-6">
+                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">
                             Active
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="px-4 pb-4">
-                        <div className="text-2xl font-bold text-white tracking-tight">
+                    <CardContent className="px-4 pb-4 md:pb-6">
+                        <div className="text-2xl md:text-4xl font-bold text-white tracking-tight">
                             {drivers.filter(d => d.status === 'Active').length}
                         </div>
                     </CardContent>
@@ -122,25 +122,25 @@ export const StationDriversManager = () => {
                     <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
                          <Wallet className="h-12 w-12 text-blue-500" />
                     </div>
-                    <CardHeader className="pb-1 px-4 pt-4">
-                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                    <CardHeader className="pb-1 px-4 pt-4 md:pt-6">
+                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">
                             Monthly Payroll
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="px-4 pb-4">
-                        <div className="text-2xl font-bold text-white tracking-tight">
+                    <CardContent className="px-4 pb-4 md:pb-6">
+                        <div className="text-2xl md:text-4xl font-bold text-white tracking-tight">
                             ₹{(drivers.reduce((acc, curr) => acc + curr.salary, 0)).toLocaleString()}
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
-            <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-xl overflow-hidden">
-                <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30">
-                    <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Partner Roster</CardTitle>
-                    <CardDescription className="text-[11px] text-slate-500 font-medium">Registry of station's authorized delivery workforce</CardDescription>
+            <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-2xl overflow-hidden">
+                <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30 p-6 md:p-8">
+                    <CardTitle className="text-[10px] md:text-xs font-bold text-white uppercase tracking-[0.3em]">Partner Roster</CardTitle>
+                    <CardDescription className="text-[11px] text-slate-500 font-medium mt-1">Registry of station's authorized delivery workforce</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-5 md:p-8 lg:p-10">
                     <div className="space-y-3">
                         {drivers.map(driver => (
                             <div key={driver.id} className="bg-[#020817] border border-slate-800/50 rounded-xl p-4 md:p-5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 md:gap-6 hover:border-[#f97316]/30 transition-all duration-300">
