@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import {
-    Check, X, Clock, Truck, Phone, Mail, User, AlertCircle
+    Check, X, Clock, Truck, Phone, Mail, User, AlertCircle, ArrowLeft, ChevronRight, Hash
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/services/api';
@@ -44,6 +44,7 @@ export const StationOrdersDashboard = () => {
     const [orders, setOrders] = useState<any[]>([]);
     const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
     const [selectedDriver, setSelectedDriver] = useState<any | null>(null);
+    const [showMobileQueue, setShowMobileQueue] = useState(true);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -148,8 +149,9 @@ export const StationOrdersDashboard = () => {
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-12">
-                <div className="md:col-span-5 lg:col-span-4 space-y-6">
+            <div className="grid gap-6 md:grid-cols-12 relative overflow-hidden">
+                {/* Left Column: Order Queue - Hidden on mobile if viewing details */}
+                <div className={`md:col-span-5 lg:col-span-4 space-y-6 ${!showMobileQueue ? 'hidden md:block' : 'block'}`}>
                     <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
                         <CardHeader>
                             <CardTitle className="text-white">Order Queue</CardTitle>
@@ -178,13 +180,22 @@ export const StationOrdersDashboard = () => {
                                         pendingOrders.map(order => (
                                             <div
                                                 key={order._id || order.id}
-                                                className={`p-4 rounded-lg cursor-pointer transition-colors ${selectedOrder?.id === order.id || selectedOrder?._id === order._id ? 'bg-orange-500 text-white' : 'bg-slate-900 hover:bg-slate-800'}`}
-                                                onClick={() => setSelectedOrder(order)}
+                                                className={`p-4 rounded-xl border transition-all duration-300 relative group ${
+                                                    (selectedOrder?.id === order.id || selectedOrder?._id === order._id)
+                                                        ? 'bg-[#f97316] border-[#f97316] text-white shadow-lg shadow-orange-500/20' 
+                                                        : 'bg-[#020817] border-slate-800 hover:border-slate-700 hover:bg-[#020817]/80 text-slate-300'
+                                                }`}
+                                                onClick={() => {
+                                                    setSelectedOrder(order);
+                                                    setShowMobileQueue(false);
+                                                }}
                                             >
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <h3 className="font-medium">Order #{order.id || order._id?.slice(-6)}</h3>
-                                                        <p className="text-sm opacity-90">{order.customer?.name || order.customer}</p>
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`p-1.5 rounded-lg border ${selectedOrder?.id === order.id || selectedOrder?._id === order._id ? 'bg-white/20 border-white/30' : 'bg-[#0a101f] border-slate-800'}`}>
+                                                            <Hash className="w-3 h-3 text-[inherit]" />
+                                                        </div>
+                                                        <h3 className="font-bold text-xs uppercase tracking-widest">{order.id?.slice(-6) || order._id?.slice(-6)}</h3>
                                                     </div>
                                                     {getStatusBadge(order.status)}
                                                 </div>
@@ -207,22 +218,30 @@ export const StationOrdersDashboard = () => {
                                         activeOrders.map(order => (
                                             <div
                                                 key={order._id || order.id}
-                                                className={`p-4 rounded-lg cursor-pointer transition-colors ${selectedOrder?.id === order.id || selectedOrder?._id === order._id ? 'bg-orange-500 text-white' : 'bg-slate-900 hover:bg-orange-500 hover:text-white'}`}
-                                                onClick={() => setSelectedOrder(order)}
+                                                className={`p-4 rounded-xl border transition-all duration-300 relative group ${
+                                                    (selectedOrder?.id === order.id || selectedOrder?._id === order._id)
+                                                        ? 'bg-[#f97316] border-[#f97316] text-white shadow-lg shadow-orange-500/20' 
+                                                        : 'bg-[#020817] border-slate-800 hover:border-slate-700 hover:bg-[#020817]/80 text-slate-300'
+                                                }`}
+                                                onClick={() => {
+                                                    setSelectedOrder(order);
+                                                    setShowMobileQueue(false);
+                                                }}
                                             >
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <h3 className="font-medium">Order #{order.id || order._id?.slice(-6)}</h3>
-                                                        <p className="text-sm opacity-90">{order.customer?.name || order.customer}</p>
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`p-1.5 rounded-lg border ${selectedOrder?.id === order.id || selectedOrder?._id === order._id ? 'bg-white/20 border-white/30' : 'bg-[#0a101f] border-slate-800'}`}>
+                                                            <Hash className="w-3 h-3 text-[inherit]" />
+                                                        </div>
+                                                        <h3 className="font-bold text-xs uppercase tracking-widest">{order.id?.slice(-6) || order._id?.slice(-6)}</h3>
                                                     </div>
                                                     {getStatusBadge(order.status)}
                                                 </div>
-                                                <div className="mt-2 text-sm">
-                                                    <p className="opacity-90">{order.fuelType} - {order.quantity}L</p>
-                                                    <p className="opacity-90">
-                                                        {order.status === 'in-transit' && (order.driverName || order.driver?.name)
-                                                            ? `Driver: ${order.driverName || order.driver?.name}`
-                                                            : new Date(order.timestamp || order.createdAt).toLocaleTimeString()}
+                                                <div className="mt-2 text-[11px] font-medium">
+                                                    <p className="opacity-90 leading-tight mb-1">{order.fuelType} • {order.quantity}L</p>
+                                                    <p className="opacity-70 flex items-center gap-1.5">
+                                                        <User className="w-3 h-3" />
+                                                        {order.customer?.name || order.customer}
                                                     </p>
                                                 </div>
                                             </div>
@@ -240,19 +259,31 @@ export const StationOrdersDashboard = () => {
                                         orders.map(order => (
                                             <div
                                                 key={order._id || order.id}
-                                                className={`p-4 rounded-lg cursor-pointer transition-colors ${selectedOrder?.id === order.id || selectedOrder?._id === order._id ? 'bg-orange-500 text-white' : 'bg-slate-900 hover:bg-orange-500 hover:text-white'}`}
-                                                onClick={() => setSelectedOrder(order)}
+                                                className={`p-4 rounded-xl border transition-all duration-300 relative group ${
+                                                    (selectedOrder?.id === order.id || selectedOrder?._id === order._id)
+                                                        ? 'bg-[#f97316] border-[#f97316] text-white shadow-lg shadow-orange-500/20' 
+                                                        : 'bg-[#020817] border-slate-800 hover:border-slate-700 hover:bg-[#020817]/80 text-slate-300'
+                                                }`}
+                                                onClick={() => {
+                                                    setSelectedOrder(order);
+                                                    setShowMobileQueue(false);
+                                                }}
                                             >
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <h3 className="font-medium">Order #{order.id || order._id?.slice(-6)}</h3>
-                                                        <p className="text-sm opacity-90">{order.customer?.name || order.customer}</p>
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`p-1.5 rounded-lg border ${selectedOrder?.id === order.id || selectedOrder?._id === order._id ? 'bg-white/20 border-white/30' : 'bg-[#0a101f] border-slate-800'}`}>
+                                                            <Hash className="w-3 h-3 text-[inherit]" />
+                                                        </div>
+                                                        <h3 className="font-bold text-xs uppercase tracking-widest">{order.id?.slice(-6) || order._id?.slice(-6)}</h3>
                                                     </div>
                                                     {getStatusBadge(order.status)}
                                                 </div>
-                                                <div className="mt-2 text-sm">
-                                                    <p className="opacity-90">{order.fuelType} - {order.quantity}L</p>
-                                                    <p className="opacity-75">{new Date(order.timestamp || order.createdAt).toLocaleTimeString()}</p>
+                                                <div className="mt-2 text-[11px] font-medium">
+                                                    <p className="opacity-90 leading-tight mb-1">{order.fuelType} • {order.quantity}L</p>
+                                                    <p className="opacity-70 flex items-center gap-1.5">
+                                                        <User className="w-3 h-3" />
+                                                        {order.customer?.name || order.customer}
+                                                    </p>
                                                 </div>
                                             </div>
                                         ))
@@ -263,12 +294,28 @@ export const StationOrdersDashboard = () => {
                     </Card>
                 </div>
 
-                <div className="md:col-span-7 lg:col-span-8">
-                    <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
-                        <CardHeader>
-                            <CardTitle className="text-white">Order Details & Dispatch</CardTitle>
+                {/* Right Column: Order Details - Hidden on mobile if queue is active */}
+                <div className={`md:col-span-7 lg:col-span-8 ${showMobileQueue ? 'hidden md:block' : 'block'}`}>
+                    <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl rounded-xl overflow-hidden min-h-[600px]">
+                        <CardHeader className="border-b border-slate-800/50 pb-4 flex flex-row items-center justify-between bg-[#020817]/30">
+                            <div className="flex items-center gap-3">
+                                {!showMobileQueue && (
+                                    <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="md:hidden text-slate-400 hover:text-white hover:bg-slate-800/50"
+                                        onClick={() => setShowMobileQueue(true)}
+                                    >
+                                        <ArrowLeft className="h-5 w-5" />
+                                    </Button>
+                                )}
+                                <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
+                                    <Truck className="w-4 h-4 text-[#f97316]" />
+                                    Dispatch Terminal
+                                </CardTitle>
+                            </div>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="pt-6">
                             {selectedOrder ? (
                                 <div>
                                     <div className="grid gap-6 md:grid-cols-2 mb-6">
