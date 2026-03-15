@@ -71,118 +71,130 @@ export const StationDriversManager = () => {
 
     return (
         <div className="w-full">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-1">
                 <div>
-                    <h1 className="text-3xl font-semibold text-white tracking-tight mb-2">
+                    <h1 className="text-2xl md:text-4xl font-bold text-white tracking-tighter mb-1.5">
                         Delivery <span className="text-[#f97316]">Partners</span>
                     </h1>
-                    <p className="text-slate-400 font-medium tracking-tight">Manage partner payrolls, leaves, and activity</p>
+                    <p className="text-[11px] md:text-sm text-slate-500 font-bold uppercase tracking-[0.15em] opacity-80">
+                        Fleet Management & Payroll Protocol
+                    </p>
                 </div>
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold">
-                    + Add New Partner
+                <Button className="w-full md:w-auto bg-[#f97316] hover:bg-[#f97316]/90 text-white text-[11px] font-bold uppercase tracking-widest h-11 px-8 shadow-lg shadow-orange-500/20 border-none transition-all hover:scale-[1.02] active:scale-95">
+                    + Register Partner
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
-                            <User className="h-3 w-3 text-[#f97316]" />
-                            Total Partners
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <User className="h-12 w-12 text-[#f97316]" />
+                    </div>
+                    <CardHeader className="pb-1 px-4 pt-4">
+                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                            Partners
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-semibold text-white mb-1">
+                    <CardContent className="px-4 pb-4">
+                        <div className="text-2xl font-bold text-white tracking-tight">
                             {drivers.length}
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
-                            <Car className="h-3 w-3 text-green-500" />
-                            Active Today
+                <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <Car className="h-12 w-12 text-green-500" />
+                    </div>
+                    <CardHeader className="pb-1 px-4 pt-4">
+                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
+                            Active
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-semibold text-white mb-1">
+                    <CardContent className="px-4 pb-4">
+                        <div className="text-2xl font-bold text-white tracking-tight">
                             {drivers.filter(d => d.status === 'Active').length}
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-semibold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
-                            <Wallet className="h-3 w-3 text-blue-500" />
+                <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl relative overflow-hidden group col-span-2 lg:col-span-1 border-t border-t-orange-500/20">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <Wallet className="h-12 w-12 text-blue-500" />
+                    </div>
+                    <CardHeader className="pb-1 px-4 pt-4">
+                        <CardTitle className="text-[9px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 text-slate-500">
                             Monthly Payroll
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-semibold text-white mb-1">
+                    <CardContent className="px-4 pb-4">
+                        <div className="text-2xl font-bold text-white tracking-tight">
                             ₹{(drivers.reduce((acc, curr) => acc + curr.salary, 0)).toLocaleString()}
                         </div>
                     </CardContent>
                 </Card>
             </div>
 
-            <Card className="bg-[#0a101f] border-slate-800 shadow-xl group hover:border-[#f97316]/30 transition-all">
-                <CardHeader>
-                    <CardTitle className="text-white">Partner Roster</CardTitle>
-                    <CardDescription className="text-slate-400">View and manage your station's delivery workforce</CardDescription>
+            <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-xl overflow-hidden">
+                <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30">
+                    <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Partner Roster</CardTitle>
+                    <CardDescription className="text-[11px] text-slate-500 font-medium">Registry of station's authorized delivery workforce</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {drivers.map(driver => (
-                            <div key={driver.id} className="bg-slate-900 border border-slate-700 rounded-lg p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-slate-600 transition-colors">
+                            <div key={driver.id} className="bg-[#020817] border border-slate-800/50 rounded-xl p-4 md:p-5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 md:gap-6 hover:border-[#f97316]/30 transition-all duration-300">
 
                                 <div className="flex items-center gap-4">
-                                    <div className="h-14 w-14 rounded-full bg-slate-800 flex items-center justify-center border-2 border-slate-700">
-                                        <User className="h-7 w-7 text-slate-400" />
+                                    <div className="h-12 w-12 md:h-14 md:w-14 rounded-xl bg-[#0a101f] flex items-center justify-center border border-slate-800 shadow-inner group-hover:border-[#f97316]/50 transition-colors">
+                                        <User className="h-6 w-6 md:h-7 md:w-7 text-slate-500" />
                                     </div>
-                                    <div>
-                                        <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="text-lg font-bold text-white tracking-tight">{driver.name}</h3>
-                                            <Badge variant="outline" className={driver.status === 'Active' ? 'text-green-500 border-green-500/30 bg-green-500/10 py-0' : 'text-amber-500 border-amber-500/30 bg-amber-500/10 py-0'}>
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                                            <h3 className="text-sm md:text-base font-bold text-white tracking-tight truncate">{driver.name}</h3>
+                                            <Badge variant="outline" className={`text-[9px] uppercase tracking-tighter px-1.5 py-0 border-none rounded-sm ${driver.status === 'Active' ? 'text-green-500 bg-green-500/10' : 'text-amber-500 bg-amber-500/10'}`}>
                                                 {driver.status}
                                             </Badge>
                                         </div>
-                                        <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
-                                            <span className="flex items-center gap-1.5"><Phone className="h-3 w-3" /> {driver.phone}</span>
-                                            <span className="flex items-center gap-1.5"><Mail className="h-3 w-3" /> {driver.email}</span>
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+                                            <span className="flex items-center gap-1.5"><Phone className="h-3 w-3 text-slate-600" /> {driver.phone}</span>
+                                            <span className="flex items-center gap-1.5"><Mail className="h-3 w-3 text-slate-600" /> {driver.email}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full md:w-auto mt-4 md:mt-0">
-                                    <div className="flex flex-col border-l border-slate-800 pl-4">
-                                        <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500 mb-1">Base Salary</span>
-                                        <span className="text-white font-bold">₹{driver.salary.toLocaleString()}/mo</span>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-8 flex-1 lg:max-w-md pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-800/50">
+                                    <div className="flex flex-col">
+                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Base Protocol</span>
+                                        <span className="text-xs md:text-sm text-white font-bold tracking-tight">₹{driver.salary.toLocaleString()}</span>
                                     </div>
-                                    <div className="flex flex-col border-l border-slate-800 pl-4">
-                                        <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500 mb-1">Leaves Used</span>
-                                        <span className="text-white font-bold">{driver.leavesUsed} <span className="text-slate-500">/ {driver.leavesTotal}</span></span>
+                                    <div className="flex flex-col">
+                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Manifest Ratio</span>
+                                        <span className="text-xs md:text-sm text-white font-bold tracking-tight">{driver.leavesUsed} <span className="text-slate-600">/ {driver.leavesTotal}</span></span>
                                     </div>
-                                    <div className="flex flex-col border-l border-slate-800 pl-4 col-span-2 md:col-span-1">
-                                        <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-500 mb-1">Trips Today</span>
-                                        <span className="text-white font-bold">{driver.tripsToday}</span>
+                                    <div className="flex flex-col col-span-2 sm:col-span-1">
+                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Total Signals</span>
+                                        <span className="text-xs md:text-sm text-white font-bold tracking-tight">{driver.tripsToday}</span>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2 self-end md:self-auto">
+                                <div className="flex items-center justify-between lg:justify-end gap-3 mt-2 lg:mt-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-800/50">
+                                    <div className="lg:hidden flex flex-col">
+                                        <span className="text-[9px] uppercase font-bold tracking-widest text-[#f97316]">Authorization</span>
+                                        <span className="text-[10px] text-slate-500">Action Required</span>
+                                    </div>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white">
+                                            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all">
                                                 <MoreVertical className="h-5 w-5" />
                                             </Button>
                                         </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" className="bg-slate-900 border-slate-800 text-white">
-                                            <DropdownMenuItem className="hover:bg-slate-800 cursor-pointer text-orange-400 focus:text-orange-400 focus:bg-slate-800" onClick={() => handlePaySalary(driver.id, driver.name)}>
-                                                <Wallet className="h-4 w-4 mr-2" /> Payroll
+                                        <DropdownMenuContent align="end" className="bg-[#0a101f] border-slate-800 text-white min-w-[160px] p-2 rounded-xl shadow-2xl">
+                                            <DropdownMenuItem className="hover:bg-slate-800 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-orange-400 focus:text-orange-400 focus:bg-slate-800 rounded-lg p-3 mb-1" onClick={() => handlePaySalary(driver.id, driver.name)}>
+                                                <Wallet className="h-4 w-4 mr-2" /> Dispatch Payroll
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="hover:bg-slate-800 cursor-pointer focus:bg-slate-800" onClick={() => handleGrantLeave(driver.id, driver.name)}>
-                                                <CalendarRange className="h-4 w-4 mr-2" /> Grant Leave
+                                            <DropdownMenuItem className="hover:bg-slate-800 cursor-pointer text-[10px] font-bold uppercase tracking-widest focus:bg-slate-800 rounded-lg p-3" onClick={() => handleGrantLeave(driver.id, driver.name)}>
+                                                <CalendarRange className="h-4 w-4 mr-2" /> Authorize Leave
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
