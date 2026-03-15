@@ -367,20 +367,21 @@ const UserProfile = () => {
 
               {/* Station Pump Location */}
               {isStation && (
-                <Card className="bg-slate-900 border-slate-800">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-white">
-                      <MapPin className="text-blue-500" /> Pump Location
+                <Card className="bg-[#0a101f] border-slate-800 shadow-2xl overflow-hidden rounded-2xl">
+                  <CardHeader className="border-b border-slate-800/50 pb-5 md:pb-6 bg-[#020817]/30">
+                    <CardTitle className="flex items-center gap-3 text-white text-xs md:text-sm font-bold uppercase tracking-[0.25em]">
+                      <MapPin className="text-[#f97316] w-4 h-4" /> Positional Telemetry
                     </CardTitle>
-                    <CardDescription>Manage your station's physical location.</CardDescription>
+                    <CardDescription className="text-[11px] text-slate-500 font-medium">Coordinate mapping for physical station infrastructure</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-4">
-                        <div className="grid gap-2">
-                          <Label className="text-gray-400">Address Line</Label>
+                  <CardContent className="p-6 md:p-8">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 md:gap-12">
+                      <div className="space-y-6">
+                        <div className="grid gap-2.5">
+                          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Primary Vector Address</Label>
                           <Input
                             disabled={!isEditing}
+                            placeholder="Terminal Street, Block"
                             value={profileData.pumpLocation?.addressLine || ''}
                             onChange={(e) => setProfileData({
                               ...profileData,
@@ -389,14 +390,15 @@ const UserProfile = () => {
                                 addressLine: e.target.value
                               }
                             })}
-                            className="bg-slate-800 border-slate-700 text-white"
+                            className="bg-[#020817] border-slate-800 text-white h-11 focus:ring-1 focus:ring-orange-500/50 transition-all placeholder:text-slate-700"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="grid gap-2">
-                            <Label className="text-gray-400">City</Label>
+                          <div className="grid gap-2.5">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">City Hub</Label>
                             <Input
                               disabled={!isEditing}
+                              placeholder="City"
                               value={profileData.pumpLocation?.city || ''}
                               onChange={(e) => setProfileData({
                                 ...profileData,
@@ -405,13 +407,14 @@ const UserProfile = () => {
                                   city: e.target.value
                                 }
                               })}
-                              className="bg-slate-800 border-slate-700 text-white"
+                              className="bg-[#020817] border-slate-800 text-white h-11 focus:ring-1 focus:ring-orange-500/50 transition-all placeholder:text-slate-700"
                             />
                           </div>
-                          <div className="grid gap-2">
-                            <Label className="text-gray-400">State</Label>
+                          <div className="grid gap-2.5">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">State Sector</Label>
                             <Input
                               disabled={!isEditing}
+                              placeholder="State"
                               value={profileData.pumpLocation?.state || ''}
                               onChange={(e) => setProfileData({
                                 ...profileData,
@@ -420,15 +423,16 @@ const UserProfile = () => {
                                   state: e.target.value
                                 }
                               })}
-                              className="bg-slate-800 border-slate-700 text-white"
+                              className="bg-[#020817] border-slate-800 text-white h-11 focus:ring-1 focus:ring-orange-500/50 transition-all placeholder:text-slate-700"
                             />
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="grid gap-2">
-                            <Label className="text-gray-400">Zip Code</Label>
+                          <div className="grid gap-2.5">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Archive Code</Label>
                             <Input
                               disabled={!isEditing}
+                              placeholder="Zip Code"
                               value={profileData.pumpLocation?.zipCode || ''}
                               onChange={(e) => setProfileData({
                                 ...profileData,
@@ -437,11 +441,11 @@ const UserProfile = () => {
                                   zipCode: e.target.value
                                 }
                               })}
-                              className="bg-slate-800 border-slate-700 text-white"
+                              className="bg-[#020817] border-slate-800 text-white h-11 focus:ring-1 focus:ring-orange-500/50 transition-all placeholder:text-slate-700"
                             />
                           </div>
-                          <div className="grid gap-2">
-                            <Label className="text-gray-400">Country</Label>
+                          <div className="grid gap-2.5">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">National Region</Label>
                             <Input
                               disabled={!isEditing}
                               value={profileData.pumpLocation?.country || 'India'}
@@ -452,13 +456,19 @@ const UserProfile = () => {
                                   country: e.target.value
                                 }
                               })}
-                              className="bg-slate-800 border-slate-700 text-white"
+                              className="bg-[#020817] border-slate-800 text-white h-11 focus:ring-1 focus:ring-orange-500/50 transition-all"
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="h-[250px] rounded-lg overflow-hidden border border-slate-800 relative">
+                      <div className="h-[280px] xl:h-full min-h-[250px] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl relative group">
+                        <div className="absolute inset-0 bg-orange-500/5 pointer-events-none group-hover:bg-transparent transition-colors z-10" />
                         <MapView address={`${profileData.pumpLocation?.city || 'India'}`} />
+                        <div className="absolute bottom-4 left-4 z-20">
+                           <Badge className="bg-[#020817]/80 backdrop-blur-md border border-slate-800/50 text-[10px] font-bold uppercase tracking-widest px-3 py-1">
+                             Target Identified
+                           </Badge>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
