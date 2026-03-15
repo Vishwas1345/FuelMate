@@ -195,13 +195,10 @@ const UserProfile = () => {
   const isStation = profileData.role === 'station';
 
   return (
-    <div className="w-full">
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 p-4 md:p-0">
         {/* LEFT COLUMN: Profile Summary Card */}
-        <div className="lg:col-span-1 space-y-6">
-          <Card className="bg-slate-900 border-slate-800 text-white overflow-hidden sticky top-8">
+        <div className="lg:col-span-1">
+          <Card className="bg-[#0a101f] border-slate-800 text-white overflow-hidden lg:sticky lg:top-8 shadow-2xl">
             <div className="h-32 bg-gradient-to-br from-orange-600 to-amber-600 relative opacity-90">
               <div className="absolute inset-0 bg-black/10" />
             </div>
@@ -268,23 +265,22 @@ const UserProfile = () => {
         {/* RIGHT COLUMN: Details & Forms */}
         <div className="lg:col-span-3">
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="bg-[#0a101f] border border-slate-800 p-1 h-12 rounded-lg w-auto inline-flex">
-              <TabsTrigger value="overview" className="h-full rounded-md px-6 text-[11px] font-semibold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Overview</TabsTrigger>
-              <TabsTrigger value="orders" className="h-full rounded-md px-6 text-[11px] font-semibold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Orders & History</TabsTrigger>
-              <TabsTrigger value="settings" className="h-full rounded-md px-6 text-[11px] font-semibold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Settings</TabsTrigger>
+            <TabsList className="bg-[#0a101f] border border-slate-800/60 p-1 h-12 rounded-xl w-full md:w-auto grid grid-cols-3 md:inline-flex shadow-lg mb-4">
+              <TabsTrigger value="overview" className="h-full rounded-lg px-2 md:px-6 text-[10px] md:text-[11px] font-bold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Overview</TabsTrigger>
+              <TabsTrigger value="orders" className="h-full rounded-lg px-2 md:px-6 text-[10px] md:text-[11px] font-bold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all text-center">Orders</TabsTrigger>
+              <TabsTrigger value="settings" className="h-full rounded-lg px-2 md:px-6 text-[10px] md:text-[11px] font-bold uppercase tracking-widest data-[state=active]:bg-[#f97316] data-[state=active]:text-white text-slate-500 transition-all">Settings</TabsTrigger>
             </TabsList>
 
             {/* OVERVIEW TAB */}
             <TabsContent value="overview" className="space-y-6">
 
               {/* Personal Information */}
-              <Card className="bg-slate-900 border-slate-800">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
+              <Card className="bg-[#0a101f] border-slate-800 shadow-xl overflow-hidden">
+                <CardHeader className="border-b border-slate-800/50 pb-4">
+                  <CardTitle className="flex items-center gap-2 text-white text-sm md:text-base uppercase tracking-wider">
                     <UserIconOrBuilding isStation={isStation} />
-                    {isStation ? 'Business Information' : 'Personal Information'}
+                    {isStation ? 'Enterprise Identity' : 'Personal Identity'}
                   </CardTitle>
-                  <CardDescription>Manage your personal details and contact info.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="grid gap-2">
@@ -471,13 +467,12 @@ const UserProfile = () => {
 
               {/* Addresses Section */}
               {!isStation && (
-                <Card className="bg-slate-900 border-slate-800">
-                  <CardHeader className="flex flex-row items-center justify-between">
+                <Card className="bg-[#0a101f] border-slate-800 shadow-xl overflow-hidden">
+                  <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800/50 pb-4 gap-4">
                     <div>
-                      <CardTitle className="flex items-center gap-2 text-white">
-                        <MapPin className="text-orange-500" /> Delivery Addresses
+                      <CardTitle className="flex items-center gap-2 text-white text-sm md:text-base uppercase tracking-wider">
+                        <MapPin className="text-orange-500" /> Delivery Adresses
                       </CardTitle>
-                      <CardDescription>Manage your delivery locations.</CardDescription>
                     </div>
                     <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
                       <DialogTrigger asChild>
@@ -581,13 +576,12 @@ const UserProfile = () => {
 
               {/* Vehicles Section */}
               {!isStation && (
-                <Card className="bg-slate-900 border-slate-800">
-                  <CardHeader className="flex flex-row items-center justify-between">
+                <Card className="bg-[#0a101f] border-slate-800 shadow-xl overflow-hidden">
+                  <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800/50 pb-4 gap-4">
                     <div>
-                      <CardTitle className="flex items-center gap-2 text-white">
-                        <Car className="text-blue-500" /> My Vehicles
+                      <CardTitle className="flex items-center gap-2 text-white text-sm md:text-base uppercase tracking-wider">
+                        <Car className="text-blue-500" /> Vehicle Units
                       </CardTitle>
-                      <CardDescription>Manage your registered vehicles.</CardDescription>
                     </div>
                     <Dialog open={isVehicleDialogOpen} onOpenChange={setIsVehicleDialogOpen}>
                       <DialogTrigger asChild>
@@ -679,22 +673,21 @@ const UserProfile = () => {
             </TabsContent>
 
             {/* ORDERS TAB */}
-            <TabsContent value="orders">
-              <Card className="bg-slate-900 border-slate-800">
-                <CardHeader className="flex flex-row items-center justify-between">
+            <TabsContent value="orders" className="space-y-6">
+              <Card className="bg-[#0a101f] border-slate-800 shadow-xl overflow-hidden">
+                <CardHeader className="border-b border-slate-800/50 pb-4 flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Package className="text-orange-500" /> Recent Orders
+                    <CardTitle className="text-sm font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
+                      <Package className="text-[#f97316] w-4 h-4" /> Operations History
                     </CardTitle>
-                    <CardDescription className="text-gray-400">View your fuel order history and receipts.</CardDescription>
                   </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 text-[10px] font-bold uppercase tracking-widest text-[#f97316] hover:bg-[#f97316]/5 border border-[#f97316]/20"
                     onClick={() => getOrders()}
-                    className="text-slate-400 hover:text-white"
                   >
-                    <Activity className="w-4 h-4 mr-2" /> Refresh
+                    <Activity className="w-3 h-3 mr-1" /> Sync
                   </Button>
                 </CardHeader>
                 <CardContent>
@@ -776,12 +769,11 @@ const UserProfile = () => {
               </Card>
             </TabsContent>
 
-          </Tabs>
+            </Tabs>
+          </div>
         </div>
-      </div>
-    </div>
-  );
-};
+      );
+    };
 
 const UserIconOrBuilding = ({ isStation }: { isStation: boolean }) => {
   return isStation ? <Building2 className="text-blue-500 w-5 h-5" /> : <Star className="text-orange-500 w-5 h-5" />;
