@@ -24,15 +24,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
 
 
-  // Force onboarding if profile is incomplete
-  if (user && !user.isProfileComplete && location.pathname !== '/onboarding') {
-    return <Navigate to="/onboarding" replace />;
-  }
-
-  // Optional: Prevent completed users from visiting onboarding again
-  if (user && user.isProfileComplete && location.pathname === '/onboarding') {
-    if (user.role === 'station') return <Navigate to="/station" replace />;
-    return <Navigate to="/customer" replace />;
+  // Force all authenticated users to under-construction page
+  if (location.pathname !== '/under-construction') {
+    return <Navigate to="/under-construction" replace />;
   }
 
   return <>{children}</>;
