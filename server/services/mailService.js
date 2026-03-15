@@ -1,49 +1,53 @@
-import nodemailer from 'nodemailer';
 import logger from '../utils/logger.js';
 
 class MailService {
     constructor() {
         this.adminEmail = 'vishwastiwari1901@gmail.com';
-        this.transporter = null;
+        this.apiKey = process.env.RESEND_API_KEY;
+        this.fromEmail = 'FuelMate <onboarding@resend.dev>'; // Resend default for testing, update to custom domain later
         this.init();
     }
 
     init() {
-        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            this.transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 465,
-                secure: true, // Use SSL for port 465
-                auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
-                },
-                pool: true, // Reuse connections for better performance
-                maxConnections: 3,
-                maxMessages: 100,
-                connectionTimeout: 15000, // 15 seconds
-                greetingTimeout: 15000,
-                socketTimeout: 30000,
-            });
-            logger.info('Mail service initialized with production settings');
+        if (this.apiKey) {
+            logger.info('Mail service initialized with Resend API');
         } else {
-            logger.warn('Email credentials missing - mail service in limited mode');
+            logger.warn('RESEND_API_KEY missing - mail service in limited mode');
         }
     }
 
     async sendEmail(options) {
-        if (!this.transporter) {
-            logger.warn('Email skipped: Transporter not initialized');
+        if (!this.apiKey) {
+            logger.warn('Email skipped: Resend API Key not configured');
             return;
         }
 
         try {
-            const info = await this.transporter.sendMail(options);
-            logger.debug('Email sent', { messageId: info.messageId, to: options.to });
-            return info;
+            const response = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.apiKey}`
+                },
+                body: JSON.stringify({
+                    from: this.fromEmail,
+                    to: options.to,
+                    reply_to: options.replyTo || 'vishwastiwari1901@gmail.com',
+                    subject: options.subject,
+                    html: options.html
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                logger.debug('Email sent via Resend' , { id: data.id, to: options.to });
+                return data;
+            } else {
+                throw new Error(data.message || 'Failed to send via Resend');
+            }
         } catch (error) {
-            logger.error('Email sending failed', { error: error.message, to: options.to });
-            // Don't throw to avoid breaking main workflow
+            logger.error('Resend email sending failed', { error: error.message, to: options.to });
         }
     }
 
