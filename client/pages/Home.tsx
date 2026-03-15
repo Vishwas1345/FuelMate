@@ -11,7 +11,9 @@ import {
     TrendingUp,
     Users,
     Award,
-    Leaf
+    Leaf,
+    MessageSquarePlus,
+    ArrowDown
 } from 'lucide-react';
 import { FastDeliveryImage, QualityFuelImage, AvailabilityImage, TrackingImage } from '@/components/FeatureIllustrations';
 import CTASection from '@/components/landing/CTASection';
@@ -332,20 +334,12 @@ const Home = () => {
                             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
                                 What Our <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">Customers Say</span>
                             </h2>
-                            <button
-                                onClick={() => document.getElementById('leave-review')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="text-sm text-gray-400 hover:text-orange-500 transition-colors underline decoration-orange-500/50 underline-offset-4 cursor-pointer focus:outline-none"
-                            >
-                                Submit a Review
-                            </button>
                         </div>
                     </RevealOnScroll>
 
                     {/* Infinite Marquee Container */}
-                    <div className="relative w-full overflow-hidden mask-gradient-sides group">
-                        {/* Gradient Masks */}
-                        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none"></div>
-                        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none"></div>
+                    <div className="relative w-full overflow-hidden group">
+
 
                         {/* Scrolling Track */}
                         <div
@@ -392,6 +386,18 @@ const Home = () => {
                             ))}
                         </div>
                     </div>
+
+                    <RevealOnScroll delay={0.3}>
+                        <div className="mt-8 flex justify-center">
+                            <Button
+                                onClick={() => document.getElementById('leave-review')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded-xl transition-all duration-300 shadow-lg shadow-orange-500/20 flex items-center gap-2 group"
+                            >
+                                Leave a Review
+                                <ArrowDown size={16} className="group-hover:translate-y-1 transition-transform" />
+                            </Button>
+                        </div>
+                    </RevealOnScroll>
                 </div>
             </section>
 
