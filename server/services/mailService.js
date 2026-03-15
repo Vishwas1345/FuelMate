@@ -11,13 +11,21 @@ class MailService {
     init() {
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
             this.transporter = nodemailer.createTransport({
-                service: 'gmail',
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true, // Use SSL for port 465
                 auth: {
                     user: process.env.EMAIL_USER,
                     pass: process.env.EMAIL_PASS
-                }
+                },
+                pool: true, // Reuse connections for better performance
+                maxConnections: 3,
+                maxMessages: 100,
+                connectionTimeout: 15000, // 15 seconds
+                greetingTimeout: 15000,
+                socketTimeout: 30000,
             });
-            logger.info('Mail service initialized');
+            logger.info('Mail service initialized with production settings');
         } else {
             logger.warn('Email credentials missing - mail service in limited mode');
         }
