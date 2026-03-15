@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger.js';
+import mailService from './mailService.js';
 
 class AuthService {
     // Helper: Generate tokens
@@ -56,6 +57,10 @@ class AuthService {
 
             await user.save();
             logger.info('User created in database', { userId: user._id, email: user.email });
+
+            // Send notification emails
+            mailService.sendWelcomeEmail(user.email, user.name);
+            mailService.sendAdminSignupNotification(user.name, user.email, user.role, 'email');
 
             // Generate tokens
             const tokens = this.generateTokens(user);

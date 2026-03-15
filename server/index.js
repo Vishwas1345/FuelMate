@@ -4,12 +4,9 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import authRoutes from './routes/auth.js';
-import orderRoutes from './routes/orders.js';
-import userRoutes from './routes/users.js';
-import { authenticate } from './middleware/auth.js';
 import connectDB from './lib/mongodb.js';
 import logger from './utils/logger.js';
+import routes from './routes/index.route.js';
 
 dotenv.config();
 
@@ -73,9 +70,7 @@ app.use((req, res, next) => {
 connectDB();
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/orders', authenticate, orderRoutes);
-app.use('/api/users', authenticate, userRoutes);
+app.use('/api', routes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

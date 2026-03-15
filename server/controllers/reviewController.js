@@ -38,7 +38,7 @@ class ReviewController {
             
             // Send acknowledgment email if email is provided
             if (email) {
-                reviewService.sendAcknowledgmentEmail(email, comment || message);
+                reviewService.sendAcknowledgmentEmail(email, name, comment || message);
             }
             res.status(201).json(newReview);
         } catch (err) {

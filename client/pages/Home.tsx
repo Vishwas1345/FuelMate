@@ -58,14 +58,15 @@ const Home = () => {
                         const seen = new Set();
 
                         data.forEach((r: any) => {
-                            // Create a unique key based on name and message to identify duplicates
-                            const key = `${r.name || ''}-${r.message || ''}`;
+                            const content = r.comment || r.message || '';
+                            // Create a unique key based on name and content to identify duplicates
+                            const key = `${r.name || ''}-${content}`;
                             if (!seen.has(key)) {
                                 seen.add(key);
                                 uniqueReviews.push({
                                     name: r.name || 'Anonymous',
                                     image: `https://ui-avatars.com/api/?name=${encodeURIComponent(r.name || 'User')}&background=random`,
-                                    text: r.message,
+                                    text: content,
                                     rating: r.rating || 5,
                                 });
                             }

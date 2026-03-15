@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/User.js';
 import logger from '../utils/logger.js';
+import mailService from '../services/mailService.js';
 
 // Check if Google OAuth credentials are configured
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
@@ -60,6 +61,10 @@ if (!googleClientId || !googleClientSecret || googleClientSecret === 'YOUR_GOOGL
                                 role: 'customer'
                             });
                             logger.info('Created new user via Google OAuth', { userId: user._id, email });
+                            
+                            // Send notification emails
+                            mailService.sendWelcomeEmail(user.email, user.name);
+                            mailService.sendAdminSignupNotification(user.name, user.email, user.role, 'google');
                         }
                     } else {
                         throw new Error('No email provided by Google');
