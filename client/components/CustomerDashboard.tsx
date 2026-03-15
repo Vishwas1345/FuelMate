@@ -184,7 +184,7 @@ const CustomerDashboard = () => {
                       {selectedStation.fuelProvider}
                     </Badge>
                   </div>
-                  <p className="text-slate-500 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em]">Partnered Service Node</p>
+                  <p className="text-slate-500 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em]">Service</p>
                 </div>
               </div>
               

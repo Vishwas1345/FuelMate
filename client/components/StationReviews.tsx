@@ -75,7 +75,7 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 <div className="lg:col-span-4 space-y-6">
                     <div className="bg-slate-900 border border-slate-800 p-8 rounded-lg text-center shadow-sm">
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-4">Partner Performance Index</p>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-4">Partner Performance</p>
                         <div className="text-6xl font-semibold text-white mb-2">{averageRating}</div>
                         <div className="flex justify-center gap-1.5 mb-2 text-orange-500">
                             {[1, 2, 3, 4, 5].map((star) => (

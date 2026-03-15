@@ -755,14 +755,14 @@ const UserProfile = () => {
               <Card className="bg-[#0a101f] border-slate-800 shadow-xl overflow-hidden">
                 <CardHeader className="border-b border-slate-800/50 pb-4">
                   <CardTitle className="text-sm font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
-                    <ShieldCheck className="text-green-500 w-4 h-4" /> Security Protocol
+                    <ShieldCheck className="text-green-500 w-4 h-4" /> Security
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6 space-y-4">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-xl border border-slate-800/60 bg-[#020817] hover:bg-[#020817]/80 transition-all gap-4 shadow-inner">
                     <div className="space-y-1">
-                      <h4 className="text-white font-bold text-xs uppercase tracking-wider opacity-90">Authentication Gate</h4>
-                      <p className="text-[11px] text-slate-500 font-medium">Rotate your access credentials to maintain vault integrity.</p>
+                      <h4 className="text-white font-bold text-xs uppercase tracking-wider opacity-90">Update Password</h4>
+                      <p className="text-[11px] text-slate-500 font-medium">Rotate your access credentials to maintain security.</p>
                     </div>
                     <Button variant="outline" size="sm" className="h-9 border-slate-700 hover:bg-slate-800 text-slate-300 text-[10px] font-bold uppercase tracking-widest px-4">
                       Update Password
@@ -771,8 +771,8 @@ const UserProfile = () => {
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-xl border border-red-900/20 bg-red-900/5 hover:bg-red-900/10 transition-all gap-4 shadow-inner mt-6">
                     <div className="space-y-1">
-                      <h4 className="text-red-400 font-bold text-xs uppercase tracking-wider opacity-90">Termination Protocol</h4>
-                      <p className="text-[11px] text-red-500/60 font-medium">Permanently decommission this account and purge all associated telemetry.</p>
+                      <h4 className="text-red-400 font-bold text-xs uppercase tracking-wider opacity-90">Delete Account</h4>
+                      <p className="text-[11px] text-red-500/60 font-medium">Permanently delete this account and purge all associated data.</p>
                     </div>
                     <Button variant="destructive" size="sm" className="h-9 text-[10px] font-bold uppercase tracking-widest px-4 shadow-lg shadow-red-900/20">
                       Delete Profile
