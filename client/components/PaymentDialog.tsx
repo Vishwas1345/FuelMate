@@ -36,10 +36,10 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onConfir
                 <DialogHeader className="p-6 border-b border-slate-800/50 bg-[#020817]/30">
                     <DialogTitle className="text-xs font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2 mb-1">
                         <Smartphone className="w-4 h-4 text-[#f97316]" />
-                        Transaction Protocol
+                        Confirm Payment
                     </DialogTitle>
                     <DialogDescription className="text-[11px] text-slate-500 font-medium">
-                        Secure authorization for total manifest value: <span className="text-white font-bold tracking-tight ml-1">₹{amount.toFixed(2)}</span>
+                        Total amount to pay: <span className="text-white font-bold tracking-tight ml-1">₹{amount.toFixed(2)}</span>
                     </DialogDescription>
                 </DialogHeader>
 
@@ -110,7 +110,7 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({ isOpen, onClose, onConfir
                         {isSubmitting ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
                         ) : (
-                            <>Authorize Protocol <Check className="w-3.5 h-3.5 ml-2" /></>
+                            <>Confirm Payment <Check className="w-3.5 h-3.5 ml-2" /></>
                         )}
                     </Button>
                 </DialogFooter>

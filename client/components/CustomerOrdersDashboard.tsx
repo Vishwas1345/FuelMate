@@ -182,9 +182,9 @@ export const CustomerOrdersDashboard = () => {
                                 <div className="lg:col-span-2">
                                     <div className="bg-[#0a101f] border border-slate-800/60 rounded-xl p-6 min-h-[500px] flex flex-col shadow-xl">
                                         <div className="flex justify-between items-center mb-6">
-                                            <div className="flex items-center gap-2 text-orange-500">
-                                                <TrendingUp className="w-4 h-4" />
-                                                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Telemetry Stream</span>
+                                            <div className="flex items-center gap-2 mb-4">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-orange-500 animate-pulse" />
+                                                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Order Summary</span>
                                             </div>
                                             <Badge variant="outline" className="text-[9px] border-slate-800 text-slate-500 font-bold bg-[#020817] px-2 py-0.5">ESTABLISHED</Badge>
                                         </div>

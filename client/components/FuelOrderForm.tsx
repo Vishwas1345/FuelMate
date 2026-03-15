@@ -417,7 +417,13 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                     <TrendingDown className="w-5 h-5 text-[#f97316]" />
                   </div>
                   <div className="flex-1 space-y-1">
-                    <p className="text-[10px] font-bold text-white uppercase tracking-widest opacity-90">Efficiency Metrics</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-bold text-white uppercase tracking-widest opacity-90">Efficiency Metrics</p>
+                      <div className="text-right">
+                        <p className="font-bold uppercase tracking-widest">Min Limit: 20L</p>
+                        <p className="text-[9px] text-slate-500 font-medium">Standard Capacity</p>
+                      </div>
+                    </div>
                     <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                       Optimizing operations will save approximately {estimatedDeliveryTime} minutes and ₹{savings.toFixed(0)} compared to traditional station transit.
                     </p>

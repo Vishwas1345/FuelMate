@@ -251,10 +251,10 @@ const CustomerDashboard = () => {
                   Client Reviews
                 </TabsTrigger>
                 <TabsTrigger value="about" className="rounded-lg h-full px-6 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all duration-300">
-                  Telemetry Information
+                    About Station
                 </TabsTrigger>
                 <TabsTrigger value="contact" className="rounded-lg h-full px-6 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all duration-300">
-                  Node Contact
+                    Contact
                 </TabsTrigger>
               </TabsList>
             </div>

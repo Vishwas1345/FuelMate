@@ -538,17 +538,17 @@ const FuelStationDashboard = () => {
               <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
                 <div className="flex items-center gap-3 mb-2">
                   <Target className="w-4 h-4 text-green-500" />
-                  <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Peak Efficiency</p>
+                  <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Work Speed</p>
                 </div>
-                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Your order confirmation time is 14% faster than average. Logistics throughput is optimal.</p>
+                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Your order processing is faster than usual. Keep it up!</p>
               </div>
 
               <div className="p-4 bg-[#020817] rounded-xl border border-slate-800 group hover:border-[#f97316]/30 transition-all">
                 <div className="flex items-center gap-3 mb-2">
                   <TrendingUp className="w-4 h-4 text-blue-500" />
-                  <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Volume Forecast</p>
+                  <p className="text-[11px] font-semibold text-white uppercase tracking-wider">Upcoming Demand</p>
                 </div>
-                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Anticipated 30% increase in Diesel demand for industrial clusters by Thursday. Sync tanker arrival.</p>
+                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">Expect a 30% increase in Diesel demand by Thursday. Make sure your stock is ready.</p>
               </div>
 
               <div className="p-4 bg-[#0a101f] rounded-xl border-2 border-dashed border-[#f97316]/20 group hover:border-[#f97316]/50 transition-all flex flex-col justify-center items-center gap-3">

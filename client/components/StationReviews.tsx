@@ -40,8 +40,8 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
         try {
             await api.createStationReview(stationId, comment, rating);
             toast({
-                title: "Feedback Logged",
-                description: "Your experience has been recorded.",
+                title: "Review Submitted",
+                description: "Thank you for your feedback.",
             });
             setComment('');
             setRating(5);
@@ -75,7 +75,7 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 <div className="lg:col-span-4 space-y-6">
                     <div className="bg-slate-900 border border-slate-800 p-8 rounded-lg text-center shadow-sm">
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-4">Partner Performance</p>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-4">Average Rating</p>
                         <div className="text-6xl font-semibold text-white mb-2">{averageRating}</div>
                         <div className="flex justify-center gap-1.5 mb-2 text-orange-500">
                             {[1, 2, 3, 4, 5].map((star) => (
@@ -91,7 +91,7 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
 
                 <div className="lg:col-span-8">
                     <div className="bg-slate-900 border border-slate-800 p-8 rounded-lg shadow-sm">
-                        <h3 className="text-lg font-bold text-white mb-6 uppercase tracking-tight">Submit Feedback</h3>
+                        <h3 className="text-lg font-bold text-white mb-6 uppercase tracking-tight">Write a Review</h3>
                         <form onSubmit={handleSubmitReview} className="space-y-6">
                             <div className="flex items-center gap-4">
                                 <p className="text-sm text-slate-400 font-medium">Experience Rating:</p>
@@ -131,7 +131,7 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
             {/* List */}
             <div className="space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                    <h3 className="text-xl font-semibold text-white uppercase tracking-tight">Review Logs</h3>
+                    <h3 className="text-xl font-semibold text-white uppercase tracking-tight">Customer Reviews</h3>
                     <Button variant="ghost" size="sm" className="text-slate-500 text-[10px] font-bold uppercase gap-2">
                         <Filter className="w-3 h-3" /> Filter: Most Recent
                     </Button>
@@ -139,7 +139,7 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
 
                 {reviews.length === 0 ? (
                     <div className="py-16 text-center bg-slate-900 border border-dashed border-slate-800 rounded-lg">
-                        <p className="text-slate-500 font-medium">No operational logs available for this station.</p>
+                        <p className="text-slate-500 font-medium">No reviews for this station yet.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-6">
@@ -156,10 +156,10 @@ const StationReviews: React.FC<StationReviewsProps> = ({ stationId }) => {
                                         </Avatar>
                                         <div>
                                             <p className="font-bold text-white text-lg">
-                                                {review.userId?.name || 'Authorized Client'}
+                                                {review.userId?.name || 'User'}
                                             </p>
                                             <p className="text-xs text-slate-500 font-mono">
-                                                TIMESTAMP: {new Date(review.createdAt).toLocaleString()}
+                                                DATE: {new Date(review.createdAt).toLocaleString()}
                                             </p>
                                         </div>
                                     </div>

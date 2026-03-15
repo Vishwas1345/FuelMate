@@ -151,7 +151,7 @@ const OrderTracking = ({ activeOrders, trackingOrderId, onTrackOrder }: OrderTra
 
             {/* Live Telemetry View */}
             <div className="space-y-3">
-              <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-[0.2em]">Operational Telemetry</p>
+              <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-[0.2em]">Order Status</p>
               <div className="h-48 rounded-lg overflow-hidden border border-slate-800 shadow-inner bg-slate-950">
                 <MapboxMap
                   address={selectedOrder.deliveryAddress}

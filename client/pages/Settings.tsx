@@ -40,8 +40,8 @@ const Settings = () => {
       [key]: !prev[key]
     }));
     toast({
-      title: "Notification settings updated",
-      description: "Your notification preferences have been saved.",
+      title: "Settings Updated",
+      description: "Preferences saved to secure cloud.",
     });
   };
 
@@ -49,49 +49,26 @@ const Settings = () => {
     try {
       await logout();
       navigate('/auth');
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account.",
-      });
+      toast({ title: "Signed Out", description: "You have been signed out of your account." });
     } catch (error) {
-      toast({
-        title: "Logout failed",
-        description: "Failed to logout. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to sign out. Please try again.", variant: "destructive" });
     }
   };
 
   const handlePasswordChange = async () => {
     try {
       setIsChangingPassword(true);
+      if (newPassword.length < 8) throw new Error('Password must be 8+ characters');
+      if (newPassword !== confirmPassword) throw new Error('Passwords mismatch');
 
-      // Validate passwords
-      if (newPassword.length < 8) {
-        throw new Error('New password must be at least 8 characters long');
-      }
-
-      if (newPassword !== confirmPassword) {
-        throw new Error('New passwords do not match');
-      }
-
-      // Update password in database
       await updatePassword(currentPassword, newPassword);
-
-      // Reset form
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
       setIsDialogOpen(false);
-
-      toast({
-        title: "Password updated",
-        description: "Your password has been changed successfully.",
-      });
+      toast({ title: "Password Updated", description: "Your password has been changed successfully." });
     } catch (error) {
       toast({
-        title: "Password change failed",
-        description: error instanceof Error ? error.message : "Failed to change password. Please try again.",
+        title: "Update Failed",
+        description: error instanceof Error ? error.message : "An error occurred while updating your password.",
         variant: "destructive",
       });
     } finally {
@@ -100,192 +77,122 @@ const Settings = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full px-4 md:px-0 space-y-10 pb-12">
+      <div className="px-1">
+        <h1 className="text-2xl md:text-5xl font-bold text-white tracking-tighter mb-2">
+            Account <span className="text-[#f97316]">Settings</span>
+        </h1>
+        <p className="text-[11px] md:text-sm text-slate-500 font-bold uppercase tracking-[0.2em] opacity-80">
+            Manage your notifications & security
+        </p>
+      </div>
 
-      <h1 className="text-2xl md:text-3xl font-semibold text-white mb-6">Settings</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="lg:col-span-12 space-y-8">
+            <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-2xl overflow-hidden">
+              <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30 p-6 md:p-8">
+                <CardTitle className="text-[10px] md:text-xs font-bold text-white uppercase tracking-[0.3em] flex items-center gap-3">
+                    <Bell className="h-4 w-4 text-[#f97316]" /> Notifications
+                </CardTitle>
+                <CardDescription className="text-[11px] text-slate-500 font-medium mt-1">Choose how you want to receive updates</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 md:p-8 space-y-4">
+                {[
+                    { id: 'orderUpdates', label: 'Order Updates', desc: 'Get real-time updates on your fuel orders' },
+                    { id: 'deliveryUpdates', label: 'Delivery Alerts', desc: 'Receive notifications from your delivery partner' },
+                    { id: 'promotions', label: 'Promotions', desc: 'Get news about credits and special offers' },
+                    { id: 'emailNotifications', label: 'Email Notifications', desc: 'Receive account alerts via email' }
+                ].map((item) => (
+                    <div key={item.id} className="flex items-center justify-between p-5 bg-[#020817] border border-slate-800/40 rounded-xl group hover:border-[#f97316]/20 transition-all">
+                        <div className="space-y-1">
+                            <Label htmlFor={item.id} className="text-xs md:text-sm font-bold text-white tracking-tight">{item.label}</Label>
+                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{item.desc}</p>
+                        </div>
+                        <Switch
+                            id={item.id}
+                            checked={notifications[item.id as keyof typeof notifications]}
+                            onCheckedChange={() => handleNotificationChange(item.id as keyof typeof notifications)}
+                            className="bg-slate-800 data-[state=checked]:bg-[#f97316]"
+                        />
+                    </div>
+                ))}
+              </CardContent>
+            </Card>
 
-      <div className="grid gap-6">
-        <Card className="bg-slate-900 border-slate-800 text-white">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-orange-400" />
-              Notifications
-            </CardTitle>
-            <CardDescription className="text-gray-400">Manage your notification preferences</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-              <Label htmlFor="order-updates" className="flex-1">Order status updates</Label>
-              <Switch
-                id="order-updates"
-                checked={notifications.orderUpdates}
-                onCheckedChange={() => handleNotificationChange('orderUpdates')}
-              />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-2xl overflow-hidden">
+                  <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30 p-6 md:p-8">
+                    <CardTitle className="text-[10px] md:text-xs font-bold text-white uppercase tracking-[0.3em] flex items-center gap-3">
+                        <Shield className="h-4 w-4 text-green-500" /> Security
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 md:p-8 space-y-4">
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="w-full bg-[#020817] border border-slate-800 md:h-14 rounded-xl text-white hover:bg-slate-800/50 hover:border-[#f97316]/30 text-[10px] font-bold uppercase tracking-[0.2em] transition-all">
+                          <Lock className="h-4 w-4 mr-3 text-[#f97316]" /> Change Password
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-[#0a101f] border-slate-800 text-white rounded-2xl p-8 max-w-md">
+                        <DialogHeader className="mb-6">
+                          <DialogTitle className="text-sm font-bold uppercase tracking-[0.3em]">Update Password</DialogTitle>
+                          <DialogDescription className="text-[11px] text-slate-500 font-medium">Enter your current password and choose a new one</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-5">
+                          {[
+                            { id: 'current', label: 'Current Password', val: currentPassword, set: setCurrentPassword },
+                            { id: 'new', label: 'New Password', val: newPassword, set: setNewPassword },
+                            { id: 'confirm', label: 'Confirm New Password', val: confirmPassword, set: setConfirmPassword }
+                          ].map((field) => (
+                            <div key={field.id} className="space-y-2">
+                                <Label className="text-[9px] font-bold uppercase tracking-widest text-slate-500 ml-1">{field.label}</Label>
+                                <Input
+                                    type="password"
+                                    value={field.val}
+                                    onChange={(e) => field.set(e.target.value)}
+                                    className="bg-[#020817] border-slate-800 h-12 text-white placeholder:text-slate-700"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex gap-3 mt-8">
+                          <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1 bg-transparent border-slate-800 h-12 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white">Cancel</Button>
+                          <Button onClick={handlePasswordChange} disabled={isChangingPassword} className="flex-1 bg-[#f97316] h-12 text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-orange-500/20">
+                            {isChangingPassword ? 'Saving...' : 'Update Password'}
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Button onClick={handleLogout} className="w-full bg-[#020817] border border-slate-800 md:h-14 rounded-xl text-white hover:bg-slate-800/50 hover:border-red-500/30 text-[10px] font-bold uppercase tracking-[0.2em] transition-all">
+                      <LogOut className="h-4 w-4 mr-3 text-red-500" /> Sign Out
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-2xl overflow-hidden">
+                  <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30 p-6 md:p-8">
+                    <CardTitle className="text-[10px] md:text-xs font-bold text-white uppercase tracking-[0.3em] flex items-center gap-3">
+                        <Info className="h-4 w-4 text-blue-500" /> About & Support
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 md:p-8">
+                    <Accordion type="single" collapsible className="w-full">
+                      {[
+                        { val: 'about', title: 'About FuelMate', content: 'FuelMate is an easy way to get fuel delivered to your door. Version 1.2.4.' },
+                        { val: 'support', title: 'Contact Support', content: 'Email: support@fuelmate.com | Phone: +91 1800 123 4567' }
+                      ].map((item) => (
+                        <AccordionItem key={item.val} value={item.val} className="border-slate-800/50">
+                            <AccordionTrigger className="text-[11px] font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:no-underline">{item.title}</AccordionTrigger>
+                            <AccordionContent className="text-[12px] leading-relaxed text-slate-500 font-medium pb-4">{item.content}</AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </CardContent>
+                </Card>
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-              <Label htmlFor="delivery-updates" className="flex-1">Delivery notifications</Label>
-              <Switch
-                id="delivery-updates"
-                checked={notifications.deliveryUpdates}
-                onCheckedChange={() => handleNotificationChange('deliveryUpdates')}
-              />
-            </div>
-            <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-              <Label htmlFor="promotions" className="flex-1">Promotions and offers</Label>
-              <Switch
-                id="promotions"
-                checked={notifications.promotions}
-                onCheckedChange={() => handleNotificationChange('promotions')}
-              />
-            </div>
-            <div className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-              <Label htmlFor="email-notifications" className="flex-1">Email notifications</Label>
-              <Switch
-                id="email-notifications"
-                checked={notifications.emailNotifications}
-                onCheckedChange={() => handleNotificationChange('emailNotifications')}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800 text-white">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Info className="h-5 w-5 text-orange-400" />
-              About & Support
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="about" className="border-slate-800">
-                <AccordionTrigger className="text-white hover:text-white">About FuelMate</AccordionTrigger>
-                <AccordionContent className="text-gray-300">
-                  <p>FuelMate is a revolutionary service that delivers fuel right to your doorstep. Our mission is to make fuel delivery convenient, safe, and affordable for everyone.</p>
-                  <p className="mt-2">Founded by Vishwas Tiwari (CEO & Founder, FuelMate), a visionary entrepreneur committed to revolutionizing the fuel delivery industry. Under his leadership, FuelMate has emerged as a pioneering force in bringing innovative solutions to meet modern fuel delivery needs.</p>
-                  <p className="mt-2">Version 1.2.0</p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="faq" className="border-slate-800">
-                <AccordionTrigger className="text-white hover:text-white">Frequently Asked Questions</AccordionTrigger>
-                <AccordionContent className="text-gray-300 space-y-3">
-                  <div>
-                    <h4 className="font-medium text-white">How does fuel delivery work?</h4>
-                    <p className="text-sm">We deliver fuel directly to your location using specialized vehicles that are safe and compliant with all regulations.</p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-white">Is there a minimum order quantity?</h4>
-                    <p className="text-sm">Yes, the minimum order is 5 liters of fuel.</p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-white">How long does delivery take?</h4>
-                    <p className="text-sm">Delivery times typically range from 30 minutes to 2 hours depending on your location and current demand.</p>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="contact" className="border-slate-800">
-                <AccordionTrigger className="text-white hover:text-white">Contact Support</AccordionTrigger>
-                <AccordionContent className="text-gray-300">
-                  <p>Email: support@fuelmate.com</p>
-                  <p>Phone: +91 1800 123 4567</p>
-                  <p className="mt-2">Available 24/7 for your support needs.</p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800 text-white">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-orange-400" />
-              Account Security
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
-                >
-                  <Lock className="h-4 w-4 mr-2" />
-                  Change Password
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-slate-900 border-slate-800 text-white">
-                <DialogHeader>
-                  <DialogTitle>Change Password</DialogTitle>
-                  <DialogDescription className="text-gray-400">
-                    Enter your current password and choose a new one.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="current-password">Current Password</Label>
-                    <Input
-                      id="current-password"
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="bg-slate-800 border-slate-700 text-white"
-                      placeholder="Enter your current password"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input
-                      id="new-password"
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="bg-slate-800 border-slate-700 text-white"
-                      placeholder="Enter new password"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm New Password</Label>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="bg-slate-800 border-slate-700 text-white"
-                      placeholder="Confirm new password"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsDialogOpen(false)}
-                    className="bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handlePasswordChange}
-                    disabled={isChangingPassword}
-                    className="bg-orange-500 hover:bg-orange-600"
-                  >
-                    {isChangingPassword ? 'Changing...' : 'Change Password'}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            <Button
-              variant="outline"
-              className="w-full bg-slate-800 border-slate-700 text-white hover:bg-slate-700"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          </CardContent>
-        </Card>
+        </div>
       </div>
     </div>
   );

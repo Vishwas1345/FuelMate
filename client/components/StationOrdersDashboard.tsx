@@ -145,7 +145,7 @@ export const StationOrdersDashboard = () => {
                     <h1 className="text-3xl font-semibold text-white tracking-tight mb-2">
                         Manage <span className="text-[#f97316]">Orders</span>
                     </h1>
-                    <p className="text-slate-400 font-medium tracking-tight">Review, accept, and dispatch fuel deliveries</p>
+                    <p className="text-slate-400 font-medium tracking-tight">Accept and manage your fuel orders</p>
                 </div>
             </div>
 
@@ -311,7 +311,7 @@ export const StationOrdersDashboard = () => {
                                 )}
                                 <CardTitle className="text-[10px] font-bold text-white uppercase tracking-[0.2em] flex items-center gap-2">
                                     <Truck className="w-4 h-4 text-[#f97316]" />
-                                    Dispatch Terminal
+                                    Order Details
                                 </CardTitle>
                             </div>
                         </CardHeader>

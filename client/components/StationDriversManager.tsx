@@ -77,7 +77,7 @@ export const StationDriversManager = () => {
                         Delivery <span className="text-[#f97316]">Partners</span>
                     </h1>
                     <p className="text-[11px] md:text-sm text-slate-500 font-bold uppercase tracking-[0.2em] opacity-80">
-                        Fleet Management & Payroll Protocol
+                        Manage your delivery team and payroll
                     </p>
                 </div>
                 <Button className="w-full md:w-auto bg-[#f97316] hover:bg-[#f97316]/90 text-white text-[11px] font-bold uppercase tracking-widest h-12 px-10 shadow-lg shadow-orange-500/20 border-none transition-all hover:scale-[1.02] active:scale-95">
@@ -137,8 +137,8 @@ export const StationDriversManager = () => {
 
             <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-2xl overflow-hidden">
                 <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30 p-6 md:p-8">
-                    <CardTitle className="text-[10px] md:text-xs font-bold text-white uppercase tracking-[0.3em]">Partner Roster</CardTitle>
-                    <CardDescription className="text-[11px] text-slate-500 font-medium mt-1">Registry of station's authorized delivery workforce</CardDescription>
+                    <CardTitle className="text-[10px] md:text-xs font-bold text-white uppercase tracking-[0.3em]">Delivery Partners</CardTitle>
+                    <CardDescription className="text-[11px] text-slate-500 font-medium mt-1">List of all your delivery team members</CardDescription>
                 </CardHeader>
                 <CardContent className="p-5 md:p-8 lg:p-10">
                     <div className="space-y-3">
@@ -165,23 +165,23 @@ export const StationDriversManager = () => {
 
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-8 flex-1 lg:max-w-md pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-800/50">
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Base Protocol</span>
+                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Monthly Salary</span>
                                         <span className="text-xs md:text-sm text-white font-bold tracking-tight">₹{driver.salary.toLocaleString()}</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Manifest Ratio</span>
+                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Leaves Used</span>
                                         <span className="text-xs md:text-sm text-white font-bold tracking-tight">{driver.leavesUsed} <span className="text-slate-600">/ {driver.leavesTotal}</span></span>
                                     </div>
                                     <div className="flex flex-col col-span-2 sm:col-span-1">
-                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Total Signals</span>
+                                        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-slate-600 mb-1">Trips Today</span>
                                         <span className="text-xs md:text-sm text-white font-bold tracking-tight">{driver.tripsToday}</span>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center justify-between lg:justify-end gap-3 mt-2 lg:mt-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-800/50">
                                     <div className="lg:hidden flex flex-col">
-                                        <span className="text-[9px] uppercase font-bold tracking-widest text-[#f97316]">Authorization</span>
-                                        <span className="text-[10px] text-slate-500">Action Required</span>
+                                        <span className="text-[9px] uppercase font-bold tracking-widest text-[#f97316]">Actions</span>
+                                        <span className="text-[10px] text-slate-500">More options</span>
                                     </div>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -191,10 +191,10 @@ export const StationDriversManager = () => {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" className="bg-[#0a101f] border-slate-800 text-white min-w-[160px] p-2 rounded-xl shadow-2xl">
                                             <DropdownMenuItem className="hover:bg-slate-800 cursor-pointer text-[10px] font-bold uppercase tracking-widest text-orange-400 focus:text-orange-400 focus:bg-slate-800 rounded-lg p-3 mb-1" onClick={() => handlePaySalary(driver.id, driver.name)}>
-                                                <Wallet className="h-4 w-4 mr-2" /> Dispatch Payroll
+                                                <Wallet className="h-4 w-4 mr-2" /> Pay Salary
                                             </DropdownMenuItem>
                                             <DropdownMenuItem className="hover:bg-slate-800 cursor-pointer text-[10px] font-bold uppercase tracking-widest focus:bg-slate-800 rounded-lg p-3" onClick={() => handleGrantLeave(driver.id, driver.name)}>
-                                                <CalendarRange className="h-4 w-4 mr-2" /> Authorize Leave
+                                                <CalendarRange className="h-4 w-4 mr-2" /> Grant Leave
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
