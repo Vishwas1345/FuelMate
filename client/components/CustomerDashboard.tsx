@@ -144,18 +144,18 @@ const CustomerDashboard = () => {
     return (
       <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
         {/* Top Navigation Bar - Aligned with grid */}
-        <div className="grid grid-cols-12 gap-6 mb-6">
+        <div className="grid grid-cols-12 gap-6 mb-8">
           <div className="col-span-12 flex items-center justify-between">
             <Button
               variant="ghost"
-              className="text-slate-400 hover:text-white hover:bg-slate-800/50 gap-2"
+              className="text-slate-500 hover:text-white hover:bg-slate-800/30 gap-2 text-[10px] font-bold uppercase tracking-widest px-0"
               onClick={() => setSelectedStation(null)}
             >
               <ArrowLeft className="w-4 h-4" /> Back to Dashboard
             </Button>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-slate-500">Status:</span>
-              <Badge variant="outline" className="bg-green-500/10 border-green-500/30 text-green-400 font-medium px-2 py-0.5">
+              <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Status</span>
+              <Badge variant="outline" className="bg-green-500/5 border-green-500/20 text-green-500 text-[10px] font-bold uppercase py-0.5">
                 Operational
               </Badge>
             </div>
@@ -163,66 +163,98 @@ const CustomerDashboard = () => {
         </div>
 
         {/* Station Header - Full width grid aligned */}
-        <div className="grid grid-cols-12 gap-6 mb-6">
-          <div className="col-span-12 bg-slate-900/50 border border-slate-800/50 rounded-md p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              {/* Logo and Name - Tightly Aligned */}
-              <div className="flex items-center gap-2">
-                <div className="w-12 h-12 rounded-md overflow-hidden bg-white border border-slate-800/50 flex-shrink-0">
+        <div className="grid grid-cols-12 gap-6 mb-8">
+          <div className="col-span-12 bg-[#0a101f] border border-slate-800/60 rounded-xl p-6 shadow-2xl overflow-hidden relative group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-orange-500/10 transition-all duration-700" />
+            
+            <div className="flex flex-col lg:flex-row lg:items-center gap-6 relative z-10">
+              {/* Logo and Name */}
+              <div className="flex items-center gap-5">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden bg-white p-1 border border-slate-800/50 flex-shrink-0 shadow-xl group-hover:scale-105 transition-transform duration-500">
                   <img
                     src={selectedStation.avatar || '/placeholder-station.png'}
                     alt={selectedStation.businessName}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain rounded-xl"
                   />
                 </div>
-                <h1 className="text-xl font-semibold text-white tracking-tight">{selectedStation.businessName}</h1>
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tighter">{selectedStation.businessName}</h1>
+                    <Badge variant="secondary" className="bg-orange-500/10 text-orange-500 border-none text-[9px] font-bold uppercase tracking-widest px-2">
+                      {selectedStation.fuelProvider}
+                    </Badge>
+                  </div>
+                  <p className="text-slate-500 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em]">Partnered Service Node</p>
+                </div>
               </div>
               
-              {/* Badge and Details */}
+              {/* Vertical Divider for desktop */}
+              <div className="hidden lg:block w-px h-16 bg-slate-800/40" />
+
+              {/* Station Metadata Details */}
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="secondary" className="bg-slate-800/50 text-slate-300 border-slate-700 text-xs">
-                    {selectedStation.fuelProvider}
-                  </Badge>
-                </div>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400">
-                  <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" /> {selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</p>
-                  <p className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" /> Open 24/7</p>
-                  <p className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" /> {selectedStation.phone || "Contact Available"}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-4 gap-x-6 text-[11px] font-semibold text-slate-400">
+                  <div className="flex items-center gap-2.5 group/item">
+                    <div className="w-8 h-8 rounded-lg bg-[#020817] flex items-center justify-center border border-slate-800 shadow-inner">
+                      <MapPin className="w-4 h-4 text-orange-500" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-slate-600 text-[9px] font-bold uppercase tracking-widest mb-0.5">Location</span>
+                      <span className="text-slate-300">{selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#020817] flex items-center justify-center border border-slate-800 shadow-inner">
+                      <Clock className="w-4 h-4 text-orange-500" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-slate-600 text-[9px] font-bold uppercase tracking-widest mb-0.5">Hours</span>
+                      <span className="text-slate-300">Open 24/7 Operations</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#020817] flex items-center justify-center border border-slate-800 shadow-inner">
+                      <Phone className="w-4 h-4 text-orange-500" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-slate-600 text-[9px] font-bold uppercase tracking-widest mb-0.5">Support</span>
+                      <span className="text-slate-300">{selectedStation.phone || "Contact Enabled"}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              {/* Price Cards - Horizontal and Compact */}
-              <div className="flex gap-2 flex-shrink-0 sm:ml-auto">
-                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center min-w-[65px]">
-                  <p className="text-[10px] text-slate-500 font-medium mb-0.5">Petrol</p>
-                  <p className="text-base font-semibold text-white">₹{selectedStation.fuelPrices.petrol}</p>
+              {/* Price Cards - Sophisticated Typography */}
+              <div className="flex gap-3 flex-shrink-0 lg:ml-auto">
+                <div className="bg-[#020817] border border-slate-800/60 p-3 rounded-xl text-center min-w-[90px] shadow-inner group/price">
+                  <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mb-1.5 px-2">Petrol</p>
+                  <p className="text-xl font-bold text-white tracking-tighter">₹{selectedStation.fuelPrices.petrol}</p>
                 </div>
-                <div className="bg-slate-950/50 border border-slate-800/50 px-3 py-2 rounded-md text-center min-w-[65px]">
-                  <p className="text-[10px] text-slate-500 font-medium mb-0.5">Diesel</p>
-                  <p className="text-base font-semibold text-white">₹{selectedStation.fuelPrices.diesel}</p>
+                <div className="bg-[#020817] border border-slate-800/60 p-3 rounded-xl text-center min-w-[90px] shadow-inner group/price">
+                  <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mb-1.5 px-2">Diesel</p>
+                  <p className="text-xl font-bold text-white tracking-tighter">₹{selectedStation.fuelPrices.diesel}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Tabs - Full width grid aligned */}
+        {/* Tabs - Advanced Branding */}
         <Tabs defaultValue="order" className="w-full">
-          <div className="grid grid-cols-12 gap-6 mb-6">
+          <div className="grid grid-cols-12 gap-6 mb-8">
             <div className="col-span-12">
-              <TabsList className="bg-slate-900/50 border border-slate-800/50 p-1 h-11 rounded-md w-full md:w-auto justify-start">
-                <TabsTrigger value="order" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
+              <TabsList className="bg-[#0a101f] border border-slate-800/60 p-1 h-12 rounded-xl w-full md:w-auto overflow-x-auto overflow-y-hidden justify-start no-scrollbar shadow-lg">
+                <TabsTrigger value="order" className="rounded-lg h-full px-6 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all duration-300">
                   Place Order
                 </TabsTrigger>
-                <TabsTrigger value="reviews" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
-                  Reviews
+                <TabsTrigger value="reviews" className="rounded-lg h-full px-6 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all duration-300">
+                  Client Reviews
                 </TabsTrigger>
-                <TabsTrigger value="about" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
-                  Information
+                <TabsTrigger value="about" className="rounded-lg h-full px-6 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all duration-300">
+                  Telemetry Information
                 </TabsTrigger>
-                <TabsTrigger value="contact" className="rounded-sm h-full px-6 data-[state=active]:bg-orange-500 data-[state=active]:text-white font-medium whitespace-nowrap text-sm">
-                  Contact
+                <TabsTrigger value="contact" className="rounded-lg h-full px-6 data-[state=active]:bg-[#f97316] data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all duration-300">
+                  Node Contact
                 </TabsTrigger>
               </TabsList>
             </div>
