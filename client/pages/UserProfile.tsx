@@ -370,7 +370,7 @@ const UserProfile = () => {
                 <Card className="bg-[#0a101f] border-slate-800 shadow-2xl overflow-hidden rounded-2xl">
                   <CardHeader className="border-b border-slate-800/50 pb-5 md:pb-6 bg-[#020817]/30">
                     <CardTitle className="flex items-center gap-3 text-white text-xs md:text-sm font-bold uppercase tracking-[0.25em]">
-                      <MapPin className="text-[#f97316] w-4 h-4" /> Positional Telemetry
+                      <MapPin className="text-[#f97316] w-4 h-4" /> Pump location
                     </CardTitle>
                     <CardDescription className="text-[11px] text-slate-500 font-medium">Coordinate mapping for physical station infrastructure</CardDescription>
                   </CardHeader>
@@ -378,10 +378,10 @@ const UserProfile = () => {
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 md:gap-12">
                       <div className="space-y-6">
                         <div className="grid gap-2.5">
-                          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Primary Vector Address</Label>
+                          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Primary adress</Label>
                           <Input
                             disabled={!isEditing}
-                            placeholder="Terminal Street, Block"
+                            placeholder="Street, Block"
                             value={profileData.pumpLocation?.addressLine || ''}
                             onChange={(e) => setProfileData({
                               ...profileData,
@@ -395,7 +395,7 @@ const UserProfile = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="grid gap-2.5">
-                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">City Hub</Label>
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">City</Label>
                             <Input
                               disabled={!isEditing}
                               placeholder="City"
@@ -411,7 +411,7 @@ const UserProfile = () => {
                             />
                           </div>
                           <div className="grid gap-2.5">
-                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">State Sector</Label>
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">State</Label>
                             <Input
                               disabled={!isEditing}
                               placeholder="State"
@@ -429,7 +429,7 @@ const UserProfile = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div className="grid gap-2.5">
-                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Archive Code</Label>
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Postal code</Label>
                             <Input
                               disabled={!isEditing}
                               placeholder="Zip Code"
@@ -445,7 +445,7 @@ const UserProfile = () => {
                             />
                           </div>
                           <div className="grid gap-2.5">
-                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">National Region</Label>
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Country</Label>
                             <Input
                               disabled={!isEditing}
                               value={profileData.pumpLocation?.country || 'India'}
@@ -466,7 +466,7 @@ const UserProfile = () => {
                         <MapView address={`${profileData.pumpLocation?.city || 'India'}`} />
                         <div className="absolute bottom-4 left-4 z-20">
                            <Badge className="bg-[#020817]/80 backdrop-blur-md border border-slate-800/50 text-[10px] font-bold uppercase tracking-widest px-3 py-1">
-                             Target Identified
+                             Location Identified
                            </Badge>
                         </div>
                       </div>
