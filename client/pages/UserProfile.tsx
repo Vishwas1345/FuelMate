@@ -282,7 +282,7 @@ const UserProfile = () => {
                     {isStation ? 'Enterprise Identity' : 'Personal Identity'}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
                   <div className="grid gap-2">
                     <Label className="text-gray-400">Full Name</Label>
                     <Input
@@ -471,7 +471,7 @@ const UserProfile = () => {
                   <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800/50 pb-4 gap-4">
                     <div>
                       <CardTitle className="flex items-center gap-2 text-white text-sm md:text-base uppercase tracking-wider">
-                        <MapPin className="text-orange-500" /> Delivery Adresses
+                        <MapPin className="text-orange-500" /> Delivery Addresses
                       </CardTitle>
                     </div>
                     <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
@@ -543,7 +543,7 @@ const UserProfile = () => {
                       </DialogContent>
                     </Dialog>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {profileData.addresses.map((addr, idx) => (
                         <div key={idx} className="relative p-4 rounded-lg bg-slate-800/30 border border-slate-800 group hover:border-slate-700 transition-colors">
@@ -580,7 +580,7 @@ const UserProfile = () => {
                   <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800/50 pb-4 gap-4">
                     <div>
                       <CardTitle className="flex items-center gap-2 text-white text-sm md:text-base uppercase tracking-wider">
-                        <Car className="text-blue-500" /> Vehicle Units
+                        <Car className="text-blue-500" /> Mobilization Units
                       </CardTitle>
                     </div>
                     <Dialog open={isVehicleDialogOpen} onOpenChange={setIsVehicleDialogOpen}>
@@ -635,7 +635,7 @@ const UserProfile = () => {
                       </DialogContent>
                     </Dialog>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {profileData.vehicles.map((v, idx) => (
                         <div key={idx} className="relative flex items-center gap-4 p-3 rounded-lg bg-slate-800/30 border border-slate-800 group hover:border-slate-700 transition-colors">
@@ -690,7 +690,7 @@ const UserProfile = () => {
                     <Activity className="w-3 h-3 mr-1" /> Sync
                   </Button>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   <div className="space-y-4">
                     {userOrders && userOrders.length > 0 ? (
                       [...userOrders]
