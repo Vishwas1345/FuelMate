@@ -1,46 +1,57 @@
-import nodemailer from 'nodemailer';
 import logger from '../utils/logger.js';
 
 class MailService {
     constructor() {
         this.adminEmail = 'vishwastiwari1901@gmail.com';
-        this.transporter = null;
+        this.apiKey = process.env.SENDGRID_API_KEY;
+        this.fromEmail = 'vishwastiwari1901@gmail.com'; // Verified sender in SendGrid
         this.init();
     }
 
     init() {
-        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-            this.transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
-                }
-            });
-            logger.info('Mail service initialized with Gmail SMTP');
+        if (this.apiKey) {
+            logger.info('Mail service initialized with SendGrid API');
         } else {
-            logger.warn('Email credentials missing - mail service in limited mode');
+            logger.warn('SENDGRID_API_KEY missing - mail service in limited mode');
         }
     }
 
     async sendEmail(options) {
-        if (!this.transporter) {
-            logger.warn('Email skipped: Transporter not initialized');
+        if (!this.apiKey) {
+            logger.warn('Email skipped: SendGrid API Key not configured');
             return;
         }
 
         try {
-            const info = await this.transporter.sendMail({
-                from: `"Vishwas from FuelMate" <${process.env.EMAIL_USER}>`,
-                ...options
+            const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.apiKey}`
+                },
+                body: JSON.stringify({
+                    personalizations: [{
+                        to: [{ email: options.to }],
+                        subject: options.subject
+                    }],
+                    from: { email: this.fromEmail, name: "FuelMate" },
+                    reply_to: { email: options.replyTo || this.adminEmail },
+                    content: [{
+                        type: 'text/html',
+                        value: options.html
+                    }]
+                })
             });
-            logger.debug('Email sent successfully', { messageId: info.messageId, to: options.to });
-            return info;
-        } catch (error) {
-            if (error.code === 'ETIMEDOUT') {
-                logger.error('CRITICAL: Gmail Timeout. Render is likely blocking SMTP ports (465/587).');
+
+            if (response.ok) {
+                logger.debug('Email sent via SendGrid', { to: options.to });
+                return true;
+            } else {
+                const errorData = await response.json();
+                throw new Error(JSON.stringify(errorData) || 'Failed to send via SendGrid');
             }
-            logger.error('Email sending failed', { error: error.message, code: error.code, to: options.to });
+        } catch (error) {
+            logger.error('SendGrid email sending failed', { error: error.message, to: options.to });
         }
     }
 
