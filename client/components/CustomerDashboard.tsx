@@ -279,28 +279,28 @@ const CustomerDashboard = () => {
 
         <div className="col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stations.map(station => (
-            <Card key={station._id} className="bg-slate-900/50 border-slate-800/50 hover:border-orange-500/30 transition-all duration-300 overflow-hidden flex flex-col group">
+            <Card key={station._id} className="bg-[#0a101f] border-slate-800/60 hover:border-orange-500/30 transition-all duration-300 overflow-hidden flex flex-col group shadow-xl">
               <div className="p-5 border-b border-slate-800/50 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-md overflow-hidden border border-slate-800/50 bg-white p-1 group-hover:border-orange-500/50 transition-colors">
+                <div className="w-14 h-14 rounded-md overflow-hidden border border-slate-800/50 bg-[#020817] p-1 group-hover:border-orange-500/50 transition-colors">
                   <img src={station.avatar || '/placeholder-station.png'} className="w-full h-full object-contain" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-white font-semibold text-lg truncate group-hover:text-orange-500 transition-colors">{station.businessName}</h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="text-xs border-slate-700 text-slate-400 font-medium px-2 py-0">{station.fuelProvider}</Badge>
-                    <div className={`w-1.5 h-1.5 rounded-full ${station.isAvailable ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <Badge variant="outline" className="text-[10px] border-slate-700 text-slate-400 font-bold uppercase tracking-wider bg-slate-950/50 px-2 py-0">{station.fuelProvider}</Badge>
+                    <div className={`w-1.5 h-1.5 rounded-full ${station.isAvailable ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
                   </div>
                 </div>
               </div>
 
               <CardContent className="p-5 flex-1 space-y-5">
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center p-4 rounded-md bg-slate-950/50 border border-slate-800/50 group-hover:border-orange-500/20 transition-colors">
-                    <p className="text-xs text-slate-500 font-medium mb-2">Petrol</p>
+                  <div className="text-center p-4 rounded-xl bg-[#020817] border border-slate-800/50 group-hover:border-orange-500/20 transition-colors shadow-inner">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Petrol</p>
                     <p className="text-2xl font-semibold text-white">₹{station.fuelPrices.petrol}</p>
                   </div>
-                  <div className="text-center p-4 rounded-md bg-slate-950/50 border border-slate-800/50 group-hover:border-orange-500/20 transition-colors">
-                    <p className="text-xs text-slate-500 font-medium mb-2">Diesel</p>
+                  <div className="text-center p-4 rounded-xl bg-[#020817] border border-slate-800/50 group-hover:border-orange-500/20 transition-colors shadow-inner">
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Diesel</p>
                     <p className="text-2xl font-semibold text-white">₹{station.fuelPrices.diesel}</p>
                   </div>
                 </div>

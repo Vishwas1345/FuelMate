@@ -703,31 +703,34 @@ const UserProfile = () => {
                       [...userOrders]
                         .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
                         .map((order: any, idx) => (
-                        <div key={order._id || order.id || idx} className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 rounded-lg border border-slate-800 bg-slate-800/50 hover:bg-slate-800 transition-colors gap-4">
+                        <div key={order._id || order.id || idx} className="flex flex-col md:flex-row justify-between items-start md:items-center p-5 rounded-xl border border-slate-800/60 bg-[#0a101f] hover:bg-[#0a101f]/80 transition-all gap-4 group shadow-lg">
                           <div className="flex items-start gap-4">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${order.status === 'delivered' ? 'bg-green-500/10 text-green-500' : 'bg-orange-500/10 text-orange-500'}`}>
-                              <Fuel className="w-5 h-5" />
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-inner ${order.status === 'delivered' ? 'bg-green-500/10 text-green-500' : 'bg-orange-500/10 text-orange-500'}`}>
+                              <Fuel className="w-6 h-6" />
                             </div>
                             <div>
-                              <h4 className="text-white font-medium opacity-90">
-                                {order.fuelType || 'Fuel'} Order <span className="text-gray-500 text-xs">#{order._id?.slice(-6) || order.id?.slice(-6) || '---'}</span>
-                              </h4>
-                              <p className="text-sm text-gray-400 mt-1">
-                                Ordered on {new Date(order.createdAt || order.timestamp || Date.now()).toLocaleDateString()}
+                               <div className="flex items-center gap-2 mb-1">
+                                  <h4 className="text-white font-bold opacity-90 text-sm tracking-tight">
+                                    {order.fuelType || 'Fuel'} Order
+                                  </h4>
+                                  <span className="text-slate-600 text-[10px] font-bold uppercase tracking-widest">#{order._id?.slice(-6) || order.id?.slice(-6) || '---'}</span>
+                               </div>
+                              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                                Manifested on {new Date(order.createdAt || order.timestamp || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </p>
-                              <div className="flex gap-2 mt-2">
-                                <Badge variant="secondary" className="bg-slate-900 text-gray-300 text-[10px] border border-slate-700">
-                                  {order.quantity} Liters
+                              <div className="flex gap-2 mt-3">
+                                <Badge variant="secondary" className="bg-[#020817] text-slate-400 text-[9px] font-bold border border-slate-800 px-2 py-0">
+                                  {order.quantity}L VOL
                                 </Badge>
-                                <Badge variant="outline" className={`${order.status === 'delivered' ? 'border-green-500 text-green-400' : 'border-orange-500 text-orange-400'} text-[10px] capitalize`}>
+                                <Badge variant="outline" className={`${order.status === 'delivered' ? 'border-green-500/30 text-green-500 bg-green-500/5' : 'border-orange-500/30 text-orange-500 bg-orange-500/5'} text-[9px] font-bold uppercase px-2 py-0`}>
                                   {order.status || 'pending'}
                                 </Badge>
                               </div>
                             </div>
                           </div>
                           <div className="flex flex-row md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-2">
-                            <span className="text-xl font-bold text-white">₹{order.totalPrice || order.price || 0}</span>
-                            <Button variant="ghost" size="sm" className="h-8 text-xs text-blue-400 hover:text-blue-300">
+                            <span className="text-2xl font-semibold text-white tracking-tighter">₹{order.totalPrice || order.price || 0}</span>
+                            <Button variant="ghost" size="sm" className="h-8 text-[10px] text-blue-400 hover:text-blue-300 font-bold uppercase tracking-widest hover:bg-blue-500/5">
                               <Download className="w-3 h-3 mr-1" /> Invoice
                             </Button>
                           </div>
