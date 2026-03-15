@@ -27,11 +27,19 @@ class ReviewController {
 
     async createReview(req, res) {
         try {
-            logger.info('Creating general review', { userId: req.user?._id });
+            const { message, comment, rating, name, email } = req.body;
             const newReview = await reviewService.createReview({
-                ...req.body,
+                comment: comment || message,
+                rating,
+                name,
+                email,
                 userId: req.user?._id
             });
+            
+            // Send acknowledgment email if email is provided
+            if (email) {
+                reviewService.sendAcknowledgmentEmail(email, comment || message);
+            }
             res.status(201).json(newReview);
         } catch (err) {
             logger.error('Review creation error', { error: err.message });

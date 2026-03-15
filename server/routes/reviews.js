@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', reviewController.getReviews);
 
 // Create a new general review
-router.post('/', authenticate, reviewController.createReview);
+router.post('/', reviewController.createReview);
 
 // Station specific reviews
 router.get('/station/:stationId', reviewController.getStationReviews);

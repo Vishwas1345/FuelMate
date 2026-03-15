@@ -17,9 +17,11 @@ class ReviewService {
 
     async createReview(reviewData) {
         // This is for general site reviews
-        const { comment, rating, userId } = reviewData;
+        const { comment, rating, userId, name, email } = reviewData;
         const review = new Review({
             userId,
+            name,
+            email,
             comment,
             rating: rating || 5
         });
