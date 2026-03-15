@@ -77,8 +77,8 @@ const Settings = () => {
   };
 
   return (
-    <div className="w-full px-4 md:px-0 space-y-10 pb-12">
-      <div className="px-1">
+    <div className="w-full space-y-8 pb-12">
+      <div>
         <h1 className="text-2xl md:text-5xl font-bold text-white tracking-tighter mb-2">
             Account <span className="text-[#f97316]">Settings</span>
         </h1>
@@ -87,7 +87,7 @@ const Settings = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-12 space-y-8">
             <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-2xl overflow-hidden">
               <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30 p-6 md:p-8">
@@ -119,7 +119,7 @@ const Settings = () => {
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="bg-[#0a101f] border-slate-800/60 shadow-2xl rounded-2xl overflow-hidden">
                   <CardHeader className="border-b border-slate-800/50 bg-[#020817]/30 p-6 md:p-8">
                     <CardTitle className="text-[10px] md:text-xs font-bold text-white uppercase tracking-[0.3em] flex items-center gap-3">

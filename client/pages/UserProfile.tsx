@@ -195,7 +195,7 @@ const UserProfile = () => {
   const isStation = profileData.role === 'station';
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8 p-4 md:p-0">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 md:p-0">
         {/* LEFT COLUMN: Profile Summary Card */}
         <div className="lg:col-span-1">
           <Card className="bg-[#0a101f] border-slate-800 text-white overflow-hidden lg:sticky lg:top-8 shadow-2xl">
@@ -375,7 +375,7 @@ const UserProfile = () => {
                     <CardDescription className="text-[11px] text-slate-500 font-medium">Add your station's physical address</CardDescription>
                   </CardHeader>
                   <CardContent className="p-6 md:p-8">
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 md:gap-12">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-12">
                       <div className="space-y-6">
                         <div className="grid gap-2.5">
                           <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Address</Label>
@@ -554,7 +554,7 @@ const UserProfile = () => {
                     </Dialog>
                   </CardHeader>
                   <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {profileData.addresses.map((addr, idx) => (
                         <div key={idx} className="relative p-4 rounded-lg bg-slate-800/30 border border-slate-800 group hover:border-slate-700 transition-colors">
                           <div className="flex justify-between items-start mb-2">
@@ -590,7 +590,7 @@ const UserProfile = () => {
                   <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800/50 pb-4 gap-4">
                     <div>
                       <CardTitle className="flex items-center gap-2 text-white text-sm md:text-base uppercase tracking-wider">
-                        <Car className="text-blue-500" /> Mobilization Units
+                        <Car className="text-blue-500" /> Vehicle Units
                       </CardTitle>
                     </div>
                     <Dialog open={isVehicleDialogOpen} onOpenChange={setIsVehicleDialogOpen}>
@@ -646,7 +646,7 @@ const UserProfile = () => {
                     </Dialog>
                   </CardHeader>
                   <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {profileData.vehicles.map((v, idx) => (
                         <div key={idx} className="relative flex items-center gap-4 p-3 rounded-lg bg-slate-800/30 border border-slate-800 group hover:border-slate-700 transition-colors">
                           <div className="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center border border-slate-800 text-slate-400">
