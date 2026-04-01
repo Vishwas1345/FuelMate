@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,29 +15,11 @@ type Driver = {
     name: string;
     phone: string;
     email: string;
+    status?: 'Active' | 'On Leave';
     currentLocation?: string;
 };
 
-const availableDrivers: Driver[] = [
-    {
-        name: "Amit Verma",
-        phone: "+91 98765 43210",
-        email: "amit.verma@fuelmate.com",
-        currentLocation: "Adajan, Surat"
-    },
-    {
-        name: "Rajesh Kumar",
-        phone: "+91 87654 32109",
-        email: "rajesh.kumar@fuelmate.com",
-        currentLocation: "City Light, Surat"
-    },
-    {
-        name: "Priya Patel",
-        phone: "+91 76543 21098",
-        email: "priya.patel@fuelmate.com",
-        currentLocation: "Vesu, Surat"
-    }
-];
+const driversStorageKey = 'fuelmate:stationDrivers';
 
 export const StationOrdersDashboard = () => {
     const { user } = useAuth();
@@ -45,6 +27,7 @@ export const StationOrdersDashboard = () => {
     const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
     const [selectedDriver, setSelectedDriver] = useState<any | null>(null);
     const [showMobileQueue, setShowMobileQueue] = useState(true);
+    const [drivers, setDrivers] = useState<Driver[]>([]);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -62,11 +45,57 @@ export const StationOrdersDashboard = () => {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        const readDrivers = () => {
+            try {
+                const raw = localStorage.getItem(driversStorageKey);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                if (!Array.isArray(parsed)) return [];
+                return parsed
+                    .filter((d: any) => d && typeof d === 'object')
+                    .map((d: any) => ({
+                        name: d.name,
+                        phone: d.phone,
+                        email: d.email,
+                        status: d.status || 'Active',
+                        currentLocation: d.currentLocation
+                    }))
+                    .filter((d: any) => d.name && d.email);
+            } catch {
+                return [];
+            }
+        };
+
+        // Initial load (fallback to legacy hardcoded defaults if storage empty)
+        const loaded = readDrivers();
+        if (loaded.length) setDrivers(loaded);
+        else setDrivers([
+            { name: "Amit Verma", phone: "+91 98765 43210", email: "amit.verma@fuelmate.com", status: "Active", currentLocation: "Adajan, Surat" },
+            { name: "Rajesh Kumar", phone: "+91 87654 32109", email: "rajesh.kumar@fuelmate.com", status: "On Leave", currentLocation: "City Light, Surat" },
+            { name: "Priya Patel", phone: "+91 76543 21098", email: "priya.patel@fuelmate.com", status: "Active", currentLocation: "Vesu, Surat" },
+        ]);
+
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === driversStorageKey) {
+                const next = readDrivers();
+                if (next.length) setDrivers(next);
+            }
+        };
+        window.addEventListener('storage', onStorage);
+        return () => window.removeEventListener('storage', onStorage);
+    }, []);
+
+    const activeDrivers = useMemo(
+        () => drivers.filter(d => (d.status || 'Active') === 'Active'),
+        [drivers]
+    );
+
     const updateOrderStatus = async (orderId: string, newStatus: string) => {
         try {
             let driverDetails = undefined;
             if (newStatus === 'in-transit') {
-                driverDetails = selectedDriver || availableDrivers[Math.floor(Math.random() * availableDrivers.length)];
+                driverDetails = selectedDriver || activeDrivers[Math.floor(Math.random() * Math.max(activeDrivers.length, 1))];
             }
 
             await api.updateOrderStatus(orderId, newStatus, driverDetails);
@@ -367,18 +396,28 @@ export const StationOrdersDashboard = () => {
                                         <div className="mb-6 bg-slate-900 p-4 rounded-lg border border-orange-500/30">
                                             <h3 className="text-lg font-medium text-white mb-3">Require Action: Dispatch Driver</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                                {availableDrivers.map((driver) => (
+                                                {drivers.map((driver) => {
+                                                    const isOnLeave = (driver.status || 'Active') === 'On Leave';
+                                                    return (
                                                     <div
-                                                        key={driver.name}
-                                                        className={`p-4 rounded-lg cursor-pointer transition-colors ${selectedDriver?.name === driver.name
-                                                            ? 'bg-orange-500 text-white'
-                                                            : 'bg-slate-800 hover:bg-slate-700'
-                                                            }`}
-                                                        onClick={() => setSelectedDriver(driver)}
+                                                        key={driver.email || driver.name}
+                                                        className={`p-4 rounded-lg transition-colors ${isOnLeave ? 'opacity-50 cursor-not-allowed bg-slate-800/60' : (selectedDriver?.email === driver.email ? 'bg-orange-500 text-white cursor-pointer' : 'bg-slate-800 hover:bg-slate-700 cursor-pointer')}`}
+                                                        onClick={() => {
+                                                            if (isOnLeave) return;
+                                                            setSelectedDriver(driver);
+                                                        }}
                                                     >
-                                                        <div className="flex items-center gap-2">
+                                                        <div className="flex items-center gap-2 justify-between">
+                                                            <div className="flex items-center gap-2">
                                                             <User className="h-5 w-5" />
                                                             <p className="font-medium">{driver.name}</p>
+                                                            </div>
+                                                            <Badge
+                                                                variant="outline"
+                                                                className={`text-[9px] uppercase tracking-widest border-none ${isOnLeave ? 'bg-amber-500/10 text-amber-400' : 'bg-green-500/10 text-green-400'}`}
+                                                            >
+                                                                {isOnLeave ? 'On Leave' : 'Active'}
+                                                            </Badge>
                                                         </div>
                                                         <div className="mt-2 text-sm opacity-90">
                                                             <p className="flex items-center gap-1">
@@ -386,7 +425,7 @@ export const StationOrdersDashboard = () => {
                                                             </p>
                                                         </div>
                                                     </div>
-                                                ))}
+                                                )})}
                                             </div>
                                         </div>
                                     )}

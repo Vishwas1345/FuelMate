@@ -35,6 +35,25 @@ export const CustomerOrdersDashboard = () => {
     const [trackingOrderId, setTrackingOrderId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const buildAnalyticsFallback = (orders: any[]) => {
+        const delivered = (orders || []).filter(o => String(o.status || '').toLowerCase() === 'delivered');
+        const totalFuel = delivered.reduce((acc, o) => acc + (Number(o.quantity) || 0), 0);
+        const totalAmount = delivered.reduce((acc, o) => acc + (Number(o.totalPrice ?? o.price) || 0), 0);
+
+        const map = new Map<string, { date: string; quantity: number; amount: number }>();
+        for (const o of delivered) {
+            const date = o.createdAt ? new Date(o.createdAt) : (o.timestamp ? new Date(o.timestamp) : new Date());
+            const key = Number.isNaN(date.getTime()) ? new Date().toISOString().slice(0, 10) : date.toISOString().slice(0, 10);
+            const prev = map.get(key) || { date: key, quantity: 0, amount: 0 };
+            prev.quantity += Number(o.quantity) || 0;
+            prev.amount += Number(o.totalPrice ?? o.price) || 0;
+            map.set(key, prev);
+        }
+
+        const dailyTrends = Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
+        return { totalFuel, totalAmount, dailyTrends };
+    };
+
     const fetchDashboardData = async () => {
         setIsLoading(true);
         try {
@@ -43,7 +62,16 @@ export const CustomerOrdersDashboard = () => {
                 api.getAnalytics().catch(() => null)
             ]);
 
-            setAnalyticsData(fetchedAnalytics);
+            const fallback = buildAnalyticsFallback(fetchedOrders);
+            const mergedAnalytics = {
+                ...(fetchedAnalytics || {}),
+                totalFuel: fetchedAnalytics?.totalFuel ?? fallback.totalFuel,
+                totalAmount: fetchedAnalytics?.totalAmount ?? fallback.totalAmount,
+                dailyTrends: (Array.isArray(fetchedAnalytics?.dailyTrends) && fetchedAnalytics.dailyTrends.length > 0)
+                    ? fetchedAnalytics.dailyTrends
+                    : fallback.dailyTrends,
+            };
+            setAnalyticsData(mergedAnalytics);
 
             const formattedOrders = fetchedOrders.map((order: any) => ({
                 id: order._id,
