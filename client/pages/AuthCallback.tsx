@@ -55,10 +55,19 @@ const AuthCallback = () => {
                 // Redirect based on profile completion
                 const userObj = userData.user || userData;
 
-                // Redirect based on profile completion
-                if (!userObj.profileComplete) {
+                const userId = userObj?._id || userObj?.id;
+                const onboardingSeenKey = userId ? `fuelmate:onboardingSeen:${userId}` : null;
+                const hasSeenOnboarding = onboardingSeenKey ? localStorage.getItem(onboardingSeenKey) === '1' : false;
+                const isProfileComplete = Boolean(userObj?.isProfileComplete);
+
+                // OAuth callback can represent either sign-in or sign-up.
+                // Show onboarding ONLY the first time for a new (incomplete) user.
+                if (!isProfileComplete && !hasSeenOnboarding) {
                     navigate('/onboarding');
-                } else if (userObj.role === 'station') {
+                    return;
+                }
+
+                if (userObj.role === 'station') {
                     navigate('/station');
                 } else {
                     navigate('/dashboard');

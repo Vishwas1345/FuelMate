@@ -167,6 +167,8 @@ export default function Onboarding() {
                 role,
                 isProfileComplete: true
             });
+            const userId = user?._id || user?.id;
+            if (userId) localStorage.setItem(`fuelmate:onboardingSeen:${userId}`, '1');
             toast.success("Profile setup skipped for now!");
             navigate(role === 'customer' ? '/customer' : '/station');
         } catch (error: any) {
@@ -336,6 +338,8 @@ export default function Onboarding() {
             }
 
             await updateProfile(updateData);
+            const userId = user?._id || user?.id;
+            if (userId) localStorage.setItem(`fuelmate:onboardingSeen:${userId}`, '1');
             toast.success("Profile setup complete!");
             navigate(role === 'customer' ? '/customer' : '/station');
         } catch (error: any) {

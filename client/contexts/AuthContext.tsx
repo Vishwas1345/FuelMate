@@ -75,10 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Welcome back!",
       });
 
-      // Redirect based on profile completion
-      if (!response.user?.profileComplete) {
-        navigate("/onboarding");
-      } else if (response.user?.role === 'station') {
+      // Returning users should never be forced into onboarding on login.
+      // Route directly to the appropriate dashboard by role.
+      if (response.user?.role === 'station') {
         navigate("/station");
       } else {
         navigate("/dashboard");
