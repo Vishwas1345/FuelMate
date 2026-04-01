@@ -73,6 +73,7 @@ async function main() {
       role: 'customer',
       authProvider: 'local',
       isProfileComplete: true,
+      isEmailVerified: true,
       phone: '+91 98765 00000',
       avatar: DEMO_CUSTOMER_AVATAR,
       addresses: demoAddresses,
@@ -86,6 +87,7 @@ async function main() {
     user.authProvider = 'local';
     user.googleId = undefined;
     user.isProfileComplete = true;
+    user.isEmailVerified = true;
     user.phone = user.phone || '+91 98765 00000';
     user.avatar = DEMO_CUSTOMER_AVATAR;
     user.addresses = demoAddresses;

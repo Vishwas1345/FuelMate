@@ -45,6 +45,7 @@ if (!googleClientId || !googleClientSecret || googleClientSecret === 'YOUR_GOOGL
                             // Link Google account to existing user
                             user.googleId = profile.id;
                             user.authProvider = 'google';
+                            user.isEmailVerified = true;
                             if (profile.photos?.[0]?.value) {
                                 user.avatar = profile.photos[0].value;
                             }
@@ -58,7 +59,8 @@ if (!googleClientId || !googleClientSecret || googleClientSecret === 'YOUR_GOOGL
                                 name: profile.displayName || profile.name?.givenName || 'Google User',
                                 authProvider: 'google',
                                 avatar: profile.photos?.[0]?.value,
-                                role: 'customer'
+                                role: 'customer',
+                                isEmailVerified: true,
                             });
                             logger.info('Created new user via Google OAuth', { userId: user._id, email });
                             

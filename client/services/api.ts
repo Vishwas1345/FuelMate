@@ -90,7 +90,16 @@ export type AuthResponse = {
   token: string;
   user: User;
   message: string;
+  refreshToken?: string;
 };
+
+export type RegisterPendingResponse = {
+  requiresVerification: true;
+  email: string;
+  message?: string;
+};
+
+export type RegisterResult = RegisterPendingResponse | AuthResponse;
 
 export type Order = {
   _id: string;
@@ -155,7 +164,9 @@ class Api {
       // Auth endpoints like /login and /register return 401 for bad credentials,
       // NOT for expired tokens, so we must NOT silently retry them.
       const isAuthEndpoint = url.startsWith('/api/auth/login') ||
-        url.startsWith('/api/auth/register');
+        url.startsWith('/api/auth/register') ||
+        url.startsWith('/api/auth/verify-email') ||
+        url.startsWith('/api/auth/resend-signup-otp');
 
       if (response.status === 401 && !isAuthEndpoint) {
         if (url === '/api/auth/refresh-token') {
@@ -271,16 +282,42 @@ class Api {
     return response;
   }
 
-  async register(data: RegisterData): Promise<AuthResponse> {
+  async register(data: RegisterData): Promise<RegisterResult> {
     const response = await this.fetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(data)
+    });
+    if (response.requiresVerification) {
+      return {
+        requiresVerification: true,
+        email: response.email,
+        message: response.message,
+      };
+    }
+    localStorage.setItem('token', response.token);
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
+    return response as AuthResponse;
+  }
+
+  async verifyEmail(data: { email: string; otp: string }): Promise<AuthResponse> {
+    const response = await this.fetch('/api/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
     localStorage.setItem('token', response.token);
     if (response.refreshToken) {
       localStorage.setItem('refreshToken', response.refreshToken);
     }
-    return response;
+    return response as AuthResponse;
+  }
+
+  async resendSignupOtp(email: string): Promise<void> {
+    await this.fetch('/api/auth/resend-signup-otp', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   }
 
   async logout(): Promise<void> {

@@ -136,6 +136,35 @@ class MailService {
         return this.sendEmail(mailOptions);
     }
 
+    async sendSignupOtpEmail(email, name, otp) {
+        if (!email) return;
+
+        const mailOptions = {
+            to: email,
+            subject: 'Your FuelMate verification code',
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #333; max-width: 560px; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+                    <div style="background: linear-gradient(to right, #0f172a, #1e293b); padding: 28px 20px; text-align: center;">
+                        <h1 style="color: #f97316; margin: 0; font-size: 22px;">Verify your email</h1>
+                    </div>
+                    <div style="padding: 32px;">
+                        <p style="font-size: 16px;">Hi ${name || 'there'},</p>
+                        <p style="line-height: 1.6;">Use this one-time code to finish signing up for <strong>FuelMate</strong>:</p>
+                        <div style="margin: 28px 0; text-align: center;">
+                            <span style="display: inline-block; letter-spacing: 0.35em; font-size: 28px; font-weight: 800; color: #0f172a; background: #fff7ed; padding: 16px 28px; border-radius: 12px; border: 2px solid #f97316;">${otp}</span>
+                        </div>
+                        <p style="color: #64748b; font-size: 13px;">This code expires in 15 minutes. If you didn’t create an account, you can ignore this email.</p>
+                    </div>
+                </div>
+            `,
+        };
+        const sent = await this.sendEmail(mailOptions);
+        if (!sent && !this.apiKey) {
+            logger.warn('[DEV] Signup OTP (email not configured)', { email, otp });
+        }
+        return sent;
+    }
+
     // ─── SCENARIO 3: SIGNUP ─────────────────────────────────────────────────
     async sendWelcomeEmail(email, name) {
         if (!email) return;

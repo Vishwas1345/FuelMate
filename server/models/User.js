@@ -54,6 +54,23 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  /** Local signups only: false until email OTP verified; missing/true = can log in. */
+  isEmailVerified: {
+    type: Boolean,
+  },
+  emailVerificationOtpHash: {
+    type: String,
+    select: false,
+  },
+  emailVerificationOtpExpires: {
+    type: Date,
+    select: false,
+  },
+  emailVerificationAttempts: {
+    type: Number,
+    default: 0,
+    select: false,
+  },
   // Customer specific fields
   addresses: [{
     label: { type: String, enum: ['home', 'work', 'other'], default: 'home' },

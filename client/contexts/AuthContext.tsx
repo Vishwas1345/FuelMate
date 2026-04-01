@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { api, User, AuthResponse, Order } from "@/services/api";
 
+export type SignupPending = { requiresVerification: true; email: string };
+
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -11,7 +13,8 @@ interface AuthContextType {
   setUser: (user: User | null) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<SignupPending | void>;
+  verifyEmailWithOtp: (email: string, otp: string) => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<User | void>;
   createOrder: (orderData: any) => Promise<Order>;
   getOrders: () => Promise<Order[]>;
@@ -116,11 +119,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await api.register({ name, email, password });
 
-      let fullUser = response.user as User;
+      if ("requiresVerification" in response && response.requiresVerification) {
+        toast({
+          title: "Check your email",
+          description: "We sent a 6-digit code to complete sign up.",
+        });
+        return { requiresVerification: true as const, email: response.email };
+      }
+
+      const auth = response as AuthResponse;
+      let fullUser = auth.user as User;
       try {
         fullUser = await api.getProfile();
       } catch {
-        /* use response.user */
+        /* keep minimal user */
       }
       setUser(fullUser);
       setIsAuthenticated(true);
@@ -130,12 +142,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Your account has been created successfully!",
       });
 
-      // New users go to onboarding
       navigate("/onboarding");
     } catch (error: any) {
       toast({
         title: "Registration Failed",
         description: error.message || "An error occurred during registration",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  }, [navigate]);
+
+  const verifyEmailWithOtp = useCallback(async (email: string, otp: string) => {
+    try {
+      const response = await api.verifyEmail({ email, otp });
+
+      let fullUser = response.user as User;
+      try {
+        fullUser = await api.getProfile();
+      } catch {
+        /* use response.user */
+      }
+      setUser(fullUser);
+      setIsAuthenticated(true);
+
+      try {
+        const orders = await api.getOrders();
+        setUserOrders(orders);
+      } catch {
+        /* optional */
+      }
+
+      toast({
+        title: "Email verified",
+        description: "Welcome to FuelMate!",
+      });
+
+      if (fullUser.role === "station") {
+        navigate("/station");
+      } else {
+        navigate("/onboarding");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Verification failed",
+        description: error.message || "Invalid or expired code",
         variant: "destructive",
       });
       throw error;
@@ -348,6 +399,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     logout,
     signup,
+    verifyEmailWithOtp,
     updateProfile,
     createOrder,
     getOrders,

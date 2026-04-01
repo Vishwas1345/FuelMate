@@ -7,23 +7,31 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/services/api";
 import { LogoIcon } from "@/components/Logo";
-import { ArrowRight } from "lucide-react";
 import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 
 export default function Auth() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string>("");
   const [signupError, setSignupError] = useState<string>("");
+  const [signupPhase, setSignupPhase] = useState<"form" | "otp">("form");
+  const [pendingEmail, setPendingEmail] = useState<string>("");
+  const [otpValue, setOtpValue] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { login, signup } = useAuth();
+  const { login, signup, verifyEmailWithOtp } = useAuth();
 
   // Clear errors when switching tabs
   const handleTabChange = (value: string) => {
     setLoginError("");
     setSignupError("");
+    if (value === "signup") {
+      setSignupPhase("form");
+      setPendingEmail("");
+      setOtpValue("");
+    }
   };
 
   // Redirect /login to /auth
@@ -91,8 +99,12 @@ export default function Auth() {
     }
 
     try {
-      await signup(name, email, password);
-      // Navigation is handled in AuthContext
+      const pending = await signup(name, email, password);
+      if (pending && pending.requiresVerification) {
+        setPendingEmail(pending.email);
+        setSignupPhase("otp");
+        setOtpValue("");
+      }
     } catch (error: any) {
       const errorMessage = error.message || "An error occurred while creating your account";
       setSignupError(errorMessage);
@@ -198,81 +210,175 @@ export default function Auth() {
           <TabsContent value="signup">
             <Card className="bg-slate-900/80 backdrop-blur-xl border-slate-800 shadow-xl">
               <CardHeader>
-                <CardTitle className="text-white">Create an account</CardTitle>
+                <CardTitle className="text-white">
+                  {signupPhase === "otp" ? "Verify your email" : "Create an account"}
+                </CardTitle>
                 <CardDescription className="text-slate-400">
-                  Enter your details to create a new account
+                  {signupPhase === "otp"
+                    ? `Enter the 6-digit code we sent to ${pendingEmail}`
+                    : "Enter your details to create a new account"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSignup} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-slate-300">Full Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Enter your full name"
-                      required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-slate-300">Email</Label>
-                    <Input
-                      id="signup-email"
-                      name="signup-email"
-                      type="email"
-                      placeholder="Enter your email"
-                      required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-slate-300">Password</Label>
-                    <Input
-                      id="signup-password"
-                      name="signup-password"
-                      type="password"
-                      placeholder="Create a password (min. 6 characters)"
-                      required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password" className="text-slate-300">Confirm Password</Label>
-                    <Input
-                      id="confirm-password"
-                      name="confirm-password"
-                      type="password"
-                      placeholder="Confirm your password"
-                      required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
-                    />
-                  </div>
-                  {signupError && (
-                    <div className="text-red-500 text-sm mt-2">{signupError}</div>
-                  )}
-                  <Button
-                    type="submit"
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white"
-                    disabled={isLoading}
+                {signupPhase === "form" ? (
+                  <>
+                    <form onSubmit={handleSignup} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name" className="text-slate-300">Full Name</Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          type="text"
+                          placeholder="Enter your full name"
+                          required
+                          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-email" className="text-slate-300">Email</Label>
+                        <Input
+                          id="signup-email"
+                          name="signup-email"
+                          type="email"
+                          placeholder="Enter your email"
+                          required
+                          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-password" className="text-slate-300">Password</Label>
+                        <Input
+                          id="signup-password"
+                          name="signup-password"
+                          type="password"
+                          placeholder="Create a password (min. 6 characters)"
+                          required
+                          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password" className="text-slate-300">Confirm Password</Label>
+                        <Input
+                          id="confirm-password"
+                          name="confirm-password"
+                          type="password"
+                          placeholder="Confirm your password"
+                          required
+                          className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-orange-500 text-sm placeholder:text-xs md:text-sm md:placeholder:text-sm"
+                        />
+                      </div>
+                      {signupError && (
+                        <div className="text-red-500 text-sm mt-2">{signupError}</div>
+                      )}
+                      <Button
+                        type="submit"
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Creating account..." : "Sign Up"}
+                      </Button>
+                    </form>
+                    <div className="mt-4">
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-slate-700"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-2 bg-slate-900 text-slate-400">Or sign up with</span>
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <GoogleSignInButton text="Sign up with Google" />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <form
+                    className="space-y-4"
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      setIsLoading(true);
+                      setSignupError("");
+                      try {
+                        await verifyEmailWithOtp(pendingEmail, otpValue.trim());
+                      } catch (err: any) {
+                        setSignupError(err?.message || "Verification failed");
+                      } finally {
+                        setIsLoading(false);
+                      }
+                    }}
                   >
-                    {isLoading ? "Creating account..." : "Sign Up"}
-                  </Button>
-                </form>
-                <div className="mt-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-700"></div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-otp" className="text-slate-300">Verification code</Label>
+                      <Input
+                        id="signup-otp"
+                        name="signup-otp"
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        maxLength={6}
+                        placeholder="000000"
+                        value={otpValue}
+                        onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        className="bg-slate-800 border-slate-700 text-white text-center text-2xl tracking-[0.4em] font-mono focus:border-orange-500"
+                      />
+                      <p className="text-[11px] text-slate-500">
+                        Wrong code 5 times? Use resend to get a fresh code and reset attempts.
+                      </p>
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-slate-900 text-slate-400">Or sign up with</span>
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <GoogleSignInButton text="Sign up with Google" />
-                  </div>
-                </div>
+                    {signupError && (
+                      <div className="text-red-500 text-sm">{signupError}</div>
+                    )}
+                    <Button
+                      type="submit"
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                      disabled={isLoading || otpValue.length !== 6}
+                    >
+                      {isLoading ? "Verifying..." : "Verify & continue"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full border-slate-600 text-slate-300 hover:bg-slate-800"
+                      disabled={isLoading}
+                      onClick={async () => {
+                        setSignupError("");
+                        setIsLoading(true);
+                        try {
+                          await api.resendSignupOtp(pendingEmail);
+                          toast({
+                            title: "Code sent",
+                            description: "Check your inbox for a new verification code.",
+                          });
+                          setOtpValue("");
+                        } catch (err: any) {
+                          toast({
+                            title: "Could not resend",
+                            description: err?.message || "Try again later",
+                            variant: "destructive",
+                          });
+                        } finally {
+                          setIsLoading(false);
+                        }
+                      }}
+                    >
+                      Resend code
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="w-full text-slate-400 hover:text-white"
+                      onClick={() => {
+                        setSignupPhase("form");
+                        setPendingEmail("");
+                        setOtpValue("");
+                        setSignupError("");
+                      }}
+                    >
+                      Back to sign up
+                    </Button>
+                  </form>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
