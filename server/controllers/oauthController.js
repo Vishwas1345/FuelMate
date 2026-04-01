@@ -38,19 +38,22 @@ export const googleAuth = (req, res, next) => {
 export const googleCallback = (req, res, next) => {
     if (!isGoogleOAuthConfigured()) {
         logger.warn('Google OAuth callback attempted but not configured');
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/auth?error=oauth_not_configured`);
+        const fe = process.env.FRONTEND_URL || 'http://localhost:5173';
+        return res.redirect(`${fe}/auth/callback?error=oauth_not_configured`);
     }
 
     passport.authenticate('google', { session: false }, async (err, user, info) => {
         try {
+            const fe = process.env.FRONTEND_URL || 'http://localhost:5173';
+
             if (err) {
                 logger.error('Google OAuth authentication error', { error: err.message, stack: err.stack });
-                return res.redirect(`${process.env.FRONTEND_URL}/auth?error=oauth_error`);
+                return res.redirect(`${fe}/auth/callback?error=oauth_error`);
             }
 
             if (!user) {
                 logger.warn('Google OAuth failed: No user returned', { info });
-                return res.redirect(`${process.env.FRONTEND_URL}/auth?error=oauth_failed`);
+                return res.redirect(`${fe}/auth/callback?error=oauth_failed`);
             }
 
             // Generate JWT tokens
@@ -76,11 +79,12 @@ export const googleCallback = (req, res, next) => {
             res.cookie('refreshToken', refreshToken, cookieOptions);
 
             // Redirect to frontend with only the access token
-            const redirectUrl = `${process.env.FRONTEND_URL}/auth/callback?token=${accessToken}`;
+            const redirectUrl = `${fe}/auth/callback?token=${accessToken}`;
             res.redirect(redirectUrl);
         } catch (error) {
             logger.error('Google OAuth callback error', { error: error.message, stack: error.stack });
-            res.redirect(`${process.env.FRONTEND_URL}/auth?error=oauth_error`);
+            const fe = process.env.FRONTEND_URL || 'http://localhost:5173';
+            res.redirect(`${fe}/auth/callback?error=oauth_error`);
         }
     })(req, res, next);
 };

@@ -16,14 +16,40 @@ const AuthCallback = () => {
                 const errorParam = params.get('error');
 
                 if (errorParam) {
+                    if (window.opener && !window.opener.closed) {
+                        window.opener.postMessage(
+                            { type: 'fuelmate-oauth', error: errorParam },
+                            window.location.origin
+                        );
+                        window.close();
+                        return;
+                    }
                     setError(getErrorMessage(errorParam));
                     setTimeout(() => navigate('/auth'), 3000);
                     return;
                 }
 
                 if (!token) {
+                    if (window.opener && !window.opener.closed) {
+                        window.opener.postMessage(
+                            { type: 'fuelmate-oauth', error: 'no_token' },
+                            window.location.origin
+                        );
+                        window.close();
+                        return;
+                    }
                     setError('No authentication token received');
                     setTimeout(() => navigate('/auth'), 3000);
+                    return;
+                }
+
+                /* Popup OAuth: hand off to opener and close (main window finishes sign-in) */
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(
+                        { type: 'fuelmate-oauth', token },
+                        window.location.origin
+                    );
+                    window.close();
                     return;
                 }
 
@@ -86,6 +112,7 @@ const AuthCallback = () => {
         const errorMessages: Record<string, string> = {
             'oauth_error': 'Authentication error occurred',
             'oauth_failed': 'Authentication failed',
+            'oauth_not_configured': 'Google sign-in is not available on this server',
             'no_token': 'No authentication token received',
             'profile_fetch_failed': 'Failed to fetch user profile'
         };

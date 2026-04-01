@@ -37,12 +37,12 @@ type CustomerOrder = {
 type Station = {
   _id: string;
   businessName: string;
-  pumpLocation: {
-    addressLine: string;
-    city: string;
-    state: string;
-    country: string;
-    zipCode: string;
+  pumpLocation?: {
+    addressLine?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zipCode?: string;
     coordinates?: {
       lat: number;
       lng: number;
@@ -50,9 +50,9 @@ type Station = {
   };
   fuelProvider: string;
   isAvailable: boolean;
-  fuelPrices: {
-    petrol: number;
-    diesel: number;
+  fuelPrices?: {
+    petrol?: number;
+    diesel?: number;
   };
   avatar: string;
   about?: string;
@@ -200,7 +200,9 @@ const CustomerDashboard = () => {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-slate-600 text-[9px] font-bold uppercase tracking-widest mb-0.5">Location</span>
-                      <span className="text-slate-300">{selectedStation.pumpLocation.city}, {selectedStation.pumpLocation.state}</span>
+                      <span className="text-slate-300">
+                        {[selectedStation.pumpLocation?.city, selectedStation.pumpLocation?.state].filter(Boolean).join(', ') || '—'}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2.5">
@@ -228,11 +230,11 @@ const CustomerDashboard = () => {
               <div className="flex gap-3 flex-shrink-0 lg:ml-auto">
                 <div className="bg-[#020817] border border-slate-800/60 p-3 rounded-xl text-center min-w-[90px] shadow-inner group/price">
                   <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mb-1.5 px-2">Petrol</p>
-                  <p className="text-xl font-bold text-white tracking-tighter">₹{selectedStation.fuelPrices.petrol}</p>
+                  <p className="text-xl font-bold text-white tracking-tighter">₹{selectedStation.fuelPrices?.petrol ?? '—'}</p>
                 </div>
                 <div className="bg-[#020817] border border-slate-800/60 p-3 rounded-xl text-center min-w-[90px] shadow-inner group/price">
                   <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mb-1.5 px-2">Diesel</p>
-                  <p className="text-xl font-bold text-white tracking-tighter">₹{selectedStation.fuelPrices.diesel}</p>
+                  <p className="text-xl font-bold text-white tracking-tighter">₹{selectedStation.fuelPrices?.diesel ?? '—'}</p>
                 </div>
               </div>
             </div>
@@ -329,18 +331,20 @@ const CustomerDashboard = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center p-4 rounded-xl bg-[#020817] border border-slate-800/50 group-hover:border-orange-500/20 transition-colors shadow-inner">
                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Petrol</p>
-                    <p className="text-2xl font-semibold text-white">₹{station.fuelPrices.petrol}</p>
+                    <p className="text-2xl font-semibold text-white">₹{station.fuelPrices?.petrol ?? '—'}</p>
                   </div>
                   <div className="text-center p-4 rounded-xl bg-[#020817] border border-slate-800/50 group-hover:border-orange-500/20 transition-colors shadow-inner">
                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2">Diesel</p>
-                    <p className="text-2xl font-semibold text-white">₹{station.fuelPrices.diesel}</p>
+                    <p className="text-2xl font-semibold text-white">₹{station.fuelPrices?.diesel ?? '—'}</p>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
                     <MapPin className="w-4 h-4 text-orange-500" />
-                    <span className="truncate">{station.pumpLocation.city}, {station.pumpLocation.state}</span>
+                    <span className="truncate">
+                      {[station.pumpLocation?.city, station.pumpLocation?.state].filter(Boolean).join(', ') || 'Location on file'}
+                    </span>
                   </div>
                   <Button
                     className="w-full bg-orange-500 text-white hover:bg-orange-600 font-medium h-11 rounded-md transition-all"
