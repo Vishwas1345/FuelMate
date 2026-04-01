@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const initialDrivers = [
     {
@@ -51,9 +54,56 @@ const initialDrivers = [
     }
 ];
 
+type DriverStatus = 'Active' | 'On Leave';
+type Driver = {
+    id: string;
+    name: string;
+    phone: string;
+    email: string;
+    status: DriverStatus;
+    salary: number;
+    leavesTotal: number;
+    leavesUsed: number;
+    tripsToday: number;
+    rating: number;
+};
+
 export const StationDriversManager = () => {
-    const [drivers, setDrivers] = useState(initialDrivers);
+    const storageKey = 'fuelmate:stationDrivers';
+    const [drivers, setDrivers] = useState<Driver[]>(() => {
+        try {
+            const raw = localStorage.getItem(storageKey);
+            if (!raw) return initialDrivers as Driver[];
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length) return parsed as Driver[];
+            return initialDrivers as Driver[];
+        } catch {
+            return initialDrivers as Driver[];
+        }
+    });
     const { toast } = useToast();
+    const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [newDriver, setNewDriver] = useState({
+        name: '',
+        phone: '',
+        email: '',
+        salary: ''
+    });
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(drivers));
+        } catch {
+            // ignore persistence errors (private mode, quota, etc.)
+        }
+    }, [drivers]);
+
+    const stats = useMemo(() => {
+        const activeCount = drivers.filter(d => d.status === 'Active').length;
+        const payroll = drivers.reduce((acc, curr) => acc + (Number(curr.salary) || 0), 0);
+        return { activeCount, payroll };
+    }, [drivers]);
 
     const handlePaySalary = (driverId: string, name: string) => {
         toast({
@@ -69,6 +119,63 @@ export const StationDriversManager = () => {
         });
     };
 
+    const resetRegisterForm = () => {
+        setNewDriver({ name: '', phone: '', email: '', salary: '' });
+    };
+
+    const handleRegisterPartner = async () => {
+        const name = newDriver.name.trim();
+        const phone = newDriver.phone.trim();
+        const email = newDriver.email.trim().toLowerCase();
+        const salary = Number(String(newDriver.salary).replace(/[^\d.]/g, ''));
+
+        if (!name || !phone || !email || !Number.isFinite(salary) || salary <= 0) {
+            toast({
+                title: "Missing details",
+                description: "Please provide name, phone, email, and a valid salary.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        const emailTaken = drivers.some(d => d.email.toLowerCase() === email);
+        if (emailTaken) {
+            toast({
+                title: "Partner already exists",
+                description: "A delivery partner with this email is already registered.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const id = `d_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
+            const created: Driver = {
+                id,
+                name,
+                phone,
+                email,
+                status: 'Active',
+                salary,
+                leavesTotal: 12,
+                leavesUsed: 0,
+                tripsToday: 0,
+                rating: 5.0
+            };
+
+            setDrivers(prev => [created, ...prev]);
+            toast({
+                title: "Partner registered",
+                description: `${name} has been added to Delivery Partners.`,
+            });
+            setIsRegisterOpen(false);
+            resetRegisterForm();
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="w-full px-4 md:px-0 space-y-10 pb-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 px-1">
@@ -80,10 +187,85 @@ export const StationDriversManager = () => {
                         Manage your delivery team and payroll
                     </p>
                 </div>
-                <Button className="w-full md:w-auto bg-[#f97316] hover:bg-[#f97316]/90 text-white text-[11px] font-bold uppercase tracking-widest h-12 px-10 shadow-lg shadow-orange-500/20 border-none transition-all hover:scale-[1.02] active:scale-95">
+                <Button
+                    onClick={() => setIsRegisterOpen(true)}
+                    className="w-full md:w-auto bg-[#f97316] hover:bg-[#f97316]/90 text-white text-[11px] font-bold uppercase tracking-widest h-12 px-10 shadow-lg shadow-orange-500/20 border-none transition-all hover:scale-[1.02] active:scale-95"
+                >
                     + Register Partner
                 </Button>
             </div>
+
+            <Dialog open={isRegisterOpen} onOpenChange={(open) => {
+                setIsRegisterOpen(open);
+                if (!open) resetRegisterForm();
+            }}>
+                <DialogContent className="bg-[#0a101f] border-slate-800 text-white rounded-2xl shadow-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-white">Register Delivery Partner</DialogTitle>
+                        <DialogDescription className="text-slate-400">
+                            Add a new partner to your delivery team.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label className="text-slate-300">Full name</Label>
+                            <Input
+                                value={newDriver.name}
+                                onChange={(e) => setNewDriver(p => ({ ...p, name: e.target.value }))}
+                                placeholder="e.g. Rahul Sharma"
+                                className="bg-[#020817] border-slate-800 text-white placeholder:text-slate-600 focus:border-orange-500"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label className="text-slate-300">Phone</Label>
+                            <Input
+                                value={newDriver.phone}
+                                onChange={(e) => setNewDriver(p => ({ ...p, phone: e.target.value }))}
+                                placeholder="e.g. +91 98765 43210"
+                                className="bg-[#020817] border-slate-800 text-white placeholder:text-slate-600 focus:border-orange-500"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label className="text-slate-300">Email</Label>
+                            <Input
+                                value={newDriver.email}
+                                onChange={(e) => setNewDriver(p => ({ ...p, email: e.target.value }))}
+                                placeholder="e.g. partner@fuelmate.com"
+                                className="bg-[#020817] border-slate-800 text-white placeholder:text-slate-600 focus:border-orange-500"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label className="text-slate-300">Monthly salary (₹)</Label>
+                            <Input
+                                inputMode="numeric"
+                                value={newDriver.salary}
+                                onChange={(e) => setNewDriver(p => ({ ...p, salary: e.target.value }))}
+                                placeholder="e.g. 25000"
+                                className="bg-[#020817] border-slate-800 text-white placeholder:text-slate-600 focus:border-orange-500"
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter className="gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsRegisterOpen(false)}
+                            className="border-slate-700 bg-transparent text-slate-200 hover:bg-slate-800/40"
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleRegisterPartner}
+                            className="bg-[#f97316] hover:bg-[#f97316]/90 text-white"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Registering...' : 'Register Partner'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                 <Card className="bg-[#0a101f] border-slate-800/60 shadow-xl relative overflow-hidden group">
@@ -113,7 +295,7 @@ export const StationDriversManager = () => {
                     </CardHeader>
                     <CardContent className="px-4 pb-4 md:pb-6">
                         <div className="text-2xl md:text-4xl font-bold text-white tracking-tight">
-                            {drivers.filter(d => d.status === 'Active').length}
+                            {stats.activeCount}
                         </div>
                     </CardContent>
                 </Card>
@@ -129,7 +311,7 @@ export const StationDriversManager = () => {
                     </CardHeader>
                     <CardContent className="px-4 pb-4 md:pb-6">
                         <div className="text-2xl md:text-4xl font-bold text-white tracking-tight">
-                            ₹{(drivers.reduce((acc, curr) => acc + curr.salary, 0)).toLocaleString()}
+                            ₹{stats.payroll.toLocaleString()}
                         </div>
                     </CardContent>
                 </Card>
