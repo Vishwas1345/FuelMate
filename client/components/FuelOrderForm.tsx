@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Fuel, MapPin, Car, ChevronRight, ShoppingCart, Clock, Zap, TrendingDown, Info, CheckCircle2, AlertCircle, Plus, Compass } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { api } from '@/services/api';
 import PaymentDialog from './PaymentDialog';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -16,12 +17,21 @@ interface FuelOrderFormProps {
   station: any;
 }
 
+const formatAddressForDelivery = (addr: any) => {
+  if (!addr) return '';
+  const line = [addr.addressLine, addr.city, addr.state, addr.zipCode, addr.country]
+    .filter(Boolean)
+    .join(', ');
+  return line || '';
+};
+
 const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, setUser } = useAuth();
   const [fuelType, setFuelType] = useState<'petrol' | 'diesel'>('petrol');
   const [quantity, setQuantity] = useState<string>('5');
-  const [selectedAddress, setSelectedAddress] = useState<string>('');
-  const [selectedVehicle, setSelectedVehicle] = useState<string>('');
+  /** Index into user.addresses / user.vehicles so every row is listed with unique Select values */
+  const [selectedAddressIndex, setSelectedAddressIndex] = useState<string>('0');
+  const [selectedVehicleIndex, setSelectedVehicleIndex] = useState<string>('0');
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
@@ -35,13 +45,41 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
   });
 
   useEffect(() => {
-    if (user?.addresses?.length) {
-      setSelectedAddress(user.addresses[0].addressLine + ", " + user.addresses[0].city);
-    }
-    if (user?.vehicles?.length) {
-      setSelectedVehicle(user.vehicles[0].plateNumber);
-    }
-  }, [user]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const fresh = await api.getProfile();
+        if (!cancelled) setUser(fresh);
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [setUser, station?._id]);
+
+  useEffect(() => {
+    const aLen = user?.addresses?.length ?? 0;
+    const vLen = user?.vehicles?.length ?? 0;
+    setSelectedAddressIndex((prev) => {
+      const i = parseInt(prev, 10);
+      if (aLen === 0) return '0';
+      if (Number.isNaN(i) || i < 0 || i >= aLen) return '0';
+      return String(i);
+    });
+    setSelectedVehicleIndex((prev) => {
+      const i = parseInt(prev, 10);
+      if (vLen === 0) return '0';
+      if (Number.isNaN(i) || i < 0 || i >= vLen) return '0';
+      return String(i);
+    });
+  }, [user?.addresses, user?.vehicles]);
+
+  const selectedAddr = user?.addresses?.[parseInt(selectedAddressIndex, 10)];
+  const selectedVeh = user?.vehicles?.[parseInt(selectedVehicleIndex, 10)];
+  const selectedAddress = formatAddressForDelivery(selectedAddr);
+  const selectedVehicle = selectedVeh?.plateNumber || '';
 
   const prices = {
     petrol: station?.fuelPrices?.petrol || 101.5,
@@ -51,9 +89,9 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
   // Calculate estimated delivery time (25-30 min average)
   const estimatedDeliveryTime = useMemo(() => {
     const baseTime = 25;
-    const distanceFactor = user?.addresses?.[0]?.city?.toLowerCase() === station?.pumpLocation?.city?.toLowerCase() ? 0 : 5;
+    const distanceFactor = selectedAddr?.city?.toLowerCase() === station?.pumpLocation?.city?.toLowerCase() ? 0 : 5;
     return baseTime + distanceFactor;
-  }, [user, station]);
+  }, [selectedAddr, station]);
 
   // Calculate savings vs going to station
   const savings = useMemo(() => {
@@ -66,11 +104,12 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
     const qty = parseFloat(quantity) || 0;
     const fuelCost = qty * prices[fuelType];
     const platformFee = qty * 2;
-    const isFreeDelivery = user?.addresses?.[0]?.city?.toLowerCase() === station?.pumpLocation?.city?.toLowerCase();
+    const addr = user?.addresses?.[parseInt(selectedAddressIndex, 10)];
+    const isFreeDelivery = addr?.city?.toLowerCase() === station?.pumpLocation?.city?.toLowerCase();
     const deliveryFee = isFreeDelivery ? 0 : (fuelType === 'petrol' ? 35 : 40);
     const total = fuelCost + platformFee + deliveryFee;
     return { fuelCost, platformFee, deliveryFee, total, isFreeDelivery };
-  }, [fuelType, quantity, station, user, prices]);
+  }, [fuelType, quantity, station, user, prices, selectedAddressIndex]);
 
   // Quick quantity suggestions based on vehicle type
   const handleAddAddress = async () => {
@@ -78,7 +117,7 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
     try {
       const updatedAddresses = [...(user.addresses || []), newAddress];
       await updateProfile({ addresses: updatedAddresses });
-      setSelectedAddress(newAddress.addressLine + ", " + newAddress.city);
+      setSelectedAddressIndex(String(updatedAddresses.length - 1));
       setIsAddressDialogOpen(false);
       setNewAddress({
         label: 'home',
@@ -94,7 +133,6 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
   };
 
   const getQuickQuantities = () => {
-    const selectedVeh = user?.vehicles?.find((v: any) => v.plateNumber === selectedVehicle);
     if (selectedVeh?.type === 'bike') return ['3', '5', '7', '10'];
     if (selectedVeh?.type === 'truck') return ['15', '20', '25', '30'];
     return ['5', '10', '15', '20'];
@@ -345,13 +383,17 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                   {/* Delivery Address */}
                   <div className="space-y-3">
                     <Label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">End Node Address</Label>
-                    <Select value={selectedAddress} onValueChange={setSelectedAddress}>
+                    <Select
+                      value={user?.addresses?.length ? selectedAddressIndex : undefined}
+                      onValueChange={setSelectedAddressIndex}
+                      disabled={!user?.addresses?.length}
+                    >
                       <SelectTrigger className="bg-[#020817] border-slate-800/60 text-white h-12 rounded-xl pl-3 shadow-inner">
-                        <SelectValue placeholder="Target Node" />
+                        <SelectValue placeholder={user?.addresses?.length ? 'Target Node' : 'Add an address in Profile'} />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0a101f] border-slate-800 text-white shadow-2xl rounded-xl">
+                      <SelectContent className="bg-[#0a101f] border-slate-800 text-white shadow-2xl rounded-xl max-h-[280px] overflow-y-auto">
                         {user?.addresses?.map((addr: any, i: number) => (
-                          <SelectItem key={i} value={addr.addressLine + ", " + addr.city} className="focus:bg-slate-800/50 focus:text-white py-3 cursor-pointer">
+                          <SelectItem key={i} value={String(i)} className="focus:bg-slate-800/50 focus:text-white py-3 cursor-pointer">
                             <div className="flex items-start gap-3 w-full max-w-[280px]">
                               <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0 mt-0.5">
                                 <MapPin className="w-3.5 h-3.5 text-[#f97316]" />
@@ -380,13 +422,17 @@ const FuelOrderForm: React.FC<FuelOrderFormProps> = ({ onSubmit, station }) => {
                   {/* Vehicle */}
                   <div className="space-y-3">
                     <Label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Operational Unit</Label>
-                    <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
+                    <Select
+                      value={user?.vehicles?.length ? selectedVehicleIndex : undefined}
+                      onValueChange={setSelectedVehicleIndex}
+                      disabled={!user?.vehicles?.length}
+                    >
                       <SelectTrigger className="bg-[#020817] border-slate-800/60 text-white h-12 rounded-xl pl-3 shadow-inner">
-                        <SelectValue placeholder="Select Unit" />
+                        <SelectValue placeholder={user?.vehicles?.length ? 'Select Unit' : 'Add a vehicle in Profile'} />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0a101f] border-slate-800 text-white shadow-2xl rounded-xl">
+                      <SelectContent className="bg-[#0a101f] border-slate-800 text-white shadow-2xl rounded-xl max-h-[280px] overflow-y-auto">
                         {user?.vehicles?.map((v: any, i: number) => (
-                          <SelectItem key={i} value={v.plateNumber} className="focus:bg-slate-800/50 focus:text-white py-3 cursor-pointer">
+                          <SelectItem key={i} value={String(i)} className="focus:bg-slate-800/50 focus:text-white py-3 cursor-pointer">
                             <div className="flex items-start gap-3 w-full max-w-[280px]">
                               <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
                                 <Car className="w-3.5 h-3.5 text-blue-500" />

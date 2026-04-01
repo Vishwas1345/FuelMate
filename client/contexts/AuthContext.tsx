@@ -63,7 +63,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await api.login({ email, password });
 
-      setUser(response.user);
+      // Login payload omits addresses/vehicles — load full profile for dashboards/forms
+      let fullUser = response.user as User;
+      try {
+        fullUser = await api.getProfile();
+      } catch {
+        // keep minimal user if profile fetch fails
+      }
+      setUser(fullUser);
       setIsAuthenticated(true);
 
       // Fetch orders after successful login
@@ -109,7 +116,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await api.register({ name, email, password });
 
-      setUser(response.user);
+      let fullUser = response.user as User;
+      try {
+        fullUser = await api.getProfile();
+      } catch {
+        /* use response.user */
+      }
+      setUser(fullUser);
       setIsAuthenticated(true);
 
       toast({
