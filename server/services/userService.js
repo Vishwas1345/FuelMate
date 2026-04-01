@@ -1,5 +1,7 @@
 import User from '../models/User.js';
 import Order from '../models/Order.js';
+import Analytics from '../models/Analytics.js';
+import bcrypt from 'bcryptjs';
 
 class UserService {
     async getProfile(userId) {
@@ -129,6 +131,72 @@ class UserService {
             recentOrders: orders.slice(0, 5),
             graphData
         };
+    }
+
+    async updatePassword(userId, currentPassword, newPassword) {
+        if (!currentPassword || !newPassword) {
+            const error = new Error('Current password and new password are required');
+            error.status = 400;
+            error.code = 'MISSING_FIELDS';
+            throw error;
+        }
+
+        if (String(newPassword).length < 8) {
+            const error = new Error('Password must be at least 8 characters');
+            error.status = 400;
+            error.code = 'WEAK_PASSWORD';
+            throw error;
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            const error = new Error('User not found');
+            error.status = 404;
+            error.code = 'USER_NOT_FOUND';
+            throw error;
+        }
+
+        // OAuth users may not have a local password
+        if (!user.password) {
+            const error = new Error('Password change is not available for this account');
+            error.status = 400;
+            error.code = 'PASSWORD_NOT_SET';
+            throw error;
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            const error = new Error('Current password is incorrect');
+            error.status = 401;
+            error.code = 'INVALID_CURRENT_PASSWORD';
+            throw error;
+        }
+
+        user.password = newPassword;
+        await user.save();
+        return { success: true };
+    }
+
+    async deleteAccount(userId, payload = {}) {
+        const { reason } = payload || {};
+
+        const user = await User.findById(userId);
+        if (!user) {
+            const error = new Error('User not found');
+            error.status = 404;
+            error.code = 'USER_NOT_FOUND';
+            throw error;
+        }
+
+        // Remove associated records
+        await Promise.allSettled([
+            Order.deleteMany({ $or: [{ userId }, { stationId: userId }] }),
+            Analytics.deleteOne({ userId }),
+        ]);
+
+        await User.deleteOne({ _id: userId });
+
+        return { success: true, reason: reason || '' };
     }
 }
 

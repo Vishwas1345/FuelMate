@@ -336,6 +336,13 @@ class Api {
     });
   }
 
+  async deleteAccount(reason: string): Promise<void> {
+    return this.fetch('/api/users/me', {
+      method: 'DELETE',
+      body: JSON.stringify({ reason })
+    });
+  }
+
   // Order methods
   async createOrder(orderData: any): Promise<Order> {
     return this.fetch('/api/orders', {

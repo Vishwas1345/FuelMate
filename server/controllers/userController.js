@@ -58,6 +58,30 @@ class UserController {
             res.status(error.status || 500).json({ message: error.message });
         }
     }
+
+    async updatePassword(req, res) {
+        try {
+            const { currentPassword, newPassword } = req.body || {};
+            logger.info('Updating password', { userId: req.user._id });
+            const result = await userService.updatePassword(req.user._id, currentPassword, newPassword);
+            res.json(result);
+        } catch (error) {
+            logger.error('Error updating password', { error: error.message, userId: req.user?._id });
+            res.status(error.status || 500).json({ message: error.message, code: error.code });
+        }
+    }
+
+    async deleteAccount(req, res) {
+        try {
+            const { reason } = req.body || {};
+            logger.warn('Deleting account', { userId: req.user._id, reason: reason || '' });
+            const result = await userService.deleteAccount(req.user._id, { reason });
+            res.json(result);
+        } catch (error) {
+            logger.error('Error deleting account', { error: error.message, userId: req.user?._id });
+            res.status(error.status || 500).json({ message: error.message, code: error.code });
+        }
+    }
 }
 
 export default new UserController();

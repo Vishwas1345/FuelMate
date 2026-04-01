@@ -214,10 +214,12 @@ export const CustomerOrdersDashboard = () => {
                                                 <div className="h-1.5 w-1.5 rounded-full bg-orange-500 animate-pulse" />
                                                 <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Order Summary</span>
                                             </div>
-                                            <Badge variant="outline" className="text-[9px] border-slate-800 text-slate-500 font-bold bg-[#020817] px-2 py-0.5">ESTABLISHED</Badge>
+                                            <Badge variant="outline" className="text-[9px] border-slate-800 text-slate-500 font-bold bg-[#020817] px-2 py-0.5">
+                                                {Array.isArray(analyticsData?.dailyTrends) ? `${analyticsData.dailyTrends.length} pts` : '0 pts'}
+                                            </Badge>
                                         </div>
 
-                                        <div className="flex-1 bg-[#020817] border border-slate-800/40 rounded-xl p-6 relative overflow-hidden shadow-inner">
+                                        <div className="h-[420px] bg-[#020817] border border-slate-800/40 rounded-xl p-6 relative overflow-hidden shadow-inner">
                                             {analyticsData?.dailyTrends?.length > 0 ? (
                                                 <ResponsiveContainer width="100%" height="100%">
                                                     <AreaChart data={analyticsData.dailyTrends}>
@@ -249,9 +251,14 @@ export const CustomerOrdersDashboard = () => {
                                                     </AreaChart>
                                                 </ResponsiveContainer>
                                             ) : (
-                                                <div className="h-full w-full flex flex-col items-center justify-center opacity-20">
-                                                    <Activity className="w-10 h-10 mb-3" />
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600">No terminal data</p>
+                                                <div className="h-full w-full flex flex-col items-center justify-center text-center">
+                                                    <div className="w-14 h-14 rounded-xl border border-slate-800/60 bg-[#0a101f] flex items-center justify-center shadow-inner mb-4">
+                                                        <Activity className="w-7 h-7 text-slate-600" />
+                                                    </div>
+                                                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-500">No summary data yet</p>
+                                                    <p className="text-xs text-slate-600 mt-2 max-w-sm">
+                                                        Analytics appears after at least one delivered order. If you have delivered orders, hit refresh or sync.
+                                                    </p>
                                                 </div>
                                             )}
                                         </div>

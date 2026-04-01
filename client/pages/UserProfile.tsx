@@ -19,6 +19,7 @@ import {
 import MapView from '@/components/MapView';
 import { toast } from '@/components/ui/use-toast';
 import { downloadOrderInvoicePdf } from '@/lib/invoice';
+import { api } from '@/services/api';
 
 // Types matching the schema
 type Address = {
@@ -70,6 +71,17 @@ const UserProfile = () => {
   const [profileData, setProfileData] = useState<UserProfileData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Password & Delete dialogs
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [isDeletingDialogOpen, setIsDeletingDialogOpen] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [deleteReason, setDeleteReason] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState('');
 
   // Dialog States
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
@@ -141,6 +153,49 @@ const UserProfile = () => {
       toast({ title: "Error", description: "Failed to save profile changes.", variant: "destructive" });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    try {
+      setIsUpdatingPassword(true);
+      if (!currentPassword) throw new Error('Please enter your current password');
+      if (newPassword.length < 8) throw new Error('New password must be at least 8 characters');
+      if (newPassword !== confirmPassword) throw new Error('New password and confirmation do not match');
+
+      await api.updatePassword(currentPassword, newPassword);
+      toast({ title: "Password Updated", description: "Your password has been changed successfully." });
+      setIsPasswordDialogOpen(false);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error?.message || "Could not update your password.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      if (!deleteReason.trim()) throw new Error('Please tell us what went wrong (reason is required).');
+      if (deleteConfirm.trim().toUpperCase() !== 'DELETE') throw new Error('Type DELETE to confirm account deletion.');
+
+      await api.deleteAccount(deleteReason.trim());
+      await logout();
+    } catch (error: any) {
+      toast({
+        title: "Delete Failed",
+        description: error?.message || "Could not delete your account.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -775,20 +830,140 @@ const UserProfile = () => {
                       <h4 className="text-white font-bold text-xs uppercase tracking-wider opacity-90">Update Password</h4>
                       <p className="text-[11px] text-slate-500 font-medium">Rotate your access credentials to maintain security.</p>
                     </div>
-                    <Button variant="outline" size="sm" className="h-9 border-slate-700 hover:bg-slate-800 text-slate-300 text-[10px] font-bold uppercase tracking-widest px-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsPasswordDialogOpen(true)}
+                      className="h-9 border-slate-700 hover:bg-slate-800 text-slate-300 text-[10px] font-bold uppercase tracking-widest px-4"
+                    >
                       Update Password
                     </Button>
                   </div>
+
+                  <Dialog open={isPasswordDialogOpen} onOpenChange={(open) => {
+                    setIsPasswordDialogOpen(open);
+                    if (!open) {
+                      setCurrentPassword('');
+                      setNewPassword('');
+                      setConfirmPassword('');
+                    }
+                  }}>
+                    <DialogContent className="bg-[#0a101f] border-slate-800 text-white rounded-2xl p-8 max-w-md">
+                      <DialogHeader className="mb-6">
+                        <DialogTitle className="text-sm font-bold uppercase tracking-[0.3em]">Update Password</DialogTitle>
+                        <DialogDescription className="text-[11px] text-slate-500 font-medium">
+                          Enter your current password, then choose a new one.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-5">
+                        {[
+                          { id: 'current', label: 'Current Password', val: currentPassword, set: setCurrentPassword },
+                          { id: 'new', label: 'New Password', val: newPassword, set: setNewPassword },
+                          { id: 'confirm', label: 'Confirm New Password', val: confirmPassword, set: setConfirmPassword },
+                        ].map((field) => (
+                          <div key={field.id} className="space-y-2">
+                            <Label className="text-[9px] font-bold uppercase tracking-widest text-slate-500 ml-1">{field.label}</Label>
+                            <Input
+                              type="password"
+                              value={field.val}
+                              onChange={(e) => field.set(e.target.value)}
+                              className="bg-[#020817] border-slate-800 h-12 text-white placeholder:text-slate-700"
+                              placeholder="••••••••"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-3 mt-8">
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsPasswordDialogOpen(false)}
+                          className="flex-1 bg-transparent border-slate-800 h-12 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white"
+                          disabled={isUpdatingPassword}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleUpdatePassword}
+                          className="flex-1 bg-[#f97316] h-12 text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-orange-500/20"
+                          disabled={isUpdatingPassword}
+                        >
+                          {isUpdatingPassword ? 'Saving...' : 'Update Password'}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-xl border border-red-900/20 bg-red-900/5 hover:bg-red-900/10 transition-all gap-4 shadow-inner mt-6">
                     <div className="space-y-1">
                       <h4 className="text-red-400 font-bold text-xs uppercase tracking-wider opacity-90">Delete Account</h4>
                       <p className="text-[11px] text-red-500/60 font-medium">Permanently delete this account and purge all associated data.</p>
                     </div>
-                    <Button variant="destructive" size="sm" className="h-9 text-[10px] font-bold uppercase tracking-widest px-4 shadow-lg shadow-red-900/20">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => setIsDeletingDialogOpen(true)}
+                      className="h-9 text-[10px] font-bold uppercase tracking-widest px-4 shadow-lg shadow-red-900/20"
+                    >
                       Delete Profile
                     </Button>
                   </div>
+
+                  <Dialog open={isDeletingDialogOpen} onOpenChange={(open) => {
+                    setIsDeletingDialogOpen(open);
+                    if (!open) {
+                      setDeleteReason('');
+                      setDeleteConfirm('');
+                    }
+                  }}>
+                    <DialogContent className="bg-[#0a101f] border-slate-800 text-white rounded-2xl p-8 max-w-lg">
+                      <DialogHeader className="mb-6">
+                        <DialogTitle className="text-sm font-bold uppercase tracking-[0.3em] text-red-400">Delete Account</DialogTitle>
+                        <DialogDescription className="text-[11px] text-slate-500 font-medium">
+                          This action is permanent. Tell us what went wrong, then type <span className="font-bold text-slate-300">DELETE</span> to confirm.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div className="space-y-5">
+                        <div className="space-y-2">
+                          <Label className="text-[9px] font-bold uppercase tracking-widest text-slate-500 ml-1">What went wrong?</Label>
+                          <Textarea
+                            value={deleteReason}
+                            onChange={(e) => setDeleteReason(e.target.value)}
+                            className="bg-[#020817] border-slate-800 text-white placeholder:text-slate-700 min-h-[110px]"
+                            placeholder="e.g. I’m facing issues with payments / delivery / support…"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[9px] font-bold uppercase tracking-widest text-slate-500 ml-1">Type DELETE to confirm</Label>
+                          <Input
+                            value={deleteConfirm}
+                            onChange={(e) => setDeleteConfirm(e.target.value)}
+                            className="bg-[#020817] border-slate-800 h-12 text-white placeholder:text-slate-700"
+                            placeholder="DELETE"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 mt-8">
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsDeletingDialogOpen(false)}
+                          className="flex-1 bg-transparent border-slate-800 h-12 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-white"
+                          disabled={isDeleting}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={handleDeleteAccount}
+                          className="flex-1 h-12 text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-red-900/20"
+                          disabled={isDeleting}
+                        >
+                          {isDeleting ? 'Deleting...' : 'Delete Anyway'}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
             </TabsContent>

@@ -18,4 +18,10 @@ router.patch('/availability', userController.toggleAvailability);
 // Get dashboard stats (Station only)
 router.get('/dashboard-stats', userController.getDashboardStats);
 
+// Update password (requires current password)
+router.put('/password', userController.updatePassword);
+
+// Delete account (self)
+router.delete('/me', userController.deleteAccount);
+
 export default router; 
