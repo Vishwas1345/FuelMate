@@ -8,7 +8,9 @@
         "start": "node server.js",
         "fuelmate-server": "nodemon server.js",
         "lint": "echo 'No linting configured for server'",
-        "wipe-data": "node scripts/wipeData.js"
+        "wipe-data": "node scripts/wipeData.js",
+        "seed:demo": "node scripts/seedDemoCustomer.js",
+        "seed:demo-station": "node scripts/seedDemoStation.js"
     },
     "keywords": [],
     "author": "",
