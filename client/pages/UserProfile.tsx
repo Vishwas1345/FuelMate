@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import MapView from '@/components/MapView';
 import { toast } from '@/components/ui/use-toast';
+import { downloadOrderInvoicePdf } from '@/lib/invoice';
 
 // Types matching the schema
 type Address = {
@@ -733,7 +734,17 @@ const UserProfile = () => {
                           </div>
                           <div className="flex flex-row md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-2">
                             <span className="text-2xl font-semibold text-white tracking-tighter">₹{order.totalPrice || order.price || 0}</span>
-                            <Button variant="ghost" size="sm" className="h-8 text-[10px] text-blue-400 hover:text-blue-300 font-bold uppercase tracking-widest hover:bg-blue-500/5">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 text-[10px] text-blue-400 hover:text-blue-300 font-bold uppercase tracking-widest hover:bg-blue-500/5"
+                              onClick={() => downloadOrderInvoicePdf(order, {
+                                name: profileData.name,
+                                email: profileData.email,
+                                phone: profileData.phone,
+                                role: profileData.role
+                              })}
+                            >
                               <Download className="w-3 h-3 mr-1" /> Invoice
                             </Button>
                           </div>

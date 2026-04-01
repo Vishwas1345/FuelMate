@@ -47,6 +47,7 @@
         "framer-motion": "^12.34.3",
         "geist": "^1.5.1",
         "input-otp": "^1.2.4",
+        "jspdf": "^4.2.1",
         "loglevel": "^1.9.2",
         "loglevel-plugin-prefix": "^0.8.4",
         "lucide-react": "^0.462.0",
