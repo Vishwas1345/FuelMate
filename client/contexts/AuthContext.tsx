@@ -75,8 +75,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Welcome back!",
       });
 
-      // Redirect to Under Construction as the main app is still building
-      navigate("/under-construction");
+      // Redirect based on profile completion
+      if (!response.user?.profileComplete) {
+        navigate("/onboarding");
+      } else if (response.user?.role === 'station') {
+        navigate("/station");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error: any) {
       toast({
         title: "Login Failed",
@@ -112,8 +118,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "Your account has been created successfully!",
       });
 
-      // Redirect to Under Construction as the main app is still building
-      navigate("/under-construction");
+      // New users go to onboarding
+      navigate("/onboarding");
     } catch (error: any) {
       toast({
         title: "Registration Failed",

@@ -23,11 +23,5 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
 
-
-  // Force all authenticated users to under-construction page
-  if (location.pathname !== '/under-construction') {
-    return <Navigate to="/under-construction" replace />;
-  }
-
   return <>{children}</>;
 } 
