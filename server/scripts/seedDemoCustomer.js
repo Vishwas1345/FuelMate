@@ -14,6 +14,10 @@ import Order from '../models/Order.js';
 const DEMO_EMAIL = 'customer@fuelmate.com';
 const DEMO_PASSWORD = 'DemoFuelMate2026!';
 
+/** Simple avatar (no upload): generated badge, works in profile & sidebar */
+const DEMO_CUSTOMER_AVATAR =
+  'https://ui-avatars.com/api/?name=Demo+Customer&background=f97316&color=fff&size=128&bold=true';
+
 const formatAddress = (a) =>
   [a.addressLine, a.city, a.state, a.zipCode, a.country].filter(Boolean).join(', ');
 
@@ -70,6 +74,7 @@ async function main() {
       authProvider: 'local',
       isProfileComplete: true,
       phone: '+91 98765 00000',
+      avatar: DEMO_CUSTOMER_AVATAR,
       addresses: demoAddresses,
       vehicles: demoVehicles,
     });
@@ -82,6 +87,7 @@ async function main() {
     user.googleId = undefined;
     user.isProfileComplete = true;
     user.phone = user.phone || '+91 98765 00000';
+    user.avatar = DEMO_CUSTOMER_AVATAR;
     user.addresses = demoAddresses;
     user.vehicles = demoVehicles;
     user.password = DEMO_PASSWORD;

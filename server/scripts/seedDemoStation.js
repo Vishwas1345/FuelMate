@@ -16,6 +16,11 @@ import Order from '../models/Order.js';
 const STATION_EMAIL = 'station@fuelmate.com';
 const STATION_PASSWORD = 'DemoFuelMate2026!';
 const DEMO_CUSTOMER_EMAIL = 'customer@fuelmate.com';
+/** Second on-network outlet so the customer map lists a clear Indian Oil petrol pump */
+const IOCL_OUTLET_EMAIL = 'demo-iocl-pump@fuelmate.com';
+
+const IOCL_AVATAR =
+  'https://ui-avatars.com/api/?name=Indian+Oil&background=FF6600&color=fff&size=128&bold=true';
 
 const buyerSeeds = [
   { email: 'sw-buyer1@fuelmate.com', name: 'Rahul Sharma', phone: '+91 90110 10001' },
@@ -70,6 +75,55 @@ async function ensureBuyer(doc) {
   return u;
 }
 
+async function ensureIndianOilPumpOutlet() {
+  let outlet = await User.findOne({ email: IOCL_OUTLET_EMAIL });
+  const profile = {
+    name: 'Indian Oil Outlet Admin',
+    role: 'station',
+    authProvider: 'local',
+    googleId: undefined,
+    isProfileComplete: true,
+    phone: '+91 261 555 0199',
+    businessName: 'Indian Oil — Ring Road Petrol Pump',
+    businessPhone: '+91 261 555 0199',
+    gstNumber: '24AABCI5678F2Z4',
+    fuelProvider: 'IndianOil',
+    pumpLocation: {
+      addressLine: 'Plot 14, Ring Road, near City Light Chowk',
+      city: 'Surat',
+      state: 'Gujarat',
+      country: 'India',
+      zipCode: '395007',
+      coordinates: { lat: 21.1458, lng: 72.7661 },
+    },
+    trucksNeeded: 3,
+    driversNeeded: 5,
+    about:
+      'Indian Oil authorized retail: MS/HSD, prepaid & UPI, and doorstep delivery via FuelMate across central Surat.',
+    history: 'Ring Road outlet operating since 2019; on FuelMate from 2024.',
+    startingYear: 2019,
+    isAvailable: true,
+    fuelPrices: { petrol: 101.55, diesel: 92.68 },
+    avatar: IOCL_AVATAR,
+  };
+
+  if (!outlet) {
+    outlet = new User({
+      email: IOCL_OUTLET_EMAIL,
+      password: STATION_PASSWORD,
+      ...profile,
+    });
+    await outlet.save();
+    console.log('Created Indian Oil demo pump:', IOCL_OUTLET_EMAIL);
+  } else {
+    Object.assign(outlet, profile);
+    outlet.password = STATION_PASSWORD;
+    await outlet.save();
+    console.log('Updated Indian Oil demo pump:', IOCL_OUTLET_EMAIL);
+  }
+  return outlet;
+}
+
 async function main() {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
@@ -89,7 +143,7 @@ async function main() {
     googleId: undefined,
     isProfileComplete: true,
     phone: '+91 261 555 0100',
-    businessName: 'Surat City Fuel Hub — Demo',
+    businessName: 'Indian Oil — Dumas VIP Road Hub (Demo)',
     businessPhone: '+91 261 555 0100',
     gstNumber: '24AABCFM1234H1Z5',
     fuelProvider: 'IndianOil',
@@ -104,15 +158,14 @@ async function main() {
     trucksNeeded: 5,
     driversNeeded: 8,
     about:
-      'IOCL-authorized retail + mobile dispensing for residential and SME fleets. ' +
+      'Indian Oil (IOCL) authorized retail + mobile dispensing for residential and SME fleets. ' +
       '24×7 dispatch desk, calibrated metering, and GPS-tracked bowzers for safe doorstep delivery across Surat.',
     history:
       'Operating since 2018. Migrated to FuelMate in 2024 for live order queue, partner payouts, and customer ETA tracking.',
     startingYear: 2018,
     isAvailable: true,
     fuelPrices: { petrol: 101.6, diesel: 92.65 },
-    avatar:
-      'https://ui-avatars.com/api/?name=Surat+Fuel+Hub&background=f97316&color=fff&size=128',
+    avatar: IOCL_AVATAR,
   };
 
   if (!station) {
@@ -129,6 +182,8 @@ async function main() {
     await station.save();
     console.log('Updated demo station:', STATION_EMAIL);
   }
+
+  await ensureIndianOilPumpOutlet();
 
   const buyerIds = [];
   const demoCustomer = await User.findOne({ email: DEMO_CUSTOMER_EMAIL });
@@ -194,9 +249,10 @@ async function main() {
   await mongoose.disconnect();
 
   console.log('\n--- Demo station login (Fuel Partner board) ---');
-  console.log('  Email:    ', STATION_EMAIL);
+  console.log('  Primary hub: ', STATION_EMAIL);
+  console.log('  Indian Oil pump (also listed to customers): ', IOCL_OUTLET_EMAIL);
   console.log('  Password: ', STATION_PASSWORD);
-  console.log('  Orders:   ', TOTAL_DELIVERED, 'delivered (analytics + history)');
+  console.log('  Orders:   ', TOTAL_DELIVERED, 'delivered on primary hub (analytics + history)');
   console.log('  Buyers:   ', buyerIds.length, 'customer accounts (including', DEMO_CUSTOMER_EMAIL, 'if present)');
   console.log('------------------------------------------------\n');
 }
