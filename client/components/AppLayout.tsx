@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import AppSidebar from './AppSidebar';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AppLayout: React.FC = () => {
     const isMobile = useIsMobile();
+    const { user } = useAuth();
+    const brandHome = user?.role === 'station' ? '/station' : '/customer';
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // On desktop, sidebar should always be open
@@ -53,7 +56,13 @@ const AppLayout: React.FC = () => {
                             <Menu className="w-5 h-5" />
                         )}
                     </Button>
-                    <span className="text-lg font-semibold text-white">FuelMate</span>
+                    <Link
+                        to={brandHome}
+                        className="text-lg font-semibold text-white hover:text-orange-400 transition-colors"
+                        onClick={closeSidebar}
+                    >
+                        FuelMate
+                    </Link>
                 </div>
 
                 {/* Main Content Scrollable */}

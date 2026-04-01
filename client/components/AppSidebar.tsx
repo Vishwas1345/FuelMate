@@ -43,6 +43,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isOpen = true, onClose }) => {
 
     const menuItems = getMenuItems();
     const isActive = (path: string) => location.pathname === path;
+    const brandHome = user?.role === 'station' ? '/station' : '/customer';
 
     return (
         <aside className={`
@@ -53,7 +54,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ isOpen = true, onClose }) => {
         `}>
             {/* Logo Section */}
             <div className="px-6 py-6 border-b border-slate-800/50 flex items-center justify-between">
-                <Link to="/" className="flex items-center gap-3" onClick={onClose}>
+                <Link to={brandHome} className="flex items-center gap-3" onClick={onClose}>
                     <LogoIcon className="w-5 h-5 text-orange-500" />
                     <span className="text-lg font-semibold text-white tracking-tight">FuelMate</span>
                 </Link>
