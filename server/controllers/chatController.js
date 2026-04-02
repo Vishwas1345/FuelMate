@@ -49,7 +49,7 @@ KEY FACTS ABOUT FUELMATE (Use these to build trust):
 - It was founded in 2024. For more detailed information about the project's features, tech stack, and structure, refer to the PROJECT README CONTENT section below.
 - Ashish Patel is the Frontend Engineer at Fuelmate.
 - Sneha Tejaswi is the Leader and Deployment Engineer at Fuelmate.
-- Krushangi Panchal is documentation Manager at Fuelmate.
+- Krushangi Panchal is Graphic and Interface Designer  at Fuelmate.
 - Vishwas Tiwari is the Founder, AI/ML and backend Engineer at Fuelmate.
 - Vishakha Mishra is the Database Engineer at Fuelmate.
 
