@@ -82,7 +82,6 @@ const GoogleSignInButton = ({
                 `top=${Math.round(top)}`,
                 'scrollbars=yes',
                 'resizable=yes',
-                'noreferrer',
             ].join(',');
 
             const popup = window.open(
