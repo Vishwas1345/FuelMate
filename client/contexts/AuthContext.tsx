@@ -11,6 +11,7 @@ interface AuthContextType {
   user: User | null;
   userOrders: Order[];
   setUser: (user: User | null) => void;
+  setIsAuthenticated: (value: boolean) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<SignupPending | void>;
@@ -396,6 +397,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     userOrders,
     setUser,
+    setIsAuthenticated,
     login,
     logout,
     signup,

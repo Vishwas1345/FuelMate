@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react';
 
 const AuthCallback = () => {
     const navigate = useNavigate();
-    const { setUser } = useAuth();
+    const { setUser, setIsAuthenticated, getOrders } = useAuth();
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -77,6 +77,14 @@ const AuthCallback = () => {
                 if (setUser) {
                     setUser(userData.user || userData);
                 }
+                if (setIsAuthenticated) {
+                    setIsAuthenticated(true);
+                }
+
+                // Fetch user orders upon successful login
+                if (getOrders) {
+                    getOrders().catch(err => console.error('Failed to fetch orders upon OAuth callback:', err));
+                }
 
                 // Redirect based on profile completion
                 const userObj = userData.user || userData;
@@ -106,7 +114,7 @@ const AuthCallback = () => {
         };
 
         handleCallback();
-    }, [navigate, setUser]);
+    }, [navigate, setUser, setIsAuthenticated, getOrders]);
 
     const getErrorMessage = (errorCode: string): string => {
         const errorMessages: Record<string, string> = {
