@@ -1,4 +1,4 @@
-# 🚀 FuelMate - On-Demand Fuel Delivery System
+# <img src="client/public/favicon.svg" alt="FuelMate logo" width="28" height="28" align="top"> FuelMate - On-Demand Fuel Delivery System
 
 [License: MIT](https://opensource.org/licenses/MIT)
 [Node.js](https://nodejs.org/)
