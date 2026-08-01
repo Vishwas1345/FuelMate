@@ -4,12 +4,18 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger.js';
 import mailService from './mailService.js';
+import redis from '../lib/redis.js';
 
-const OTP_TTL_MS = 15 * 60 * 1000;
+// OTP config
+const OTP_TTL_SECONDS = 10 * 60; // 10 minutes
 const MAX_OTP_ATTEMPTS = 5;
 
+// Redis key helpers
+const otpKey = (email) => `otp:${email.trim().toLowerCase()}`;
+
 class AuthService {
-    // Helper: Generate tokens
+    // ─── Token helpers ────────────────────────────────────────────────────────
+
     generateTokens(user) {
         const accessToken = jwt.sign(
             { id: user._id, email: user.email, role: user.role },
@@ -26,17 +32,87 @@ class AuthService {
         return { accessToken, refreshToken };
     }
 
-    async setEmailVerificationOtp(user) {
+    // ─── OTP helpers (Redis) ──────────────────────────────────────────────────
+
+    /**
+     * Generate a 6-digit OTP, bcrypt-hash it, and store it in Redis.
+     * Key: otp:<email>  — hash fields: { hash, attempts }  — TTL: 10 min
+     * Returns the plain OTP to be emailed.
+     */
+    async setOtp(email) {
         const otp = crypto.randomInt(100000, 1000000).toString();
-        user.emailVerificationOtpHash = await bcrypt.hash(otp, 10);
-        user.emailVerificationOtpExpires = new Date(Date.now() + OTP_TTL_MS);
-        user.emailVerificationAttempts = 0;
-        await user.save();
+        const hash = await bcrypt.hash(otp, 10);
+        const key = otpKey(email);
+
+        // Store as a Redis hash so we can increment attempts atomically
+        await redis.hset(key, 'hash', hash, 'attempts', '0');
+        await redis.expire(key, OTP_TTL_SECONDS);
+
+        logger.debug('OTP stored in Redis', { key, ttl: OTP_TTL_SECONDS });
         return otp;
     }
 
     /**
-     * Local signup: creates (or refreshes pending) user and emails OTP. No JWT until verifyEmailOtp.
+     * Verify an OTP submitted by the user.
+     * Throws structured errors that authController already handles.
+     * Returns true on success and deletes the Redis key.
+     */
+    async verifyOtp(email, otp) {
+        const key = otpKey(email);
+        const data = await redis.hgetall(key);
+
+        // Key missing → either never set or already expired
+        if (!data || !data.hash) {
+            const error = new Error('This code has expired. Request a new verification code.');
+            error.code = 'OTP_EXPIRED';
+            error.status = 400;
+            throw error;
+        }
+
+        const attempts = parseInt(data.attempts, 10) || 0;
+
+        if (attempts >= MAX_OTP_ATTEMPTS) {
+            const error = new Error(
+                'You have exceeded the maximum number of attempts. Use "Resend code" to get a new code and try again.'
+            );
+            error.code = 'OTP_MAX_ATTEMPTS';
+            error.status = 403;
+            throw error;
+        }
+
+        const ok = await bcrypt.compare(String(otp).trim(), data.hash);
+
+        if (!ok) {
+            const newAttempts = attempts + 1;
+            await redis.hset(key, 'attempts', String(newAttempts));
+
+            if (newAttempts >= MAX_OTP_ATTEMPTS) {
+                const error = new Error(
+                    'You have exceeded the maximum number of attempts. Use "Resend code" to get a new code and try again.'
+                );
+                error.code = 'OTP_MAX_ATTEMPTS';
+                error.status = 403;
+                throw error;
+            }
+
+            const left = MAX_OTP_ATTEMPTS - newAttempts;
+            const err = new Error(`Invalid code. ${left} attempt(s) remaining.`);
+            err.code = 'INVALID_OTP';
+            err.status = 400;
+            throw err;
+        }
+
+        // Success — delete key immediately (no need to wait for TTL)
+        await redis.del(key);
+        logger.debug('OTP verified and deleted from Redis', { key });
+        return true;
+    }
+
+    // ─── Auth methods ─────────────────────────────────────────────────────────
+
+    /**
+     * Local signup: creates (or refreshes pending) user and emails OTP.
+     * No JWT until verifyEmailOtp succeeds.
      */
     async register(userData) {
         const { email, password, name, role } = userData;
@@ -52,13 +128,14 @@ class AuthService {
         }
 
         const normalizedEmail = email.trim().toLowerCase();
-        const secretSelect = '+emailVerificationOtpHash +emailVerificationOtpExpires +emailVerificationAttempts';
 
         try {
-            let existingUser = await User.findOne({ email: normalizedEmail }).select(secretSelect);
+            let existingUser = await User.findOne({ email: normalizedEmail });
+
             if (existingUser) {
                 const isPendingLocal =
                     existingUser.authProvider === 'local' && existingUser.isEmailVerified === false;
+
                 if (!isPendingLocal) {
                     logger.warn('Registration failed: User already exists', { email });
                     const error = new Error('User already exists');
@@ -66,16 +143,24 @@ class AuthService {
                     error.status = 400;
                     throw error;
                 }
+
+                // Refresh the pending user and resend OTP
                 existingUser.name = name;
                 existingUser.password = password;
                 existingUser.role = role || existingUser.role || 'customer';
                 await existingUser.save();
-                const otp = await this.setEmailVerificationOtp(existingUser);
+
+                const otp = await this.setOtp(normalizedEmail);
                 await mailService.sendSignupOtpEmail(normalizedEmail, name, otp);
-                logger.info('Pending user refreshed; OTP resent', { userId: existingUser._id, email: normalizedEmail });
+
+                logger.info('Pending user refreshed; OTP resent via Redis', {
+                    userId: existingUser._id,
+                    email: normalizedEmail,
+                });
                 return { requiresVerification: true, email: normalizedEmail, user: existingUser };
             }
 
+            // Brand new user — no OTP fields needed on the document
             const user = new User({
                 email: normalizedEmail,
                 password,
@@ -85,12 +170,13 @@ class AuthService {
                 isEmailVerified: false,
             });
             await user.save();
-            const full = await User.findById(user._id).select(secretSelect);
-            const otp = await this.setEmailVerificationOtp(full);
-            await mailService.sendSignupOtpEmail(normalizedEmail, name, otp);
-            logger.info('User created; OTP sent', { userId: user._id, email: user.email });
 
+            const otp = await this.setOtp(normalizedEmail);
+            await mailService.sendSignupOtpEmail(normalizedEmail, name, otp);
+
+            logger.info('User created; OTP sent via Redis', { userId: user._id, email: user.email });
             return { requiresVerification: true, email: normalizedEmail, user };
+
         } catch (error) {
             if (error.code === 'USER_EXISTS' || error.code === 'MISSING_FIELDS') {
                 throw error;
@@ -112,8 +198,8 @@ class AuthService {
             throw error;
         }
 
-        const secretSelect = '+emailVerificationOtpHash +emailVerificationOtpExpires +emailVerificationAttempts';
-        const user = await User.findOne({ email: email.trim().toLowerCase() }).select(secretSelect);
+        const normalizedEmail = email.trim().toLowerCase();
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (!user) {
             const error = new Error('No account found for this email');
@@ -129,56 +215,17 @@ class AuthService {
             throw error;
         }
 
+        // Already verified — just sign them in
         if (user.isEmailVerified !== false) {
             const tokens = this.generateTokens(user);
             return { user, tokens, alreadyVerified: true };
         }
 
-        if ((user.emailVerificationAttempts || 0) >= MAX_OTP_ATTEMPTS) {
-            const error = new Error(
-                'OTP verification failed. You have exceeded the maximum number of attempts. Use "Resend code" to get a new code and try again.',
-            );
-            error.code = 'OTP_MAX_ATTEMPTS';
-            error.status = 403;
-            throw error;
-        }
+        // Delegate all OTP logic to Redis helper (throws on any failure)
+        await this.verifyOtp(normalizedEmail, otp);
 
-        if (
-            !user.emailVerificationOtpHash ||
-            !user.emailVerificationOtpExpires ||
-            new Date() > user.emailVerificationOtpExpires
-        ) {
-            const error = new Error('This code has expired. Request a new verification code.');
-            error.code = 'OTP_EXPIRED';
-            error.status = 400;
-            throw error;
-        }
-
-        const ok = await bcrypt.compare(String(otp).trim(), user.emailVerificationOtpHash);
-        if (!ok) {
-            user.emailVerificationAttempts = (user.emailVerificationAttempts || 0) + 1;
-            await user.save();
-
-            if (user.emailVerificationAttempts >= MAX_OTP_ATTEMPTS) {
-                const error = new Error(
-                    'OTP verification failed. You have exceeded the maximum number of attempts. Use "Resend code" to get a new code and try again.',
-                );
-                error.code = 'OTP_MAX_ATTEMPTS';
-                error.status = 403;
-                throw error;
-            }
-
-            const left = MAX_OTP_ATTEMPTS - user.emailVerificationAttempts;
-            const err = new Error(`Invalid code. ${left} attempt(s) remaining.`);
-            err.code = 'INVALID_OTP';
-            err.status = 400;
-            throw err;
-        }
-
+        // Mark user as verified in MongoDB
         user.isEmailVerified = true;
-        user.emailVerificationOtpHash = undefined;
-        user.emailVerificationOtpExpires = undefined;
-        user.emailVerificationAttempts = 0;
         await user.save();
 
         mailService.sendWelcomeEmail(user.email, user.name);
@@ -197,16 +244,18 @@ class AuthService {
             throw error;
         }
 
-        const secretSelect = '+emailVerificationOtpHash +emailVerificationOtpExpires +emailVerificationAttempts';
-        const user = await User.findOne({ email: email.trim().toLowerCase() }).select(secretSelect);
+        const normalizedEmail = email.trim().toLowerCase();
+        const user = await User.findOne({ email: normalizedEmail });
 
+        // Silently succeed if user not found / not pending (don't leak account existence)
         if (!user || user.authProvider !== 'local' || user.isEmailVerified !== false) {
             return { ok: true };
         }
 
-        const otp = await this.setEmailVerificationOtp(user);
+        const otp = await this.setOtp(normalizedEmail);
         await mailService.sendSignupOtpEmail(user.email, user.name, otp);
-        logger.info('Signup OTP resent', { userId: user._id, email: user.email });
+
+        logger.info('Signup OTP resent via Redis', { userId: user._id, email: user.email });
         return { ok: true };
     }
 
@@ -215,7 +264,6 @@ class AuthService {
 
         logger.debug('Login service called', { email });
 
-        // Validate input
         if (!email || !password) {
             logger.warn('Login validation failed: Missing credentials', { email, hasPassword: !!password });
             const error = new Error('Please provide email and password');
@@ -224,8 +272,8 @@ class AuthService {
             throw error;
         }
 
-        // Find user
         const user = await User.findOne({ email: email.trim().toLowerCase() });
+
         if (!user) {
             logger.warn('Login failed: User not found', { email });
             const error = new Error('Invalid credentials');
@@ -234,7 +282,6 @@ class AuthService {
             throw error;
         }
 
-        // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             logger.warn('Login failed: Invalid password', { email });
@@ -254,11 +301,7 @@ class AuthService {
         }
 
         logger.info('Login successful in service', { userId: user._id, email: user.email });
-
-        // Generate tokens
-        const tokens = this.generateTokens(user);
-
-        return { user, tokens };
+        return { user, tokens: this.generateTokens(user) };
     }
 
     async getProfile(userId) {
@@ -281,7 +324,6 @@ class AuthService {
         }
 
         try {
-            // Verify refresh token
             const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
             const user = await User.findById(decoded.id);
 
@@ -292,7 +334,6 @@ class AuthService {
                 throw error;
             }
 
-            // Generate new tokens
             return this.generateTokens(user);
         } catch (err) {
             if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {

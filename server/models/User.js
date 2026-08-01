@@ -58,19 +58,6 @@ const userSchema = new mongoose.Schema({
   isEmailVerified: {
     type: Boolean,
   },
-  emailVerificationOtpHash: {
-    type: String,
-    select: false,
-  },
-  emailVerificationOtpExpires: {
-    type: Date,
-    select: false,
-  },
-  emailVerificationAttempts: {
-    type: Number,
-    default: 0,
-    select: false,
-  },
   // Customer specific fields
   addresses: [{
     label: { type: String, enum: ['home', 'work', 'other'], default: 'home' },
