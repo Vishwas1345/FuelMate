@@ -1,4 +1,5 @@
 import Order from '../models/Order.js';
+import { invalidateAnalyticsCache } from '../controllers/analyticsController.js';
 
 class OrderService {
     async getUserOrders(userId, role) {
@@ -134,7 +135,18 @@ class OrderService {
             order.driver = driver;
         }
 
-        return await order.save();
+        const saved = await order.save();
+
+        // Invalidate analytics cache for both customer and station so the
+        // next dashboard load reflects the newly delivered order immediately
+        if (status === 'delivered') {
+            await invalidateAnalyticsCache(order.userId);
+            if (order.stationId) {
+                await invalidateAnalyticsCache(order.stationId);
+            }
+        }
+
+        return saved;
     }
 
     async getOrderHistory(userId) {
