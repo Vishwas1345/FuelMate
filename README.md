@@ -75,6 +75,8 @@ FuelMate is a comprehensive on-demand fuel delivery management system built with
 - **Express.js** - Web framework
 - **MongoDB** - NoSQL database
 - **Mongoose** - ODM for MongoDB
+- **Redis** - In-memory store for OTP management and analytics caching
+- **ioredis** - Redis client for Node.js
 - **JWT** - Authentication
 - **bcrypt** - Password hashing
 - **Winston** - Professional logging with file rotation
@@ -142,6 +144,7 @@ Before you begin, ensure you have the following installed:
 - **Node.js** (v18 or higher)
 - **npm** or **yarn**
 - **MongoDB** (local or Atlas)
+- **Redis** (local via `redis-server`, or Docker: `docker run -p 6379:6379 redis`)
 - **Git**
 
 ### Installation
@@ -175,6 +178,11 @@ NODE_ENV=development
 MONGODB_URI=mongodb://localhost:27017/fuelmate
 # Or use MongoDB Atlas:
 # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fuelmate
+
+# Redis
+REDIS_URL=redis://localhost:6379
+# Or with authentication:
+# REDIS_URL=redis://:yourpassword@localhost:6379
 
 # JWT Secret
 JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
@@ -246,6 +254,60 @@ Logs are saved to `server/logs/`:
 - `exceptions-YYYY-MM-DD.log` - Uncaught exceptions
 - `rejections-YYYY-MM-DD.log` - Unhandled rejections
 
+```
+
+## ⚡ Redis Integration
+
+FuelMate uses Redis as a fast, expiry-aware layer alongside MongoDB. The client is set up in `server/lib/redis.js` using **ioredis** with exponential retry and graceful degradation — if Redis is unavailable, the app continues to function normally.
+
+### OTP Storage
+
+Email verification OTPs are stored entirely in Redis instead of the User document.
+
+| Detail | Value |
+|---|---|
+| Key | `otp:<email>` |
+| Fields | `hash` (bcrypt), `attempts` |
+| TTL | **10 minutes** (auto-deleted by Redis) |
+| Max attempts | 5 |
+
+**Why Redis for OTPs?**
+- OTPs are temporary — Redis TTL handles expiry automatically, no cleanup queries needed
+- Failed attempts increment a counter in Redis, no MongoDB write required
+- The `User` model stays clean — no `emailVerificationOtpHash`, `emailVerificationOtpExpires`, or `emailVerificationAttempts` fields
+
+### Analytics Caching
+
+The `GET /api/analytics` endpoint caches its aggregated result in Redis.
+
+| Detail | Value |
+|---|---|
+| Key | `analytics:<userId>` |
+| TTL | **5 minutes** |
+| Invalidation | Immediately on order status → `delivered` |
+
+**How it works:**
+1. Request hits `/api/analytics`
+2. Cache hit → returns JSON in ~0.2ms
+3. Cache miss → aggregates all delivered orders from MongoDB, stores result in Redis, responds
+4. When a station marks an order as `delivered`, both the customer's and station's cache keys are deleted so the next load reflects real data
+
+### Local Setup
+
+Start Redis before running the server:
+
+```bash
+# Option A — local Redis
+redis-server
+
+# Option B — Docker
+docker run -p 6379:6379 redis
+```
+
+Set `REDIS_URL` in `server/.env`:
+
+```env
+REDIS_URL=redis://localhost:6379
 ```
 
 ## 🏃 Running the Application
@@ -341,6 +403,8 @@ FuelMate sits between **customers, stations, and field delivery**, so several de
 | **Deliverability and local development** — OTP and notifications must send in production but engineers often lack mail infra locally.                                | Central `**mailService`** using **SendGrid** when `**SENDGRID_API_KEY`** is set; **clear logging / safe fallbacks** when mail is disabled so verification flows remain testable without leaking secrets in responses.                                                              |
 | **Short-lived access tokens vs smooth UX** — aggressive access JWT expiry improves security but breaks tabs mid-session.                                             | `**POST /api/auth/refresh-token`** with **httpOnly refresh cookies** (and optional stored refresh fallback), plus a **fetch layer** that only retries with refresh on **protected** routes—not on login/register/verify, so bad credentials are not mistaken for expired sessions. |
 | **Onboarding fatigue for returning users** — new flows should not repeat after every login or OAuth return.                                                          | `**isProfileComplete`** on the user record plus a **per-user “onboarding seen”** flag in **localStorage** so first-time signups see setup once, while **returning** users go straight to the customer or station dashboard.                                                        |
+| **Temporary OTP state polluting the User model** — storing hash, expiry, and attempt count as MongoDB fields means manual cleanup and a write on every failed attempt. | **OTP stored entirely in Redis** (`otp:<email>` hash, 10-minute TTL). Redis TTL handles expiry automatically, failed attempts increment a counter in-place without a MongoDB write, and the key self-destructs on success — the `User` document never holds OTP state.          |
+| **Analytics recalculated on every dashboard load** — full MongoDB scan of delivered orders on every request is slow and wasteful for both the station and customer dashboards. | **Redis cache** (`analytics:<userId>`, 5-minute TTL). Cache hit returns in ~0.2ms. Cache is invalidated immediately when an order is marked `delivered` so dashboards always reflect real data without polling.                                                                    |
 
 
 ## Future enhancements

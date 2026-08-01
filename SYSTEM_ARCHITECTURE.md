@@ -7,6 +7,7 @@
 - **Frontend**: React (Vite), TypeScript, Tailwind CSS, Shadcn/UI, React Query, React Router.
 - **Backend**: Node.js, Express.js.
 - **Database**: MongoDB (with Mongoose ODM).
+- **Cache / In-Memory Store**: Redis (ioredis) — OTP lifecycle and analytics caching.
 - **Authentication**: JWT (JSON Web Tokens) in HTTP-only cookies.
 - **External Services**: Mapbox GL (for maps/location).
 
@@ -30,6 +31,7 @@ graph TD
 
     subgraph Database ["Data Layer"]
         MongoDB[(MongoDB Cluster)]
+        Redis[(Redis)]
     end
 
     UI --> AuthCtx
@@ -40,6 +42,7 @@ graph TD
     Auth --> Controllers
     Controllers --> Services
     Services -- "Mongoose Models" --> MongoDB
+    Services -- "OTP & Analytics Cache" --> Redis
 ```
 
 ## 3. Database Schema
@@ -179,3 +182,85 @@ Based on the route files analysis:
 ### Review Routes (`/api/reviews`)
 - `GET /` - Get all approved reviews
 - `POST /` - Submit a new review
+
+## 7. Redis Integration
+
+Redis is used as a fast, expiry-aware layer alongside MongoDB. The client (`server/lib/redis.js`) uses **ioredis** with exponential retry and `enableOfflineQueue: false` so the app degrades gracefully if Redis is unavailable.
+
+### 7.1. OTP Storage
+
+Email verification OTPs are stored entirely in Redis — the `User` document holds no OTP state.
+
+| Key pattern | `otp:<email>` |
+|---|---|
+| Type | Redis Hash (`hash`, `attempts`) |
+| TTL | 10 minutes (auto-expired by Redis) |
+| Max attempts | 5 |
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant S as Server
+    participant R as Redis
+    participant DB as MongoDB
+    participant M as Mail
+
+    Note over U,M: Registration
+    U->>S: POST /api/auth/register
+    S->>DB: Create User (isEmailVerified: false)
+    S->>R: HSET otp:email {hash, attempts:0}  EX 600
+    S->>M: Send OTP email
+    S-->>U: 201 requiresVerification: true
+
+    Note over U,M: Verification
+    U->>S: POST /api/auth/verify-email {email, otp}
+    S->>R: HGETALL otp:email
+    R-->>S: {hash, attempts}
+    S->>S: bcrypt.compare(otp, hash)
+    alt OTP correct
+        S->>R: DEL otp:email
+        S->>DB: user.isEmailVerified = true
+        S-->>U: 200 + JWT tokens
+    else OTP wrong
+        S->>R: HINCRBY otp:email attempts 1
+        S-->>U: 400 Invalid code (N attempts left)
+    end
+```
+
+### 7.2. Analytics Caching
+
+The `GET /api/analytics` response is cached in Redis to avoid scanning all delivered orders on every dashboard load.
+
+| Key pattern | `analytics:<userId>` |
+|---|---|
+| Type | Redis String (JSON) |
+| TTL | 5 minutes |
+| Invalidation | Immediately on order status → `delivered` |
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    participant R as Redis
+    participant DB as MongoDB
+
+    C->>S: GET /api/analytics
+    S->>R: GET analytics:userId
+    alt Cache hit
+        R-->>S: Cached JSON
+        S-->>C: 200 (response in ~0.2ms)
+    else Cache miss
+        R-->>S: nil
+        S->>DB: Aggregate all delivered orders
+        DB-->>S: Orders data
+        S->>R: SET analytics:userId JSON  EX 300
+        S-->>C: 200 (response from DB)
+    end
+
+    Note over C,DB: When a delivery is completed
+    C->>S: PATCH /api/orders/:id/status {status: "delivered"}
+    S->>DB: Update order status
+    S->>R: DEL analytics:customerId
+    S->>R: DEL analytics:stationId
+    Note over R: Next dashboard load gets fresh data
+```

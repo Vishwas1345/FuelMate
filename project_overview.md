@@ -93,6 +93,7 @@ FuelMate simplifies fuel delivery into a "3-Step Magic" process:
 - **Environment**: Node.js.
 - **Framework**: Express.js.
 - **Database**: MongoDB (NoSQL) with Mongoose ODM.
+- **Cache / In-Memory Store**: Redis (via ioredis) — OTP storage and analytics caching.
 - **Authentication**: JWT (JSON Web Tokens) stored in HTTP-only cookies.
 - **Encryption**: bcrypt for password hashing.
 - **AI**: Gemini AI Integration (for the Customer Assistant).
